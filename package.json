@@ -1,0 +1,24 @@
+{
+  "name": "mediadeal-backendv3",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.17.3",
+    "express-flash": "0.0.2",
+    "express-override": "^0.1.9",
+    "express-session": "^1.17.2",
+    "method-override": "^3.0.0",
+    "mssql": "^8.0.2",
+    "mysql": "^2.18.1",
+    "twig": "^1.15.4",
+    "typeorm": "^0.2.45"
+  },
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
