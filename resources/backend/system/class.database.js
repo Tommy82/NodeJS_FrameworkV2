@@ -26,7 +26,7 @@ export default class DBConnection {
      * @param {boolean} syncDatabase true = Create the Database Tables by EntitySchema
      */
     constructor(entityArray, coreEvents, databaseConnection, syncDatabase = false) {
-        return new Promise((resolve, reject) => {
+        try {
             // Check if connection exists, otherwise create a new Instance
             if ( this.currConnection === undefined ) {
                 // Create Config File for TypeORM Module
@@ -49,33 +49,35 @@ export default class DBConnection {
                                 .then(() => {
                                     this.isConnected = true;
                                     this.currConnection = this;     // Set Global Connection Variable
-                                    console.log('DB Connected');
-                                    return resolve(true);
+                                    console.log(`Database [${databaseConnection.database}] erfolgreich verbunden und syncronisiert!`);
+                                    coreEvents.emit(`database:${databaseConnection.database}:connected`);
                                 })
                                 .catch(err => {
                                     console.error(err);
-                                    return reject(err);
+                                    coreEvents.emit(`database:${databaseConnection.database}:failed`);
                                 })
                         } else {
                             this.isConnected = true;
                             this.currConnection = this;             // Set Global Connection Variable
-                            console.log('DB Connected');
-                            return resolve(true);
+                            console.log(`Database [${databaseConnection.database}] erfolgreich verbunden!`);
+                            coreEvents.emit(`database:${databaseConnection.database}:connected`);
                         }
                     })
                     .catch(err => {
-                        console.error(err);
-                        return reject(err);
+                        coreEvents.emit(`database:${databaseConnection.database}:failed`);
                     })
             }
-        })
+        } catch ( err ) {
+            console.error(err);
+            coreEvents.emit(`database:[unknown]:failed`);
+        }
     }
 
     /**
      * Delete all Records with the specific ID´s from Database Table
      * @param {string} repoName TableName | EntitySchema.Name
      * @param {array} ids List of ID´s or a single ID
-     * @return {Promise<array of Record>}
+     * @returns {Promise<unknown>}
      * @example core.database.deleteById('modules', [1]) -> Delete the Record with ID: 1
      */
     async deleteById(repoName, ids) {
@@ -115,7 +117,7 @@ export default class DBConnection {
      * Search all Records with the specific Parameters
      * @param {string} repoName TableName | EntitySchema.name
      * @param {object} document
-     * @return {Promise<array of Record>}
+     * @returns {Promise<unknown>}
      */
     async find(repoName, document) {
         return new Promise((resolve, reject) => {
@@ -131,7 +133,7 @@ export default class DBConnection {
     /**
      * Get all Records of a Table
      * @param {string} repoName TableName | EntitySchema.name
-     * @return {Promise<array of Record>}
+     * @returns {Promise<unknown>}
      */
     async findAll(repoName) {
         return new Promise((resolve, reject) => {
@@ -193,7 +195,7 @@ export default class DBConnection {
      * Create a new Database Entry
      * @param {string} repoName TableName | EntitySchema.name
      * @param {object} document Record Content as Object
-     * @return {Promise<insert Record>}
+     * @returns {Promise<unknown>}
      */
     async insert(repoName, document) {
         return new Promise((resolve, reject) => {
@@ -210,7 +212,7 @@ export default class DBConnection {
      * Select the specific Columns from Database Table
      * @param {string} repoName TableName | EntitySchema.name
      * @param {array} fieldNames Array of TableColumns
-     * @return {Promise<list of Record>}
+     * @returns {Promise<unknown>}
      */
     async select(repoName, fieldNames) {
         return new Promise((resolve, reject) => {
@@ -232,7 +234,7 @@ export default class DBConnection {
      * @param {string} repoName TableName | EntitySchema.name
      * @param {int} id ID that should be updated
      * @param {object} document Record Content as Class
-     * @return {Promise<Database Record>} the Updated Data
+     * @returns {Promise<unknown>}
      */
     async update(repoName, id, document) {
         return new Promise((resolve, reject) => {
