@@ -1,3 +1,3 @@
 
-import './rights.class.js';
-import './rights.install.js';
+import './class.rights.js';
+import './install.js';
