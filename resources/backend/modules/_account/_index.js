@@ -1,3 +1,3 @@
 
-import './account.class.js';
-import './account.install.js';
+import './class.account.js';
+import './install.js';

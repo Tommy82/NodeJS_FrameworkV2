@@ -1,8 +1,8 @@
-import { DBAccount } from "./account.entities.js";
+import { DBAccount } from "./entities.js";
 import {app} from "../../system/class.app.js";
-import Account from "./account.class.js";
+import Account from "./class.account.js";
 
-class AccountInstall {
+class Install {
     constructor() { }
 
     entities = [  DBAccount ];
@@ -21,4 +21,4 @@ class AccountInstall {
     }
 }
 
-app.addModule(new AccountInstall());
+app.addModule(new Install());
