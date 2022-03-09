@@ -119,7 +119,7 @@ class ClassApp {
 
         this.events.on(`database:${database.default.database}:connected`, () => { this.install(); } );
 
-        this.DB = new DBConnection(entityArray, this.events, database.default, true);
+        this.DB = new DBConnection(entityArray, database.default, true);
 
     }
 

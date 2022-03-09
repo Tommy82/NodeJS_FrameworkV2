@@ -8,6 +8,7 @@
  *  @revision: 1
  */
 
+import { app } from './class.app.js';
 import orm from 'typeorm';
 
 /** Global Database Class */
@@ -20,12 +21,12 @@ export default class DBConnection {
 
     /**
      * Instantiate a new Database Class
+     * @param {ClassApp} app Global App
      * @param {array} entityArray List of all orm.EntitySchemas
      * @param {events.EventEmitter} coreEvents Global EventManager
-     * @param {object} databaseConnection Global Setting Manager
      * @param {boolean} syncDatabase true = Create the Database Tables by EntitySchema
      */
-    constructor(entityArray, coreEvents, databaseConnection, syncDatabase = false) {
+    constructor(entityArray, databaseConnection, syncDatabase = false) {
         try {
             // Check if connection exists, otherwise create a new Instance
             if ( this.currConnection === undefined ) {
@@ -49,27 +50,27 @@ export default class DBConnection {
                                 .then(() => {
                                     this.isConnected = true;
                                     this.currConnection = this;     // Set Global Connection Variable
-                                    console.log(`Database [${databaseConnection.database}] erfolgreich verbunden und syncronisiert!`);
-                                    coreEvents.emit(`database:${databaseConnection.database}:connected`);
+                                    app.log(`Database [${databaseConnection.database}] erfolgreich verbunden und syncronisiert!`, "System-Database");
+                                    app.events.emit(`database:${databaseConnection.database}:connected`);
                                 })
                                 .catch(err => {
-                                    console.error(err);
-                                    coreEvents.emit(`database:${databaseConnection.database}:failed`);
+                                    app.logError(err, "System-Database");
+                                    app.events.emit(`database:${databaseConnection.database}:failed`);
                                 })
                         } else {
                             this.isConnected = true;
                             this.currConnection = this;             // Set Global Connection Variable
-                            console.log(`Database [${databaseConnection.database}] erfolgreich verbunden!`);
-                            coreEvents.emit(`database:${databaseConnection.database}:connected`);
+                            app.log(`Database [${databaseConnection.database}] erfolgreich verbunden!`, "System-Database");
+                            app.events.emit(`database:${databaseConnection.database}:connected`);
                         }
                     })
                     .catch(err => {
-                        coreEvents.emit(`database:${databaseConnection.database}:failed`);
+                        app.events.emit(`database:${databaseConnection.database}:failed`);
                     })
             }
         } catch ( err ) {
-            console.error(err);
-            coreEvents.emit(`database:[unknown]:failed`);
+            app.logError(err, "System-Database");
+            app.events.emit(`database:[unknown]:failed`);
         }
     }
 
