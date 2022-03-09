@@ -1,4 +1,6 @@
 import { app } from "../../system/class.app.js";
+import {DBRights} from "./settings.entities.js";
+import * as fDatabase from './functions.database.js';
 
 export default class Rights {
     static moduleName = 'Rights';
@@ -7,62 +9,60 @@ export default class Rights {
     }
 
     static database = {
-        getAll: databaseGetAll,
-        getByID: databaseGetById,
-        getByName: databaseGetByName,
-        save: databaseSave
+        getAll: fDatabase.databaseGetAll,
+        getByID: fDatabase.databaseGetById,
+        getByName: fDatabase.databaseGetByName,
+        save: fDatabase.databaseSave
     };
 }
 
-//#region Functions - Database
-/**
- * Lädt alle Rechte aus der Datenbank (db:rights)
- * @param {boolean} onlyActive Nur aktive Rechte laden ?
- */
-function databaseGetAll(onlyActive = false) {
-    return new Promise((resolve, reject) => {
-        app.DB.findAll('rights')
-            .then(data => { return resolve(data); })
-            .catch(err => { return reject(err); })
-    })
+
+
+
+class RightsInstall {
+    constructor() { }
+
+    entities = [  DBRights ];
+
+    rights = [
+        { key: "add", desc: "", defaultRole: "admin" },
+        { key: "change", desc: "", defaultRole: "admin" },
+    ];
+
+    moduleName = Rights.moduleName;
+
+    async init() {
+    }
+
+    async install() {
+        //#region Installation - Alle Rechte aus allen Modulen
+        app.log("Installation / Update - Rechte", this.moduleName);
+        let orgRights = await Rights.database.getAll(false).catch(err => { app.logError(err, Rights.moduleName); });
+        if ( app.modules && app.modules.length > 0 ) {
+            await app.helper.lists.asyncForEach(app.modules, async (module) => {
+                if ( module && module.rights && module.rights.length > 0 ) {
+                    await app.helper.lists.asyncForEach(module.rights, async (right) => {
+                        let found = orgRights.find(x => x.moduleName === module.moduleName && x.key === right.key);
+                        if ( !found ) {
+                            let document = {
+                                id: 0,
+                                moduleName: module.moduleName,
+                                key: right.key,
+                                desc: right.desc,
+                                defaultRole: right.defaultRole
+                            }
+                            await Rights.database.save(document).catch(err => { app.logError(err, "RightInstall"); });
+                        }
+                    });
+                }
+            })
+        }
+        //#endregion Installation - Alle Rechte aus allen Modulen
+    }
+
+    async start() {
+        app.rights = await Rights.database.getAll(false);
+    }
 }
 
-/**
- * Lädt einen einzelnen Datensatz anhand der ID
- * @param {int} id interne ID des Accounts (db:account.id)
- * @returns {Promise<unknown>}
- */
-function databaseGetById(id) {
-    return new Promise((resolve, reject) => {
-        app.DB.findById('rights', [id])
-            .then(data => { return resolve(data); })
-            .catch(err => { return reject(err); })
-    })
-}
-
-/**
- * Lädt alle Datensätze des Accounts mit dem angegebenem LoginNamen (Sollte nur einer sein!)
- * @param {string} name LoginName / Benutzername (db:account.name)
- * @returns {Promise<unknown>}
- */
-function databaseGetByName(name) {
-    return new Promise((resolve, reject) => {
-        app.DB.find('rights', { name: name })
-            .then(data => { return resolve(data); })
-            .catch(err => { return reject(err); })
-    })
-}
-
-/**
- * Speichert einen Datensatz in der AccountDatenbank
- * @param {*} document Datensatz (db:account)
- * @returns {Promise<unknown>}
- */
-function databaseSave(document) {
-    return new Promise((resolve, reject) => {
-        app.DB.upsert('rights', document)
-            .then(data => { return resolve(data); })
-            .catch(err => { return reject(err); })
-    })
-}
-//#endregion Functions - Database
+app.addModule(new RightsInstall());
