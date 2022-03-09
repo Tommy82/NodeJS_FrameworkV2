@@ -1,4 +1,7 @@
 import { app } from "../../system/class.app.js";
+import * as fWeb from './functions.web.js';
+import * as fDatabase from './functions.database.js';
+import {DBAccount} from "./settings.entities.js";
 
 export default class Account {
     static moduleName = 'Account';
@@ -6,53 +9,36 @@ export default class Account {
     constructor() {
     }
 
+    static web = {
+        toLogin: fWeb.webToLogin,
+        toAccountList: fWeb.toAccountList,
+        toAccountSingle: fWeb.toAccountSingle,
+    }
+
     static database = {
-        getByID: databaseGetById,
-        getByName: databaseGetByName,
-        save: databaseSave
+        getByID: fDatabase.databaseGetById,
+        getByName: fDatabase.databaseGetByName,
+        save: fDatabase.databaseSave
     };
 }
 
-//#region Functions - Database
+class AccountInstall {
+    constructor() { }
 
-/**
- * Lädt einen einzelnen Datensatz anhand der ID
- * @param {int} id interne ID des Accounts (db:account.id)
- * @returns {Promise<unknown>}
- */
-function databaseGetById(id) {
-    return new Promise((resolve, reject) => {
-        app.DB.findById('account', [id])
-            .then(data => { return resolve(data); })
-            .catch(err => { return reject(err); })
-    })
+    entities = [  DBAccount ];
+
+    rights = [ ];
+
+    moduleName = Account.moduleName;
+
+    async init() {
+    }
+
+    async install() {
+    }
+
+    async start() {
+    }
 }
-
-/**
- * Lädt alle Datensätze des Accounts mit dem angegebenem LoginNamen (Sollte nur einer sein!)
- * @param {string} name LoginName / Benutzername (db:account.name)
- * @returns {Promise<unknown>}
- */
-function databaseGetByName(name) {
-    return new Promise((resolve, reject) => {
-        app.DB.find('account', { name: name })
-            .then(data => { return resolve(data); })
-            .catch(err => { return reject(err); })
-    })
-}
-
-/**
- * Speichert einen Datensatz in der AccountDatenbank
- * @param {*} document Datensatz (db:account)
- * @returns {Promise<unknown>}
- */
-function databaseSave(document) {
-    return new Promise((resolve, reject) => {
-        app.DB.upsert('account', document)
-            .then(data => { return resolve(data); })
-            .catch(err => { return reject(err); })
-    })
-}
-//#endregion Functions - Database
-
+app.addModule(new AccountInstall());
 
