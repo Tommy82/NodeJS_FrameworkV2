@@ -1,0 +1,42 @@
+{% extends basicSite %}
+
+{# Disable Main Navigation#}
+{% block navigation_main %}{% endblock %}
+
+{% block content %}
+<form id="form_login" method="post" action="{{prefix}}/backend/login">
+    <div class="loginRow">
+        <span class="col1"><label for="loginName" class="default_style1">User:</label></span>
+        <span class="col2"><input type="text" name="loginName" id="loginName" class="default_style1"></span>
+    </div>
+
+    <div class="loginRow">
+        <span class="col1"><label for="password" class="default_style1">Password:</label></span>
+        <span class="col2"><input type="password" name="password" id="password" class="default_style1"></span>
+    </div>
+
+    <div class="loginRow">
+        <span class="col1">&nbsp;</span>
+        <span class="col2"><button type="submit" class="default_style1">Login</button></span>
+    </div>
+</form>
+{% endblock %}
+
+{% block stylesheet %}
+{{ parent() }}
+
+<!-- Begin: Login Style -->
+<style>
+    #main {
+        display: grid;
+        align-items: center;
+        justify-content: center;
+    }
+
+
+    #form_login .loginRow { display: flex; margin-bottom: 0.5em;}
+    #form_login .loginRow .col1 { flex: 0 0 25%; }
+    #form_login .loginRow .col2 { flex: 1; }
+</style>
+<!-- End: Login Style -->
+{% endblock %}

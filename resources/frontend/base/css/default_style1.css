@@ -1,0 +1,29 @@
+input.default_style1 {
+    height: 1.5em;
+    width: 20em;
+    padding: 0.4em;
+    border: 0.1em solid RGB(150,150,150);
+    border-radius: 0.5em;
+}
+select.default_style1,
+button.default_style1 {
+    height: 2.4em;
+    width: 21em;
+    padding: 0.4em;
+    border: 0.1em solid RGB(150,150,150);
+    border-radius: 0.5em;
+    cursor: pointer;
+}
+label.default_style1 {
+    color: RGB(0,0,0);
+    font-size: 1em;
+}
+input.default_style1:hover,
+select.default_style1:hover,
+button.default_style1:hover {
+    border-color: RGB(0,0,0);
+    border-radius: 1em;
+}
+
+.tblsorter { display: table; }
+.tblsorter th, .tblSorter td { display: table-cell; vertical-align:middle; padding-left: 0.5em; }
