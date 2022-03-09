@@ -1,0 +1,80 @@
+{% set prefix = '/' %}
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    {% block head %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/vnd.microsoft.icon" href="{{prefix}}/tgsoft/basic/assets/favicon.ico">
+    <title>{{ title }}</title>
+
+    {% block stylesheet_extern %}
+    <link rel="stylesheet" type="text/css" href="{{prefix}}/vendor/jquery/jquery-ui/jquery-ui.min.css">
+    <link rel="stylesheet" type="text/css" href="{{prefix}}/vendor/jquery/jquery-tablesorter/css/theme.default.css">
+    <link rel="stylesheet" type="text/css" href="{{prefix}}/vendor/jquery/jquery-tablesorter/css/theme.blue.css">
+    <link rel="stylesheet" type="text/css" href="{{prefix}}/vendor/toastr/toastr.min.css">
+    {% endblock %}
+
+    {% block stylesheet %}
+    <link rel="stylesheet" type="text/css" href="{{prefix}}/tgsoft/basic/assets/css/tgsoft.css">
+    <link rel="stylesheet" type="text/css" href="{{prefix}}/tgsoft/basic/assets/css/default_style1.css">
+    {% endblock %}
+    {% endblock %}
+</head>
+<body>
+<div id="wrapper">
+    <div id="header">
+        {% block navigation_main %}
+        <nav class="mainmenu">
+            <ul>
+                <li><a href="{{prefix}}/">Home</a></li>
+                {% block nav_beforebasic %}{% endblock %}
+                <li class="submenu"><a href="#">Basics</a>
+                    <ul>
+                        {% block nav_basic_before %}{% endblock %}
+                        <li><a href="{{prefix}}/backend/users">Users</a></li>
+                        <li><a href="{{prefix}}/backend/roles">Rollen</a></li>
+                        <li><a href="{{prefix}}/backend/settings">Einstellungen</a></li>
+                        {% block nav_basic_after %}{% endblock %}
+                    </ul>
+                </li>
+                {% block nav_afterbasic %}{% endblock %}
+                <li class="submenu"><a href="#">Ich</a>
+                    <ul>
+                        {% block nav_me_before %}{% endblock %}
+                        <li><a href="{{prefix}}/backend/users/me">Eigene Einstellungen</a></li>
+                        {% block nav_me_after %}{% endblock %}
+                    </ul>
+                </li>
+                <li><a href="{{prefix}}/backend/logout">Logout</a></li>
+            </ul>
+            <div id="header_me">User: {{ me.name }} [ID: {{ me.id }} | Role: {{ me.role }}]</div>
+        </nav>
+        {% endblock %}
+        {% block header %}{% endblock %}
+    </div>
+    <div id="main">
+        <div id="content">{% block content %}{% endblock %}</div>
+    </div>
+    <div id="footer">{% block footer %}{% endblock %}</div>
+</div>
+
+{% block javascript_extern %}
+<script src="{{prefix}}/vendor/jquery/jquery.min.js"></script>
+<script src="{{prefix}}/vendor/jquery/jquery-ui/jquery-ui.min.js"></script>
+<script src="{{prefix}}/vendor/jquery/jquery-tablesorter/js/jquery.tablesorter.min.js"></script>
+<script src="{{prefix}}/vendor/jquery/jquery-tablesorter/js/jquery.tablesorter.widgets.min.js"></script>
+<script src="{{prefix}}/vendor/toastr/toastr.min.js"></script>
+{% endblock %}
+
+{% block javascript_intern %}
+<script type="text/javascript">
+    page = {
+        prefix: '{{prefix}}',
+    }
+</script>
+
+<script src="{{prefix}}/tgsoft/basic/assets/js/tgsoft.js"></script>
+{% endblock %}
+</body>
+</html>

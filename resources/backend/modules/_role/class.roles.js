@@ -86,6 +86,6 @@ async function syncAll() {
 
 //#region Functions - Web
 function webGetList(req, res) {
-    app.web.toTwigOutput(req, res, ["modules", "_role"], "list", {});
+    app.web.toTwigOutput(req, res, ["modules", "_role"], "list", {}, true);
 }
 //#endregion Functions - Web

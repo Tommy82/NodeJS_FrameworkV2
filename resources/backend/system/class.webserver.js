@@ -36,9 +36,6 @@ export default class ClassWebserver {
         this.#server.set('view options', {layout: false});                  // Set View Options
         this.#server.use(express.static(app.directories.frontend));         // Set Frontend Static Directory ( needed for "include files" like 'js', 'css', 'png' ...)
 
-        console.log(app.directories);
-
-        /*
         this.prefix = '';
         if ( app.settings.webServer.prefix && app.settings.webServer.prefix !== '' ) {
             this.prefix = app.settings.webServer.prefix;
@@ -47,7 +44,6 @@ export default class ClassWebserver {
             this.#server.use(this.prefix, express.static(app.directories.frontend));
             this.#server.use(this.prefix, this.router);
         }
-        */
 
         this.#server.use(express.urlencoded({extended: false}));            // Set Url Encoding
         this.#server.use(flash());                                          // Include Flash to set direct Messages on HTML Form
@@ -107,8 +103,9 @@ export default class ClassWebserver {
      * @param {Array} filePath Path to File ( without Filename! )
      * @param {string} fileName Filename (without Path)
      * @param {Array} params Params for Twig Template
+     * @param {boolean} isBackend ist die Seite eine "Backend" Seite ? (Wichtig für BasicSite)
      */
-    toTwigOutput(req, res, filePath, fileName, params) {
+    toTwigOutput(req, res, filePath, fileName, params, isBackend ) {
         let _fileName = this.#app.directories.frontend;
         let _altFileName = this.#app.directories.frontend;
         if ( filePath && filePath.length > 0 ) {
@@ -118,6 +115,19 @@ export default class ClassWebserver {
         let tmpFileName = fileName.toLowerCase().replace('.twig', '');
         _fileName = path.join(_fileName, tmpFileName + ".twig");
         _altFileName = path.join(_fileName, tmpFileName + "_custom.twig");
+
+        let basicSite = "";
+        let basicSiteCustom = "";
+        if ( isBackend ) {
+            basicSite = "/base/backend_base.twig";
+            basicSiteCustom = "/base/backend_base_custom.twig";
+        } else {
+            basicSite = "/base/frontend_base.twig";
+            basicSite = "/base/frontend_base_custom.twig";
+        }
+
+        if ( fs.existsSync(this.#app.directories.frontend + basicSiteCustom)) { params.basicSite = basicSiteCustom; }
+        else { params.basicSite = basicSite; }
 
         if ( fs.existsSync(_altFileName)) { res.render(_altFileName, !params ? {} : params); }
         else { res.render(_fileName, !params ? {} : params); }
