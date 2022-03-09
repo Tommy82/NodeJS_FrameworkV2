@@ -169,20 +169,43 @@ class ClassApp {
      * @param {*} message Nachricht, welche ausgegeben werden soll
      * @param {string} moduleName Name des Moduls
      */
-    log(message, moduleName = '') {
-        console.log(">>> --------------------------- >>> ");
-        if ( moduleName && moduleName.trim() !== '' ) { console.log(`Module: ${moduleName}`)}
-        switch ( typeof(message)) {
-            case "string": console.log(`Message: ${message}`); break;
-            case "int": console.log(`Message: ${message}`); break;
-            case "float": console.log(`Message: ${message}`); break;
-            case "double": console.log(`Message: ${message}`); break;
-            default:
-                console.log(`Message (type: ${typeof(message)}):`);
-                console.log(message);
-                break;
+    log(message, moduleName = '', canSimple = true) {
+        //TODO: Add To LogFile
+        let isSimple = false;
+        if ( canSimple ) {
+            let simple = ['string', 'int', 'float', 'double', 'boolean' ];
+            if ( simple.includes(typeof(message)) ) {
+                if ( !moduleName || moduleName.trim() == '' ) { moduleName = "Unknown"; }
+                isSimple = true;
+            }
         }
-        console.log("<<< --------------------------- <<< ");
+
+        if ( !isSimple ) {
+            console.log(">>> ----------" + this.helper.dateTime.getCurrentDateTime().realString + "----------- >>> ");
+            if ( moduleName && moduleName.trim() !== '' ) { console.log(`Module: ${moduleName}`)}
+            switch ( typeof(message)) {
+                case "string": console.log(`Message: ${message}`); break;
+                case "int": console.log(`Message: ${message}`); break;
+                case "float": console.log(`Message: ${message}`); break;
+                case "double": console.log(`Message: ${message}`); break;
+                default:
+                    console.log(`Message (type: ${typeof(message)}):`);
+                    console.log(message);
+                    break;
+            }
+            console.log("<<< --------------------------- <<< ");
+        } else {
+            this.logSimple(message, moduleName);
+        }
+    }
+
+    /**
+     * Simples Schreiben einer [String|Int|Double] Nachricht
+     * @param message
+     * @param moduleName
+     */
+    logSimple(message, moduleName) {
+        console.log(`Log: ${this.helper.dateTime.getCurrentDateTime().realString} [${moduleName}] ${message}`);
     }
 }
 //#endregion ClassApp
