@@ -6,6 +6,7 @@ import { EventEmitter } from 'events';
 
 import fs from 'fs';
 import path from 'path';
+import Frontend from "./class.frontend.js";
 
 class Directories {
     /** Root Verzeichnis @type string */
@@ -74,12 +75,15 @@ class ClassApp {
      */
     timers = [];
 
+    frontend = undefined;
+
     constructor() {
         this.settings = settings;
         this.SetDirectories();
         this.events = new EventEmitter();
         this.helper = new Helper();
         this.web = new WebServer(this);
+        this.frontend = new Frontend();
     }
 
     SetDirectories() {
