@@ -10,6 +10,7 @@
 
 import { app } from './class.app.js';
 import orm from 'typeorm';
+import { default as mysql } from 'mysql';
 
 /** Global Database Class */
 export default class DBConnection {
@@ -18,6 +19,7 @@ export default class DBConnection {
     /** true = Connected Successful | false = Connected Failed **/
     isConnected = false;
     currConnection = undefined;
+    #config = {};
 
     /**
      * Instantiate a new Database Class
@@ -31,7 +33,7 @@ export default class DBConnection {
             // Check if connection exists, otherwise create a new Instance
             if ( this.currConnection === undefined ) {
                 // Create Config File for TypeORM Module
-                const config = {
+                this.#config = {
                     type:       `${databaseConnection.type}`,
                     host:       `${databaseConnection.host}`,
                     port:        databaseConnection.port,
@@ -42,7 +44,7 @@ export default class DBConnection {
                     cache:      true
                 }
 
-                orm.createConnection(config)                        // Create Connection
+                orm.createConnection(this.#config)                        // Create Connection
                     .then(conn => {
                         this.connection = conn;                     // Make Connection globally in complete Class
                         if ( syncDatabase ) {
@@ -266,6 +268,39 @@ export default class DBConnection {
                 repo.save(document)
                     .then(res => { return resolve(res); })
                     .catch(err => { return reject(err); })
+            } catch ( err ) { return reject(err); }
+        })
+    }
+
+    /**
+     * Führt einen einzelnen Query aus
+     * @param {string} sqlQuery SQL String welcher ausgeführt werden soll
+     * @returns {Promise<unknown>}
+     */
+    async query(sqlQuery) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                switch ( this.#config.type ) {
+                    case "mysql":
+                        let connection = await mysql.createConnection({
+                            host: `${this.#config.host}`,
+                            port: this.#config.port,
+                            user: `${this.#config.username}`,
+                            password: `${this.#config.password}`,
+                            database: `${this.#config.database}`
+                        });
+                        await connection.connect(function(err) {
+                            if ( err ) { return reject(err); }
+                            connection.query(sqlQuery, function(err, result) {
+                                if (err) return reject(err);
+                                return resolve(result);
+                            })
+                        })
+                        break;
+                    case "mssql":
+                        return reject(new Error("Not included!"));
+                        break;
+                }
             } catch ( err ) { return reject(err); }
         })
     }
