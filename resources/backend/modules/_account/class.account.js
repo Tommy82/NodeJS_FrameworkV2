@@ -36,9 +36,6 @@ export default class Account {
         save: fDatabase.databaseSave
     };
 
-    test() {
-        Account.web
-    }
 }
 
 
