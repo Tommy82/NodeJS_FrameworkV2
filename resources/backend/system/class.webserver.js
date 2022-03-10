@@ -15,27 +15,62 @@ import methodOverride from 'method-override';
 import fs from 'fs';
 import path from 'path';
 
+/** WebServer */
 export default class ClassWebserver {
+
+    /**
+     * Private -- Webserver (express)
+     * @type {Express}
+     */
     #server = undefined;
+
+    /**
+     * Private -- Webserver Router (express.route)
+     * @type {Express.Router}
+     */
     #router = undefined;
+
+    /**
+     * AppClass
+     */
     #app;
+
+    /**
+     * Gibt an ob Express Server online ist
+     * @type {boolean}
+     */
     isOnline = false;
+
+    /**
+     * Prefix für Web URL
+     * @type {string}
+     */
     prefix = '';
 
+    /**
+     * Instantiate new Express Webserver
+     * @param AppClass app
+     */
     constructor(app) {
         this.#app = app;
-        this.#server = express();                                           // Initialize Express Webserver
+        this.#server = express();
 
+        //#region Twig
         this.#server.engine('twig', Twig.__express);                        // ... set Twig to Express as default Engine
         this.#server.set('view-engine', 'twig');                            // ... set twig as View Engine
         this.#server.set('twig options', {
             allow_async: true, // Allow asynchronous compiling
             strict_variables: false
-        });                           // ... set Twig Options
+        });
+        //#endregion Twig
+
+        //#region Views
         this.#server.set('views', app.directories.frontend);                // ... set Frontend Directory
         this.#server.set('view options', {layout: false});                  // Set View Options
         this.#server.use(express.static(app.directories.frontend));         // Set Frontend Static Directory ( needed for "include files" like 'js', 'css', 'png' ...)
+        //#endregion Views
 
+        //#region Prefix
         this.prefix = '';
         if ( app.settings.webServer.prefix && app.settings.webServer.prefix !== '' ) {
             this.prefix = app.settings.webServer.prefix;
@@ -44,7 +79,9 @@ export default class ClassWebserver {
             this.#server.use(this.prefix, express.static(app.directories.frontend));
             this.#server.use(this.prefix, this.router);
         }
+        //#endregion Prefix
 
+        //#region Global Settings
         this.#server.use(express.urlencoded({extended: false}));            // Set Url Encoding
         this.#server.use(flash());                                          // Include Flash to set direct Messages on HTML Form
         this.#server.use(session({                                          // Set WebServer Session
@@ -53,23 +90,42 @@ export default class ClassWebserver {
             saveUninitialized: false
         }));
         this.#server.use(methodOverride('_method'));                        // Allow Method Override
+        //#endregion Global Settings
+
+        // Start Server
         this.#server.listen(app.settings.webServer.port);                       // Start WebServer with Port given in Settings File
         this.isOnline = true;                                           // Set Internal Parameter to true, so Modules that initialize later can see that Server is online
     }
 
     /**
-     *
-     * @param req
-     * @param res
-     * @param next
+     * Prüfung ob User im Backend angemeldet. Falls ja, wird auf entsprechende Seite weitergeleitet
+     * @param {*} req Express.Request
+     * @param {*} res Express.Response
+     * @param {*} next Callback zur Funktion wohin geleitet werden soll
      * @returns {*}
      */
     checkLogin_Backend(req, res, next) {
-        return next();
+        if ( req.session.loggedIn_Backend ) {
+            return next();
+        } else {
+            res.redirect("/backend/login");
+        }
+
     }
 
+    /**
+     * Prüft ob User im Frontend angemeldet ist. Falls ja, wird auf entsprechende Seite weitergeleitet
+     * @param {*} req Express.Request
+     * @param {*} res Express.Response
+     * @param {*} next Callback zur Funktion wohin geleitet werden soll
+     * @returns {*}
+     */
     checkLogin_Frontend(req, res, next) {
-        return next();
+        if ( req.session.loggedIn_Frontend ) {
+            return next();
+        } else {
+            res.redirect("/login");
+        }
     }
 
     /**
@@ -95,14 +151,13 @@ export default class ClassWebserver {
         }
     }
 
-
     /**
      * Send Data to Twig Template
      * @param {object} req  Website-Request
      * @param {object} res  Website-Response
      * @param {Array} filePath Path to File ( without Filename! )
      * @param {string} fileName Filename (without Path)
-     * @param {Array} params Params for Twig Template
+     * @param {object} params Params for Twig Template
      * @param {boolean} isBackend ist die Seite eine "Backend" Seite ? (Wichtig für BasicSite)
      */
     toTwigOutput(req, res, filePath, fileName, params, isBackend ) {

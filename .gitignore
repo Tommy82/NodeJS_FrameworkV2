@@ -129,3 +129,4 @@ dist
 # Self
 package-lock.json
 resources/config/settings.js
+/resources/logFiles/

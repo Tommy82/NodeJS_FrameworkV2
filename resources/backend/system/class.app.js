@@ -19,28 +19,30 @@ class Directories {
     import;
     /** Export Verzeichnis @type string */
     export;
+    logs;
 }
 
 //#region ClassApp
 class ClassApp {
+
     /**
      * Globaler Event emitter
      * @type EventEmitter
      */
-
     events;
+
     /**
      * Globale Verzeichnisse
      * @type Directories
      */
-
     directories;
+
     /**
      * Globale Einstellungen
      * @type [];
      */
-
     settings;
+
     /**
      * Globaler WebServer
      * @type WebServer
@@ -48,35 +50,43 @@ class ClassApp {
     web;
 
     /**
+     * Allgemeine Hauptdatenbank
      * @type DBConnection
      */
     DB;
 
     /**
-     *
+     * Allgemeine Hilfsklasse
      */
     helper;
 
     /**
-     *
+     * InstallModule (werden nach Start wieder entfernt)
      * @type {[]}
      */
     modules = [];
 
     /**
-     *
+     * Rechte
      * @type {[]}
      */
     rights = [];
 
     /**
-     *
+     * Timer welche Zeitgesteuert ausgeführt werden sollen
      * @type {[]}
      */
     timers = [];
 
+    /**
+     * Frontend Klasse
+     * @type {*}
+     */
     frontend = undefined;
 
+    /**
+     * Instanziiert die App Klasse
+     */
     constructor() {
         this.settings = settings;
         this.SetDirectories();
@@ -84,26 +94,45 @@ class ClassApp {
         this.helper = new Helper();
         this.web = new WebServer(this);
         this.frontend = new Frontend();
+        this.checkLogFile();
     }
 
+    /**
+     * Setzen der Standardverzeichnisse
+     * - Kann für einzelne Module erweitert werden
+     * @constructor
+     */
     SetDirectories() {
         this.directories = new Directories();
-        this.directories.root = fs.realpathSync('.');                                           // Root Path
-        this.directories.backend = path.join(this.directories.root, 'resources', 'backend');     // Backend Source
-        this.directories.frontend = path.join(this.directories.root, 'resources', 'frontend');   // Frontend Source
-        this.directories.import = path.join(this.directories.root, 'resources', 'import');       // Import Source
-        this.directories.export = path.join(this.directories.root, 'resources', 'export');       // Export Source
+        this.directories.root = fs.realpathSync('.');                                      // Root Path
+        this.directories.backend = path.join(this.directories.root, 'resources', 'backend');    // Backend Source
+        this.directories.frontend = path.join(this.directories.root, 'resources', 'frontend');  // Frontend Source
+        this.directories.import = path.join(this.directories.root, 'resources', 'import');      // Import Source
+        this.directories.export = path.join(this.directories.root, 'resources', 'export');      // Export Source
+        this.directories.logs = path.join(this.directories.root, 'resources', 'logFiles');      // Logfiles
     }
 
+    /**
+     * Ausführen der Initfunktion aller Module
+     * - Zuordnen der Datenbanken
+     * - Starten der Hauptdatenbank
+     * @returns {Promise<void>}
+     */
     async init() {
+        /**
+         * Liste aller Datenbanktabellen für Hauptdatenbank
+         * @type {*[]}
+         */
         let entityArray = [];
+
         await this.helper.lists.asyncForEach(this.modules, async(module) => {
             if ( module ) {
+                // Starten der Init Funktion
                 let moduleName = 'undefined';
                 if ( module.moduleName ) { moduleName = module.moduleName; }
                 if ( module.init ) { await module.init(); }
 
-                //#region Entities
+                //#region Zuordnung der Datenbanken
                 if ( module.entities && module.entities.length > 0 ) {
                     for ( let i = 0; i < module.entities.length; i++ ) {
                         if ( module.entities[i] !== undefined ) {
@@ -113,7 +142,7 @@ class ClassApp {
                 }
                 //#endregion Entities
 
-                //#region Rights
+                //#region Zuordnung der Rechte
                 if ( module.rights && module.rights.length > 0 ) {
                     this.rights[moduleName] = module.rights;
                 }
@@ -121,12 +150,18 @@ class ClassApp {
             }
         });
 
+        // Starten der Installation, wenn Datenbank korrekt gestartet
         this.events.on(`database:${database.default.database}:connected`, () => { this.install(); } );
 
+        // Starten der Hauptdatenbank
         this.DB = new DBConnection(entityArray, database.default, true);
 
     }
 
+    /**
+     * Ausführen der Installationsfunktionen aller Module
+     * @returns {Promise<void>}
+     */
     async install() {
         await this.helper.lists.asyncForEach(this.modules, async(module) => {
             if ( module && module.install) { await module.install(); }
@@ -135,12 +170,17 @@ class ClassApp {
         await this.start();
     }
 
+    /**
+     * Ausführen der Startfunktion und Timer aller Module
+     * @returns {Promise<void>}
+     */
     async start() {
+        // Ausführen der Startfunktion
         await this.helper.lists.asyncForEach(this.modules, async(module) => {
             if ( module && module.start ) { await module.start(); }
         });
 
-        // Start Timers
+        // Start der Timer
         this.timers.forEach(item => {
             if ( item.interval > 0 && item.function ) {
                 item.myTimer = setInterval(item.function, item.interval);
@@ -157,6 +197,15 @@ class ClassApp {
      */
     addModule(module) {
         this.modules.push(module);
+    }
+
+    /**
+     * Anlegen der Logiles, ggfl. Backup der alten Logfiles
+     */
+    async checkLogFile() {
+        await fs.mkdir(this.directories.logs, () => {
+            recursive: true
+        });
     }
 
     /**
@@ -177,7 +226,6 @@ class ClassApp {
      * @param {string} moduleName Name des Moduls
      */
     log(message, moduleName = '', canSimple = true) {
-        //TODO: Add To LogFile
         let isSimple = false;
         if ( canSimple ) {
             let simple = ['string', 'int', 'float', 'double', 'boolean' ];
@@ -201,6 +249,8 @@ class ClassApp {
                     break;
             }
             console.log("<<< --------------------------- <<< ");
+            fs.appendFile(this.directories.logs + '/server.txt', "\n" + this.helper.dateTime.getCurrentDateTime().realString, function (err) { if (err) throw err; });
+            fs.appendFile(this.directories.logs + '/server.txt', "\n" + JSON.stringify(message), function (err) { if (err) throw err; });
         } else {
             this.logSimple(message, moduleName);
         }
@@ -212,7 +262,9 @@ class ClassApp {
      * @param moduleName
      */
     logSimple(message, moduleName) {
-        console.log(`Log: ${this.helper.dateTime.getCurrentDateTime().realString} [${moduleName}] ${message}`);
+        let newMessage = "\n" + `Log: ${this.helper.dateTime.getCurrentDateTime().realString} [${moduleName}] ${message}`;
+        console.log(newMessage);
+        fs.appendFile(this.directories.logs + '/server.txt', newMessage, function (err) { if (err) throw err; });
     }
 }
 //#endregion ClassApp
