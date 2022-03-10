@@ -22,23 +22,4 @@ export default class Account {
     };
 }
 
-class AccountInstall {
-    constructor() { }
-
-    entities = [  DBAccount ];
-
-    rights = [ ];
-
-    moduleName = Account.moduleName;
-
-    async init() {
-    }
-
-    async install() {
-    }
-
-    async start() {
-    }
-}
-app.addModule(new AccountInstall());
 
