@@ -1,4 +1,8 @@
 import { app } from "../../system/class.app.js";
+import {DBRoles} from "./settings.entities.js";
+import * as fDatabase from './functions.database.js';
+import * as fWeb from './functions.web.js';
+import * as fSync from './functions.sync.js';
 
 export default class Role {
     static moduleName = 'Role';
@@ -10,121 +14,67 @@ export default class Role {
      *  Datenbankeinstellungen für die Rollen
      */
     static database = {
-        getAll: databaseGetAll,
-        getByID: databaseGetById,
-        getByKey: databaseGetByKey,
-        save: databaseSave
+        getAll: fDatabase.databaseGetAll,
+        getByID: fDatabase.databaseGetById,
+        getByKey: fDatabase.databaseGetByKey,
+        save: fDatabase.databaseSave
     };
 
     static web = {
-        getList: webGetList,
-        autocomplete: webAutoComplete,
+        getList: fWeb.webGetList,
+        autocomplete: fWeb.webAutoComplete,
     }
 
     static sync = {
-        all: syncAll,
+        all: fSync.syncAll,
     }
 }
 
-//#region Functions - Database
-/**
- * Lädt alle Rollen aus der Datenbank
- * @param {boolean} onlyActive Nur aktive Rollen laden?
- */
-function databaseGetAll(onlyActive = false) {
-    return new Promise((resolve, reject) => {
-        app.DB.findAll('roles')
-            .then(data => { return resolve(data); })
-            .catch(err => { return reject(err); })
-    })
-}
+class RoleInstall {
+    constructor() { }
 
-/**
- * Lädt einen einzelnen Datensatz anhand der ID
- * @param {int} id interne ID des Accounts (db:account.id)
- * @returns {Promise<unknown>}
- */
-function databaseGetById(id) {
-    return new Promise((resolve, reject) => {
-        app.DB.findById('roles', [id])
-            .then(data => { return resolve(data); })
-            .catch(err => { return reject(err); })
-    })
-}
+    entities = [  DBRoles ];
 
-/**
- * Lädt einen Datensatz anhand des "keys" (db: roles.key)
- * @param {string} name LoginName / Benutzername (db:account.name)
- * @returns {Promise<unknown>}
- */
-function databaseGetByKey(key) {
-    return new Promise((resolve, reject) => {
-        app.DB.find('roles', { key: key })
-            .then(data => { return resolve(data); })
-            .catch(err => { return reject(err); })
-    })
-}
+    rights = [
+        { key: "add", desc: "", defaultRole: "admin" },
+        { key: "change", desc: "", defaultRole: "admin" },
+        { key: "delete", desc: "", defaultRole: "admin" },
+    ];
 
-/**
- * Speichert einen Datensatz in der RolesDatenbank
- * @param {*} document Datensatz (db:roles)
- * @returns {Promise<unknown>}
- */
-function databaseSave(document) {
-    return new Promise((resolve, reject) => {
-        app.DB.upsert('roles', document)
-            .then(data => { return resolve(data); })
-            .catch(err => { return reject(err); })
-    })
-}
-//#endregion Functions - Database
+    moduleName = Role.moduleName;
 
-//#region Functions - Sync
-async function syncAll() {
-    app.roles = await Role.database.getAll().catch(err => { app.logError(err, Role.moduleName); });
-}
-//#endregion Functions - Sync
+    async init() {
+    }
 
-//#region Functions - Web
-async function webGetList(req, res) {
-    let params = [];
-    params["header"] = ["ID", "Modul", "Schlüssel", "Beschreibung", "StandardRolle", "Menü"];
-    params["sql"] = "SELECT `id`, `moduleName`, `key`, `desc`, `defaultRole` FROM `rights`";
-    params["where"] = "id > 0";
-    params["menu"] = `<a href='/backend/roles/%id%'>test</a>`;
+    async install() {
+        await Role.sync.all();
 
-    let autocomplete = [{fieldID: "role", filter: "role"}];
+        let basicRoles = [
+            { key: "admin", name: "Administrator", desc: "" },
+        ]
 
-    app.frontend.table.generateByDB('tblRoles', params, null)
-        .then(table => {
-            let js = "setDataTable('tblRoles');";
-            app.web.toTwigOutput(req, res, ["modules", "_role"], "list", { TAB1: table, JS: js, AUTOCOMPLETE: autocomplete }, true);
-        })
-        .catch(err => { console.error(err); });
-}
-
-async function webAutoComplete(search) {
-    return new Promise((resolve, reject) => {
-        let sql = "SELECT `id`, `name` FROM `roles` ";
-        if ( search ) {
-            sql += ` WHERE \`name\` like '%${search.trim()}%' `;
-            if ( app.helper.check.isNumeric(search)) {
-                sql += ` OR \`id\` = ${parseInt(search)} `;
+        app.helper.lists.asyncForEach(basicRoles, async (role) => {
+            let found = app.roles.find(x => x.key === role.key);
+            if ( !found ) {
+                let document = {
+                    id: 0,
+                    key: role.key,
+                    desc: role.desc,
+                    name: role.name
+                };
+                await Role.database.save(document).catch(err => { app.logError(err, Role.moduleName); })
             }
-        }
-        sql += " limit 0, 5";
-        app.DB.query(sql)
-            .then(data => {
-                let response = [];
-                if ( data && data.length > 0 ) {
-                    data.forEach(item => {
-                        response.push(`${item.id} | ${item.name}`);
-                    })
-                }
-                console.log(response);
-                return resolve(response);
-            })
-            .catch(err => { return reject(err); })
-    })
+        })
+
+        await Role.sync.all();
+    }
+
+    async start() {
+        app.frontend.autocomplete.push({ filter: "role", callback: Role.web.autocomplete });
+    }
 }
-//#endregion Functions - Web
+
+app.addModule(new RoleInstall());
+
+
+
