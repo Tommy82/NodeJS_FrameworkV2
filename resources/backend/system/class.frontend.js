@@ -3,6 +3,12 @@ export default class Frontend {
         generate: tableGenerate
     }
 
+    HtmlElement = {
+        text: generateHTMLElementText,
+        select: generateHTMLElementSelect,
+        checkBox: generateHTMLElementCheckBox
+    }
+
 }
 
 //#region Functions - Table
@@ -48,3 +54,12 @@ function tableGenerateFooter(footerData) {
     return data;
 }
 //#endregion Functions - Table
+
+function generateHTMLElementText() {
+}
+
+function generateHTMLElementSelect() {
+}
+
+function generateHTMLElementCheckBox() {
+}

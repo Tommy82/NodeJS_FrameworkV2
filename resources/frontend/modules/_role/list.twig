@@ -1,3 +1,20 @@
 {% extends basicSite %}
 
-Hallo Du da
+
+{% block content %}
+{{ parent() }}
+{{ TAB1 }}
+{% endblock %}
+
+{% block stylesheet %}
+    {{ parent() }}
+{% endblock %}
+
+
+{% block javascript_intern %}
+{{ parent() }}
+
+<script>
+    setDataTable("test");
+</script>
+{% endblock %}

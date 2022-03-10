@@ -25,4 +25,66 @@
 #nav li ul li{
     _display: inline-block; /* for IE5*/}
 #nav li ul li a{
-    width: 150px;}
+    width: 150px;
+}
+
+
+
+/** Begin: Globals - Complete Form **/
+body, form, figure {
+    margin: 0;
+    padding: 0;
+}
+
+h1 { color: #0a0a0a; }
+
+#errormessage { color: red; }
+
+h1 { color: #0a0a0a; }
+
+#errormessage { color: red; }
+
+#main {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#content {
+    text-align: left;
+    width: 95%;
+    margin-top: 5em;
+}
+
+/** End: Globals - Complete Form **/
+
+/** Begin: Globals: Header **/
+#header {
+    height: 2em;
+    width: 100%;
+    top: 0;
+    position: fixed;
+}
+/** End: Globals: Header **/
+
+/** Begin: Globals - Footer **/
+#footer {
+    height: 1em;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+}
+/** End: Globals - Footer **/
+
+#main {
+}
+
+#content {
+}
+
+.tbl-left { text-align: left; }
+.tbl-right { text-align: right; }
+.tbl-middle { text-align: center; }

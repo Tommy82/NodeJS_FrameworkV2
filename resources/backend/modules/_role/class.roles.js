@@ -86,6 +86,23 @@ async function syncAll() {
 
 //#region Functions - Web
 function webGetList(req, res) {
-    app.web.toTwigOutput(req, res, ["modules", "_role"], "list", {}, true);
+
+    let data = {
+        header: [
+            { value: "column1" },
+            { value: "column2" },
+            { value: "column3" },
+        ],
+        content: [
+            { value: "col1" },
+            { value: "col2" },
+            { value: "col3" },
+        ],
+        footer: []
+    }
+
+    let table = app.frontend.table.generate("test", data.header, data.content, data.footer);
+
+    app.web.toTwigOutput(req, res, ["modules", "_role"], "list", { TAB1: table }, true);
 }
 //#endregion Functions - Web
