@@ -1,6 +1,6 @@
 //#region Functions - Web
 import {app} from "../../system/class.app.js";
-
+import { default as Account } from './class.account.js';
 /**
  * Starte Ausgabe - Login vom Backend
  * @param {*} req Webserver - Request
@@ -16,13 +16,19 @@ export function webToLogin(req, res) {
  * @param {*} req Webserver - Request
  * @param {*} res Webserver - Response
  */
-export function checkLogin(req, res) {
+export async function checkLogin(req, res) {
     let username = req.body.username;
     let password = req.body.password;
 
     if ( username && password ) {
-        //ToDo: Check Login Data
-        let loggedIn = true;
+        let loggedIn = false;
+
+        let currData = await Account.database.getByName(username).catch(err => { throw err; });
+        if ( currData && currData.length > 0 ) {
+            if (await app.helper.security.comparePassword(password, currData[0].password).catch(err => { app.logError(err); })) {
+                loggedIn = true;
+            }
+        }
         if ( loggedIn ) {
             req.session.loggedIn_Backend = true;
             req.session.username = username;
