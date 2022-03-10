@@ -32,7 +32,13 @@ export async function checkLogin(req, res) {
         if ( loggedIn ) {
             req.session.loggedIn_Backend = true;
             req.session.username = username;
-            res.redirect("/backend");
+
+            let redirect = req.query.redirect;
+            if ( redirect && redirect.trim() !== '') {
+                res.redirect(redirect);
+            } else {
+                res.redirect("/backend");
+            }
         } else {
             res.send("Falsche Zugangsdaten");
         }
@@ -41,6 +47,12 @@ export async function checkLogin(req, res) {
         res.send("Fehlende Benutzerdaten");
         res.end();
     }
+}
+
+export function toLogout(req, res) {
+    req.session.loggedIn_Frontend = null;
+    req.session.loggedIn_Backend = null;
+    res.redirect("/backend/login");
 }
 
 export function toAccountList(req, res) {
