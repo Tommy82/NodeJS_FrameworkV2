@@ -145,7 +145,10 @@ class ClassApp {
             if ( item.interval > 0 && item.function ) {
                 item.myTimer = setInterval(item.function, item.interval);
             }
-        })
+        });
+
+        // Add Frontend Functions that need the App
+        Frontend.afterStart();
     }
 
     /**

@@ -42,6 +42,7 @@ class Install {
     }
 
     async start() {
+        app.frontend.autocomplete.push({ filter: "role", callback: Role.web.autocomplete });
     }
 }
 

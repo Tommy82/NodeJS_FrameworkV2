@@ -2,12 +2,18 @@
 
 
 {% block content %}
-{{ parent() }}
-{{ TAB1 }}
+    {{ TAB1 }}
+
+    <input type="text" id="role">
 {% endblock %}
 
 {% block stylesheet %}
     {{ parent() }}
+    <style>
+        thead input {
+            width: 100%;
+        }
+    </style>
 {% endblock %}
 
 
@@ -15,6 +21,6 @@
 {{ parent() }}
 
 <script>
-    setDataTable("test");
+    setDataTable("example");
 </script>
 {% endblock %}

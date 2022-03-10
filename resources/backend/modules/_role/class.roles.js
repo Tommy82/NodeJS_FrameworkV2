@@ -18,6 +18,7 @@ export default class Role {
 
     static web = {
         getList: webGetList,
+        autocomplete: webAutoComplete,
     }
 
     static sync = {
@@ -85,24 +86,45 @@ async function syncAll() {
 //#endregion Functions - Sync
 
 //#region Functions - Web
-function webGetList(req, res) {
+async function webGetList(req, res) {
+    let params = [];
+    params["header"] = ["ID", "Modul", "Schlüssel", "Beschreibung", "StandardRolle", "Menü"];
+    params["sql"] = "SELECT `id`, `moduleName`, `key`, `desc`, `defaultRole` FROM `rights`";
+    params["where"] = "id > 0";
+    params["menu"] = `<a href='/backend/roles/%id%'>test</a>`;
 
-    let data = {
-        header: [
-            { value: "column1" },
-            { value: "column2" },
-            { value: "column3" },
-        ],
-        content: [
-            { value: "col1" },
-            { value: "col2" },
-            { value: "col3" },
-        ],
-        footer: []
-    }
+    let autocomplete = [{fieldID: "role", filter: "role"}];
 
-    let table = app.frontend.table.generate("test", data.header, data.content, data.footer);
+    app.frontend.table.generateByDB('tblRoles', params, null)
+        .then(table => {
+            let js = "setDataTable('tblRoles');";
+            app.web.toTwigOutput(req, res, ["modules", "_role"], "list", { TAB1: table, JS: js, AUTOCOMPLETE: autocomplete }, true);
+        })
+        .catch(err => { console.error(err); });
+}
 
-    app.web.toTwigOutput(req, res, ["modules", "_role"], "list", { TAB1: table }, true);
+async function webAutoComplete(search) {
+    return new Promise((resolve, reject) => {
+        let sql = "SELECT `id`, `name` FROM `roles` ";
+        if ( search ) {
+            sql += ` WHERE \`name\` like '%${search.trim()}%' `;
+            if ( app.helper.check.isNumeric(search)) {
+                sql += ` OR \`id\` = ${parseInt(search)} `;
+            }
+        }
+        sql += " limit 0, 5";
+        app.DB.query(sql)
+            .then(data => {
+                let response = [];
+                if ( data && data.length > 0 ) {
+                    data.forEach(item => {
+                        response.push(`${item.id} | ${item.name}`);
+                    })
+                }
+                console.log(response);
+                return resolve(response);
+            })
+            .catch(err => { return reject(err); })
+    })
 }
 //#endregion Functions - Web
