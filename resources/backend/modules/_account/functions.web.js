@@ -60,7 +60,7 @@ export function toAccountList(req, res) {
     params["header"] = ["ID", "Name", "Aktiv", "Backend", "Frontend", "Rollen", "Menü"];
     params["sql"] = "SELECT `id`, `name`, `active`, `isBackend`, `isFrontend`, `roles` FROM `account` ";
     params["where"] = "id > 0";
-    params["menu"] = `<a href='/backend/account/%id%' class="fa-solid fa-pen-to-square"><label><i class="fa-solid fa-pen-to-square"></i></label></a>`;
+    params["menu"] = `<a class="toOverlay" href='/backend/account/%id%'><img src="/base/images/icons/edit.png" alt="" class="icon" href='/backend/account/%id%'></a>`;
     params["colCheckbox"] = [2,3,4];
 
     let js = "setDataTable('tblRoles');";
