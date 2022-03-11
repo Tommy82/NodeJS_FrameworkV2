@@ -1,0 +1,17 @@
+{% extends basicSite %}
+
+<!-- Deaktivieren des Hauptmenüs -->
+{% block navigation_main %}{% endblock %}
+
+{% block content %}
+    {{ TAB_EDIT }}
+{% endblock %}
+
+{% block stylesheet %}
+    {{ parent() }}
+{% endblock %}
+
+
+{% block javascript_intern %}
+    {{ parent() }}
+{% endblock %}

@@ -25,6 +25,7 @@ export default class Account {
         toLogout: fWeb.toLogout,
         toAccountList: fWeb.toAccountList,
         toAccountSingle: fWeb.toAccountSingle,
+        saveAccountSingle: fWeb.saveAccountSingle,
     }
 
     /**

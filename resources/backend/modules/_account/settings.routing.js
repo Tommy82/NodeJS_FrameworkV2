@@ -10,6 +10,7 @@ app.web.addRoute("get", "/backend/logout", Account.web.toLogout, false, true);
 
 // Account
 app.web.addRoute("get", "/backend/account", Account.web.toAccountList, false, true);
-app.web.addRoute("get", "/backend/account/:id", Account.web.toAccountSingle, false, true);
+app.web.addRoute("get", "/backend/account/:id", Account.web.toAccountSingle, false, false); //TODO: Backend anschalten!
+app.web.addRoute("post", "/backend/account/:id", Account.web.saveAccountSingle, false, false); //TODO: Backend anschalten!
 
 

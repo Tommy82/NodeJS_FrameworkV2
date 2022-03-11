@@ -15,6 +15,7 @@ export default class Frontend {
     table = {
         generate: fTable.tableGenerate,
         generateByDB: fTable.tableGenerateByDB,
+        generateEditByID: fTable.generateEditByID,
 
     }
 

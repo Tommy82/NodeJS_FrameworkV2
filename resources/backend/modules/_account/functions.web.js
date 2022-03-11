@@ -1,4 +1,3 @@
-//#region Functions - Web
 import {app} from "../../system/class.app.js";
 import { default as Account } from './class.account.js';
 /**
@@ -73,7 +72,29 @@ export function toAccountList(req, res) {
 }
 
 export function toAccountSingle(req, res) {
-    // ToDo: Add Dynamic Overlay
-    app.web.toTwigOutput(req, res, ["modules", "_account"], "details", {}, true);
+
+    let params = [];
+    params["columns"] = [
+        { key: "name", type: "text", name: "Loginname", check: "notempty" },
+        { key: "active", type: "checkbox", name: "Aktiv", check: "" },
+        { key: "isBackend", type: "checkbox", name: "Login - Backend", check: ""},
+        { key: "isFrontend", type: "checkbox", name: "Login - Frontend", check: ""},
+        { key: "roles", type: "text", name: "Rollen", check: "notempty" },
+        { key: 'test1', type: "text", name: "Mein Test", check: "", notInTable: true, value: "hallo1"}
+    ];
+    params["table"] = "account";
+    params["id"] = req.params.id;
+
+    let myFrontend = app.frontend.table.generateEditByID(params, null)
+        .then(data => {
+            app.web.toTwigOutput(req, res, ["base"], "backend_tableEditDefault", { TAB_EDIT: data }, true);
+        })
+        .catch(err => { console.error(err); })
+
+    //app.web.toTwigOutput(req, res, ["modules", "_account"], "details", {}, true);
 }
-//#endregion Functions - Web
+
+export function saveAccountSingle(req, res) {
+    console.log('saved!');
+    res.json({ success: true });
+}

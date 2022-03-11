@@ -9,6 +9,7 @@ $(document).ready(function () {
         $('#overlayIFrame').show();
         return false;
     })
+
     $('#overlayIFrameHeaderClose').click(function(e) {
         e.preventDefault();
         $('#overlayIFrame').hide();
@@ -77,4 +78,32 @@ function setDataTable(id) {
                 });
         },
     });
+}
+
+function addAutoComplete(fieldID, filter) {
+    $( fieldID ).autocomplete({
+        source: function( request, response ) {
+            $.ajax({
+                url: "/backend/autocomplete/" + filter + "/" + request.term,
+                dataType: "json",
+                data: {
+                    q: request.term
+                },
+                success: function( data ) {
+                    response( data );
+                },
+            });
+        },
+        minLength: 2,
+        select: function( event, ui ) {
+            $(fieldID).val(ui.item.value);
+        },
+        open: function() {
+            $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+        },
+        close: function() {
+            $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+        }
+    });
+
 }
