@@ -88,3 +88,35 @@ h1 { color: #0a0a0a; }
 .tbl-left { text-align: left; }
 .tbl-right { text-align: right; }
 .tbl-middle { text-align: center; }
+
+.myDataTable .icon {
+    width: 1.2em;
+    border: 0.1em solid black;
+}
+
+#overlayIFrame {
+    position: fixed;
+    display: none;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 2;
+    cursor: pointer;
+}
+
+#overlayIFrameContent{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    color: white;
+    transform: translate(-50%,-50%);
+    -ms-transform: translate(-50%,-50%);
+    width: 80%;
+    height: 80%;
+    background-color: white;
+    overflow: auto;
+}

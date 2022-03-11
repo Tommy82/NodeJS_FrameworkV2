@@ -77,6 +77,18 @@
         {% block header %}{% endblock %}
     </div>
     <div id="main">
+        <div id="overlayIFrame">
+            <div id="overlayIFrameContent">
+                <div id="overlayIFrameContentHeader">
+                    <span id="overlayIFrameContentHeaderText"></span>
+                    <span id="overlayIFrameContentHeaderClose">(X)</span>
+                </div>
+                <div id="overlayIFrameContentContent">
+                    <iframe id="overlay_iframe" width="100%" height="100%"></iframe>
+                </div>
+            </div>
+        </div>
+
         <div id="content">{% block content %}{% endblock %}</div>
     </div>
     <div id="footer">{% block footer %}{% endblock %}</div>

@@ -1,4 +1,19 @@
 $(document).ready(function () {
+    $('.toOverlay').click(function(e) {
+        e.preventDefault();
+        let uri = "http://localhost:3000" + $(this).attr("href");
+
+        uri = "http://localhost:3000/backend/account";
+
+        $('#overlay_iframe').attr("src", uri);
+        $('#overlayIFrame').show();
+        return false;
+    })
+    $('#overlayIFrameHeaderClose').click(function(e) {
+        e.preventDefault();
+        $('#overlayIFrame').hide();
+        return false;
+    })
 });
 
 function setDataTable(id) {
@@ -8,11 +23,11 @@ function setDataTable(id) {
         .addClass('filters')
         .appendTo('#' + id + ' thead');
 
-    var table = $('#' + id).DataTable({
+    let table = $('#' + id).DataTable({
         orderCellsTop: true,
         fixedHeader: true,
         initComplete: function () {
-            var api = this.api();
+            let api = this.api();
 
             // For each column
             api
@@ -20,10 +35,10 @@ function setDataTable(id) {
                 .eq(0)
                 .each(function (colIdx) {
                     // Set the header cell to contain the input element
-                    var cell = $('.filters th').eq(
+                    let cell = $('.filters th').eq(
                         $(api.column(colIdx).header()).index()
                     );
-                    var title = $(cell).text();
+                    let title = $(cell).text();
                     //$(cell).html('<input type="text" placeholder="' + title + '" />');
                     if ($(api.column(colIdx).header()).index() >= 0) {
                         $(cell).html('<input type="text" placeholder="' + title + '"/>');
@@ -40,18 +55,18 @@ function setDataTable(id) {
 
                             // Get the search value
                             $(this).attr('title', $(this).val());
-                            var regexr = '({search})'; //$(this).parents('th').find('select').val();
+                            let regexr = '({search})'; //$(this).parents('th').find('select').val();
 
-                            var cursorPosition = this.selectionStart;
+                            let cursorPosition = this.selectionStart;
                             // Search the column for that value
                             api
                                 .column(colIdx)
                                 .search(
-                                    this.value != ''
+                                    this.value !== ''
                                         ? regexr.replace('{search}', '(((' + this.value + ')))')
                                         : '',
-                                    this.value != '',
-                                    this.value == ''
+                                    this.value !== '',
+                                    this.value === ''
                                 )
                                 .draw();
 
