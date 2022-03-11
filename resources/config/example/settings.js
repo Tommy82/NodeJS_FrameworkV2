@@ -8,8 +8,8 @@ export const settings = {
 }
 
 export const Administrator = {
-    username: 'admin',
-    password: 'losgehts'
+    username: '',
+    password: ''
 }
 
 export const database = {
