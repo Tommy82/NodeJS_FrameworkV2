@@ -2,6 +2,7 @@ import { app } from "./class.app.js";
 import * as fTable from './class.frontend.table.js';
 import * as fHTMLElement from './class.frontend.htmlelement.js';
 import * as fAutoComplete from "./class.frontend.autocomplete.js";
+import {saveEditByID} from "./class.frontend.table.js";
 
 export default class Frontend {
 
@@ -16,6 +17,7 @@ export default class Frontend {
         generate: fTable.tableGenerate,
         generateByDB: fTable.tableGenerateByDB,
         generateEditByID: fTable.generateEditByID,
+        saveEditByID: fTable.saveEditByID,
 
     }
 

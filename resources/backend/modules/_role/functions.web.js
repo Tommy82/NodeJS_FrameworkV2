@@ -37,7 +37,6 @@ export async function webAutoComplete(search) {
                         response.push(`${item.id} | ${item.name}`);
                     })
                 }
-                console.log(response);
                 return resolve(response);
             })
             .catch(err => { return reject(err); })

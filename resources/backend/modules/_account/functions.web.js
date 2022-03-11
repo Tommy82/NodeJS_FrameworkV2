@@ -1,5 +1,6 @@
 import {app} from "../../system/class.app.js";
 import { default as Account } from './class.account.js';
+
 /**
  * Starte Ausgabe - Login vom Backend
  * @param {*} req Webserver - Request
@@ -73,6 +74,24 @@ export function toAccountList(req, res) {
 
 export function toAccountSingle(req, res) {
 
+    let params = setEditableData(req.params.id);
+
+    app.frontend.table.generateEditByID(params, null)
+        .then(data => { app.web.toTwigOutput(req, res, ["base"], "backend_tableEditDefault", { TAB_EDIT: data }, true); })
+        .catch(err => { console.error(err); })
+}
+
+export function saveAccountSingle(req, res) {
+    let params = setEditableData(req.params.id);
+
+    params["body"] = req.body;
+
+    app.frontend.table.saveEditByID(params, null)
+        .then(data => { res.json({ success: true, data: data }); })
+        .catch(err => { res.json({ success: false }); })
+}
+
+function setEditableData(id) {
     let params = [];
     params["columns"] = [
         { key: "name", type: "text", name: "Loginname", check: "notempty" },
@@ -83,18 +102,6 @@ export function toAccountSingle(req, res) {
         { key: 'test1', type: "text", name: "Mein Test", check: "", notInTable: true, value: "hallo1"}
     ];
     params["table"] = "account";
-    params["id"] = req.params.id;
-
-    let myFrontend = app.frontend.table.generateEditByID(params, null)
-        .then(data => {
-            app.web.toTwigOutput(req, res, ["base"], "backend_tableEditDefault", { TAB_EDIT: data }, true);
-        })
-        .catch(err => { console.error(err); })
-
-    //app.web.toTwigOutput(req, res, ["modules", "_account"], "details", {}, true);
-}
-
-export function saveAccountSingle(req, res) {
-    console.log('saved!');
-    res.json({ success: true });
+    params["id"] = id;
+    return params;
 }

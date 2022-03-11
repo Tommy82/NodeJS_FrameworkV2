@@ -51,7 +51,7 @@ export function tableGenerateFooter(footerData) {
 export async function tableGenerateByDB(id, params, database) {
     return new Promise(async (resolve, reject) => {
         // Datenbank zuordnen
-        if ( database == null || database == '' ) { database = app.DB; }
+        if ( database == null || database === '' ) { database = app.DB; }
 
         // SQL Query erstellen
         let sqlQuery = `${params["sql"]} `;
@@ -67,8 +67,8 @@ export async function tableGenerateByDB(id, params, database) {
 
                 //#region Header
                 let header = [];
-                if ( params.header !== null && params.header.length > 0 ) {
-                    params.header.forEach(item => {
+                if ( params["header"] !== null && params["header"].length > 0 ) {
+                    params["header"].forEach(item => {
                         header.push({value: item});
                     })
                 } else {
@@ -93,7 +93,7 @@ export async function tableGenerateByDB(id, params, database) {
 
                             if ( isCheckBox ) {
                                 let checked = '';
-                                if ( col[item] == 1 || col[item] == '1') { checked = 'checked'; }
+                                if ( col[item] === 1 || col[item] === '1') { checked = 'checked'; }
                                 col[item] = `<input type='checkbox' ${checked} disabled="disabled" />`
                             }
                             //#endregion Format - CheckBox
@@ -101,7 +101,7 @@ export async function tableGenerateByDB(id, params, database) {
                             column[counter] = { value: col[item] };
                             counter++;
                         });
-                        if ( params["menu"] && params["menu"] != '' ) {
+                        if ( params["menu"] && params["menu"] !== '' ) {
                             let myMenu = params["menu"];
                             myMenu = myMenu.replaceAll("%id%", col.id);
                             column[counter] = { value: myMenu }
@@ -131,7 +131,7 @@ export async function tableGenerateByDB(id, params, database) {
 export async function generateEditByID(params, database) {
     return new Promise(async (resolve, reject) => {
         // Datenbank zuordnen
-        if (database == null || database == '') {
+        if (database == null || database === '') {
             database = app.DB;
         }
 
@@ -185,4 +185,114 @@ export async function generateEditByID(params, database) {
                 return reject(err);
             })
     })
+}
+
+/**
+ * Speichert das Frontend Layout in die Datenbank
+ * @param {[]} params
+ * @param {*} database
+ * @returns {Promise<void>}
+ */
+export async function saveEditByID(params, database) {
+    return new Promise((resolve, reject) => {
+
+        // Datenbank zuordnen
+        if (database == null || database === '') {
+            database = app.DB;
+        }
+
+
+        if ( params && params["columns"] && params["columns"].length > 0 ) {
+                let sqlQuery = "";
+                //#region Update Database
+                if ( params["id"] && parseInt(params["id"]) > 0 ) {
+                    sqlQuery += ` UPDATE \`${params["table"]}\` SET`;
+
+                    let first = true;
+                    params["columns"].forEach(col => {
+                        if ( !col.notInTable ) {
+                            if ( !first ) {
+                                sqlQuery += ", ";
+                            } else {
+                                first = false;
+                            }
+
+                            let value = params["body"][col.key];
+                            sqlQuery += appendValueToSQL("insert", col, value);
+
+                        }
+                    })
+
+                    sqlQuery += ` WHERE \`id\`= ${params["id"]} `;
+                }
+                //#endregion Update Database
+                //#region Insert Database
+                else {
+                    sqlQuery += ` INSERT INTO \`${params["table"]}\` (`;
+
+                    let first = true;
+                    params["columns"].forEach(col => {
+                        if (!col.notInTable) {
+                            if (!first) { sqlQuery += ", "; }
+                            else { first = false; }
+                            sqlQuery += " `" + col.key + "` ";
+                        }
+                    });
+
+                    sqlQuery += `) VALUES (`;
+
+                    first = true;
+                    params["columns"].forEach(col => {
+                        if (!col.notInTable) {
+                            let value = params && params["body"] && params["body"][col.key] ? params["body"][col.key] : '';
+
+                            if (!first) { sqlQuery += ", "; }
+                            else { first = false; }
+
+                            sqlQuery += appendValueToSQL("update", col, value);
+                        }
+                    });
+                    sqlQuery += `) `;
+
+                }
+                //#endregion Insert Database
+
+                app.DB.query(sqlQuery)
+                    .then(data => {
+                        return resolve(data);
+                    })
+                    .catch(err => {
+                        return reject(err);
+                    })
+        }
+    })
+}
+
+function appendValueToSQL(type, col, value) {
+    let response = "";
+
+    if ( type === "insert" ) {
+        response += ` \`${col.key}\` = `;
+    }
+
+    switch ( col.type ) {
+        case 'checkbox':
+            value = value && value === 'on' ? '1' : '0';
+            if ( value === undefined ) { value = '0'; }
+            response += ` ${value} `;
+            break;
+        case 'integer':
+            response += ` ${parseInt(value)} `;
+            break;
+        case 'float':
+            response += ` ${parseFloat(value)} `;
+            break;
+        case 'double':
+            response += ` ${parseFloat(value)} `;
+            break;
+        default:
+            response += ` '${value}' `;
+            break;
+    }
+    return response;
 }

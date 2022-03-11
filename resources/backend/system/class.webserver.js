@@ -108,7 +108,6 @@ export default class ClassWebserver {
         if ( req.session.loggedIn_Backend ) {
             return next();
         } else {
-            console.log(req);
             res.redirect("/backend/login?redirect=" + req.url);
         }
 
