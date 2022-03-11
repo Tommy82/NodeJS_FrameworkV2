@@ -22,6 +22,7 @@ export default class Account {
     static web = {
         toLogin: fWeb.webToLogin,
         checkLogin: fWeb.checkLogin,
+        toLogout: fWeb.toLogout,
         toAccountList: fWeb.toAccountList,
         toAccountSingle: fWeb.toAccountSingle,
     }
@@ -36,9 +37,6 @@ export default class Account {
         save: fDatabase.databaseSave
     };
 
-    test() {
-        Account.web
-    }
 }
 
 

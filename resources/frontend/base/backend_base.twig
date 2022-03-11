@@ -33,14 +33,14 @@
                 {% block nav_beforebasic %}{% endblock %}
                 <li><a href="#">Einstellungen</a>
                     <ul>
-                        <li><a href="#">Accounts</a></li>
-                        <li><a href="#">Rollen</a></li>
+                        <li><a href="/backend/account">Accounts</a></li>
+                        <li><a href="/backend/role">Rollen</a></li>
                     </ul>
 
                 </li>
                 {% block nav_afterbasic %}{% endblock %}
                 {% block nav_beforelogout %}{% endblock %}
-                <li><a href="#">Logout</a></li>
+                <li><a href="/backend/logout">Logout</a></li>
                 {% block nav_afterlogout %}{% endblock %}
             </ul>
         </div>

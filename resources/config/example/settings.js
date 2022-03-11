@@ -7,6 +7,11 @@ export const settings = {
     }
 }
 
+export const Administrator = {
+    username: 'admin',
+    password: 'losgehts'
+}
+
 export const database = {
     // Interne Datenbank
     default: {
