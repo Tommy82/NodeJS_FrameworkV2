@@ -1,12 +1,13 @@
 //#region Functions - Web
 import {app} from "../../system/class.app.js";
 
+
 export async function webGetList(req, res) {
     let params = [];
     params["header"] = ["ID", "Modul", "Schlüssel", "Beschreibung", "StandardRolle", "Menü"];
     params["sql"] = "SELECT `id`, `moduleName`, `key`, `desc`, `defaultRole` FROM `rights`";
     params["where"] = "id > 0";
-    params["menu"] = `<a href='/backend/roles/%id%'>test</a>`;
+    params["menu"] = `<a href='/backend/roles/%id%' class="fa-solid fa-pen-to-square"><label><i class="fa-solid fa-pen-to-square"></i></label></a>`;
 
     let autocomplete = [{fieldID: "role", filter: "role"}];
 

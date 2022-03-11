@@ -60,7 +60,7 @@ export async function tableGenerateByDB(id, params, database) {
             sqlQuery += ` WHERE ${params["where"]} `;
         }
 
-        // Query ausfügreb
+        // Query ausführen
         await database.query(sqlQuery)
             .then(data => {
                 // Daten sortieren nach ID
