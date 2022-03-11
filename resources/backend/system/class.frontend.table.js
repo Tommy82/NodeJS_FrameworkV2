@@ -88,6 +88,17 @@ export async function tableGenerateByDB(id, params, database) {
                         let column = [];
                         let counter = 0;
                         Object.keys(col).forEach(item => {
+                            //#region Format - CheckBox
+                            let isCheckBox = false;
+                            if ( params["colCheckbox"] && params["colCheckbox"].includes(counter)) { isCheckBox = true; }
+
+                            if ( isCheckBox ) {
+                                let checked = '';
+                                if ( col[item] == 1 || col[item] == '1') { checked = 'checked'; }
+                                col[item] = `<input type='checkbox' ${checked} disabled="disabled" />`
+                            }
+                            //#endregion Format - CheckBox
+
                             column[counter] = { value: col[item] };
                             counter++;
                         });

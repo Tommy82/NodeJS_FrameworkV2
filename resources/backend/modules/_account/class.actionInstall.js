@@ -30,7 +30,8 @@ class AccountInstall {
                         isBackend: 1,
                         isFrontend: 1,
                         mustChange: 0,
-                        email: ''
+                        email: '',
+                        roles: 'admin'
                     };
                     Account.database.save(document)
                         .then(data => { app.log("Administrator Account Updated", Account.moduleName); })

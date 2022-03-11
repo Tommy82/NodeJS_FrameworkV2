@@ -56,7 +56,20 @@ export function toLogout(req, res) {
 }
 
 export function toAccountList(req, res) {
-    app.web.toTwigOutput(req, res, ["modules", "_account"], "list", {}, true);
+    let params = [];
+    params["header"] = ["ID", "Name", "Aktiv", "Backend", "Frontend", "Rollen", "Menü"];
+    params["sql"] = "SELECT `id`, `name`, `active`, `isBackend`, `isFrontend`, `roles` FROM `account` ";
+    params["where"] = "id > 0";
+    params["menu"] = `<a href='/backend/account/%id%' class="fa-solid fa-pen-to-square"><label><i class="fa-solid fa-pen-to-square"></i></label></a>`;
+    params["colCheckbox"] = [2,3,4];
+
+    let js = "setDataTable('tblRoles');";
+
+    app.frontend.table.generateByDB('tblRoles', params, null)
+        .then(table => {
+            app.web.toTwigOutput(req, res, ["base"], "backend_tableDefault", { TAB1: table, JS: js}, true);
+        })
+        .catch(err => { console.error(err); });
 }
 
 export function toAccountSingle(req, res) {
