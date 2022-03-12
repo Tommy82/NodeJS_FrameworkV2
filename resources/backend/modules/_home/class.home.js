@@ -5,6 +5,12 @@ export default class Home {
     }
 
     static web = {
-        toHome: fWeb.toHome,
+        backend: {
+            toHome: fWeb.toHome_backend,
+        },
+        frontend: {
+            toHome: fWeb.toHome_frontend,
+        }
+
     }
 }
