@@ -1,5 +1,3 @@
-//#region Functions - Database
-
 import {app} from "../../system/class.app.js";
 
 /**
@@ -40,4 +38,3 @@ export function databaseSave(document) {
             .catch(err => { return reject(err); })
     })
 }
-//#endregion Functions - Database

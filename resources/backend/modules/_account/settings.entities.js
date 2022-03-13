@@ -11,7 +11,7 @@ export const DBAccount = new orm.EntitySchema({
         isFrontend: { type: 'tinyint', default: 0 },            // Frontend Anmeldung möglich
         mustChange: { type: 'tinyint', default: 0 },            // Kennwort resettet
         email: { type: 'varchar', length: 50, default: 0 },     // Email für AccountReset
-        roles: { type: 'varchar', length: 30, default: '' },     // Rollen
+        roles: { type: 'varchar', length: 30, default: '' },    // Rollen
         nameShow: { type: 'varchar', length: 50, default: ''},  // Anzeigename (falls abweichend vom Benutzername)
     }
 })

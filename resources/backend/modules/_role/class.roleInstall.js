@@ -1,11 +1,11 @@
-import {DBRoles} from "./settings.entities.js";
+import {DBRoles, DBRolesRights} from "./settings.entities.js";
 import {app} from "../../system/class.app.js";
 import Role from "./class.roles.js";
 
 class RoleInstall {
     constructor() { }
 
-    entities = [  DBRoles ];
+    entities = [  DBRoles, DBRolesRights ];
 
     rights = [
         { key: "add", desc: "", defaultRole: "admin" },

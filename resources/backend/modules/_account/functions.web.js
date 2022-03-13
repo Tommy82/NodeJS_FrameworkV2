@@ -97,6 +97,11 @@ export function toAccountList(req, res) {
         .catch(err => { console.error(err); });
 }
 
+/**
+ * Starte Ausgave - Detailansicht der Accounts
+ * @param {*} req Webserver - Request
+ * @param {*} res Webserver - Response
+ */
 export function toAccountSingle(req, res) {
 
     let params = setEditableData(req.params.id);
@@ -107,6 +112,11 @@ export function toAccountSingle(req, res) {
         .catch(err => { console.error(err); })
 }
 
+/**
+ * Speichern - Speichern der Accountdaten
+ * @param {*} req Webserver - Request
+ * @param {*} res Webserver - Response
+ */
 export function saveAccountSingle(req, res) {
     let params = setEditableData(req.params.id);
 
@@ -118,6 +128,13 @@ export function saveAccountSingle(req, res) {
         .catch(err => { res.json({ success: false }); })
 }
 
+/**
+ * Prüfung / Erstellung - Parameter
+ * - für die Erstellung der Tabelle
+ * - für Speicherung der Daten
+ * @param {int} id Interne ID der Accounts (db:account.id)
+ * @returns {*[]}
+ */
 function setEditableData(id) {
     let params = [];
     params["columns"] = [
