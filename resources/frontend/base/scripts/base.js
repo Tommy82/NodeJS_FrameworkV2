@@ -3,14 +3,12 @@ $(document).ready(function () {
         e.preventDefault();
         let uri = "http://localhost:3000" + $(this).attr("href");
 
-        uri = "http://localhost:3000/backend/account";
-
         $('#overlay_iframe').attr("src", uri);
         $('#overlayIFrame').show();
         return false;
     })
 
-    $('#overlayIFrameHeaderClose').click(function(e) {
+    $('#overlayIFrameContentHeaderClose').click(function(e) {
         e.preventDefault();
         $('#overlayIFrame').hide();
         return false;
@@ -284,6 +282,11 @@ function setDataTable(id) {
     });
 }
 
+function dataTable_Add(id) {
+    let template = $('#' + id + '_addRow').html();
+    $('#' + id + " tbody").append(template);
+    console.log(template);
+}
 
 
 function addAutoComplete(fieldID, filter) {

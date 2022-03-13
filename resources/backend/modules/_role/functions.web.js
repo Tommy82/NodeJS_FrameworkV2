@@ -21,7 +21,7 @@ export async function webGetList(req, res) {
 
 export async function webAutoComplete(search) {
     return new Promise((resolve, reject) => {
-        let sql = "SELECT `id`, `name` FROM `roles` ";
+        let sql = "SELECT `id`, `name`, `key` FROM `roles` ";
         if ( search ) {
             sql += ` WHERE \`name\` like '%${search.trim()}%' `;
             if ( app.helper.check.isNumeric(search)) {
@@ -34,7 +34,8 @@ export async function webAutoComplete(search) {
                 let response = [];
                 if ( data && data.length > 0 ) {
                     data.forEach(item => {
-                        response.push(`${item.id} | ${item.name}`);
+                        // response.push(`${item.id} | ${item.name}`); // TODO: Update Value, ggfl. Override nach senden
+                        response.push(`${item.key}`);
                     })
                 }
                 return resolve(response);

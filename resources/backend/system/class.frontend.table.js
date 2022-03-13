@@ -36,7 +36,7 @@ export function tableGenerateContent(contentData) {
 }
 
 export function tableGenerateFooter(footerData) {
-    let data = "<tfooter></tfooter>";
+    let data = `<tfoot>${footerData}</tfoot>`;
     return data;
 }
 
@@ -50,6 +50,9 @@ export function tableGenerateFooter(footerData) {
  */
 export async function tableGenerateByDB(id, params, database) {
     return new Promise(async (resolve, reject) => {
+
+        let response = "";
+
         // Datenbank zuordnen
         if ( database == null || database === '' ) { database = app.DB; }
 
@@ -82,6 +85,7 @@ export async function tableGenerateByDB(id, params, database) {
 
                 //#region Content
                 let content = [];
+                let add = `<template id="${id}_addRow" class="newRow"><tr>`;
                 if ( data && data.length > 0 ) {
                     data.forEach(col => {
                         let column = [];
@@ -94,9 +98,20 @@ export async function tableGenerateByDB(id, params, database) {
                             if ( isCheckBox ) {
                                 let checked = '';
                                 if ( col[item] === 1 || col[item] === '1') { checked = 'checked'; }
-                                col[item] = `<input type='checkbox' ${checked} disabled="disabled" />`
+                                //col[item] = `<input type='checkbox' ${checked} disabled="disabled" />`
+                                col[item] = `<input type='checkbox' ${checked} disabled="disabled" />`;
                             }
                             //#endregion Format - CheckBox
+
+                            // ID nicht mit adden
+                            if ( item === 'id' ) {
+                                add += `<td></td>`;
+                            } else {
+                                // Check if Textbox
+                                if ( isCheckBox ) { add += `<td><input type="checkbox" name="${item}" id="${item}" /></td>` }
+                                // Add as Text
+                                else { add += `<td><input type="text" name="${item}" id="${item}" /></td>` }
+                            }
 
                             column[counter] = { value: col[item] };
                             counter++;
@@ -105,17 +120,28 @@ export async function tableGenerateByDB(id, params, database) {
                             let myMenu = params["menu"];
                             myMenu = myMenu.replaceAll("%id%", col.id);
                             column[counter] = { value: myMenu }
+                            add += "<td><input type='submit' value='save' name='fastSave'/></td>"
                         }
                         content.push(column);
+                        add += "</tr></template>";
                     });
                 }
                 //#endregion Content
 
                 //#region Footer
                 let footer = [];
+                if ( params["addAdd"]) {
+                    //response += add;
+                    response += `<input type="button" value="Hinzufügen" onclick="dataTable_Add('${id}');" />`
+                    response += `<form action=\"${params["url_fastsave"]}\" method=\"post\">`;
+                }
                 //#endregion Footer
 
-                return resolve(tableGenerate(id, header, content, footer));
+                response += tableGenerate(id, header, content, footer);
+
+                if ( params["addAdd"]) { response += "</form>"; }
+
+                return resolve(response);
             })
             .catch(err => { return reject(err); })
     })
@@ -210,7 +236,7 @@ export async function saveEditByID(params, database) {
 
                     let first = true;
                     params["columns"].forEach(col => {
-                        if ( !col.notInTable ) {
+                        if ( !col.notInTable && (params["fastSave"] == false || ( params["fastSave"] === true && col.fastSave === true))) {
                             if ( !first ) {
                                 sqlQuery += ", ";
                             } else {
@@ -232,7 +258,7 @@ export async function saveEditByID(params, database) {
 
                     let first = true;
                     params["columns"].forEach(col => {
-                        if (!col.notInTable) {
+                        if ( !col.notInTable && (params["fastSave"] == false || ( params["fastSave"] === true && col.fastSave === true))) {
                             if (!first) { sqlQuery += ", "; }
                             else { first = false; }
                             sqlQuery += " `" + col.key + "` ";
@@ -295,4 +321,19 @@ function appendValueToSQL(type, col, value) {
             break;
     }
     return response;
+}
+
+function checkParams(type, params) {
+
+    if ( !params ) { params = []; }
+    if ( !params["addAdd"] ) { params["addAdd"] = false; }
+    if ( !params["colCheckbox"] ) { params["colCheckbox"] = []; }
+    if ( !params["header"] ) { params["header"] = []; }
+    if ( !params["menu"] ) { params["menu"] = ''; }
+    if ( !params["sql"] ) { params["sql"] = ''; }
+    if ( !params["url_save"] ) { params["url_save"]  = "/backend/account/0"; }
+    if ( !params["where"] ) { params["where"] = ''; }
+
+
+
 }

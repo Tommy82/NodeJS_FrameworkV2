@@ -31,7 +31,12 @@ export async function checkLogin(req, res) {
         }
         if ( loggedIn ) {
             req.session.loggedIn_Backend = true;
-            req.session.username = username;
+            req.session.user = {
+                id: currData[0].id,
+                username: username,
+                role: currData[0].role,
+
+            }
 
             let redirect = req.query.redirect;
             if ( redirect && redirect.trim() !== '') {
@@ -49,23 +54,43 @@ export async function checkLogin(req, res) {
     }
 }
 
+/**
+ * Logout und Rückleitung zum Login Screen des Backends
+ * @param {*} req Webserver - Request
+ * @param {*} res Webserver - Response
+ */
 export function toLogout(req, res) {
     req.session.loggedIn_Frontend = null;
     req.session.loggedIn_Backend = null;
     res.redirect("/backend/login");
 }
 
+/**
+ * Starte Ausgabe - Listenansicht der Accounts
+ * @param {*} req Webserver - Request
+ * @param {*} res Webserver - Response
+ */
 export function toAccountList(req, res) {
+    //#region Set Parameters
     let params = [];
     params["header"] = ["ID", "Name", "Aktiv", "Backend", "Frontend", "Rollen", "Menü"];
     params["sql"] = "SELECT `id`, `name`, `active`, `isBackend`, `isFrontend`, `roles` FROM `account` ";
     params["where"] = "id > 0";
-    params["menu"] = `<a class="toOverlay" href='/backend/account/%id%'><img src="/base/images/icons/edit.png" alt="" class="icon" href='/backend/account/%id%'></a>`;
+    params["menu"] = "";
+    if ( app.check.rights(Account.module, "edit")) {
+        params["menu"] = `<a class="toOverlay" href='/backend/account/%id%'><img src="/base/images/icons/edit.png" alt="" class="icon" href='/backend/account/%id%'></a>`;
+    }
     params["colCheckbox"] = [2,3,4];
+    params["addAdd"] = true;
+    params["url_save"] = "/backend/account/0";
+    //#endregion Set Parameters
 
-    let js = "setDataTable('tblRoles');";
+    // Frontend Javascript
+    let tableID = 'tblRoles';
+    let js = `setDataTable('${tableID}');`;
 
-    app.frontend.table.generateByDB('tblRoles', params, null)
+
+    app.frontend.table.generateByDB(tableID, params, null)
         .then(table => {
             app.web.toTwigOutput(req, res, ["base"], "backend_tableDefault", { TAB1: table, JS: js}, true);
         })
@@ -75,9 +100,10 @@ export function toAccountList(req, res) {
 export function toAccountSingle(req, res) {
 
     let params = setEditableData(req.params.id);
+    let autoComplete = [ { fieldID: 'roles', filter: 'role'} ];
 
     app.frontend.table.generateEditByID(params, null)
-        .then(data => { app.web.toTwigOutput(req, res, ["base"], "backend_tableEditDefault", { TAB_EDIT: data }, true); })
+        .then(data => { app.web.toTwigOutput(req, res, ["base"], "backend_tableEditDefault", { TAB_EDIT: data, AUTOCOMPLETE: autoComplete }, true); })
         .catch(err => { console.error(err); })
 }
 
@@ -85,6 +111,7 @@ export function saveAccountSingle(req, res) {
     let params = setEditableData(req.params.id);
 
     params["body"] = req.body;
+    params["fastSave"] = true;
 
     app.frontend.table.saveEditByID(params, null)
         .then(data => { res.json({ success: true, data: data }); })
@@ -94,12 +121,12 @@ export function saveAccountSingle(req, res) {
 function setEditableData(id) {
     let params = [];
     params["columns"] = [
-        { key: "name", type: "text", name: "Loginname", check: "notempty" },
-        { key: "active", type: "checkbox", name: "Aktiv", check: "" },
-        { key: "isBackend", type: "checkbox", name: "Login - Backend", check: ""},
-        { key: "isFrontend", type: "checkbox", name: "Login - Frontend", check: ""},
-        { key: "roles", type: "text", name: "Rollen", check: "notempty" },
-        { key: 'test1', type: "text", name: "Mein Test", check: "", notInTable: true, value: "hallo1"}
+        { key: "name", type: "text", name: "Loginname", check: "notempty", fastSave: true },
+        { key: "active", type: "checkbox", name: "Aktiv", check: "", fastSave: true },
+        { key: "isBackend", type: "checkbox", name: "Login - Backend", check: "", fastSave: true },
+        { key: "isFrontend", type: "checkbox", name: "Login - Frontend", check: "", fastSave: true},
+        { key: "roles", type: "text", name: "Rollen", check: "notempty", fastSave: true },
+        { key: 'test1', type: "text", name: "Mein Test", check: "", notInTable: true, value: "hallo1", fastSave: false}
     ];
     params["table"] = "account";
     params["id"] = id;

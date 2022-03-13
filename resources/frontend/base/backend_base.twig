@@ -19,7 +19,7 @@
 
         {% block stylesheet %}
             <link rel="stylesheet" type="text/css" href="{{prefix}}/base/css/base.css">
-            <link rel="sytelsheet" type="text/css" href="{{prefix}}/base/css/default_style1.css">
+            <link rel="stylesheet" type="text/css" href="{{prefix}}/base/css/default_style1.css">
         {% endblock %}
     {% endblock %}
 </head>
@@ -27,36 +27,16 @@
 <div id="wrapper">
     <div id="header">
         {% block navigation_main %}
-        <div class="slide-down-page">
-            <ul id="nav">
-                <li><a href="{{prefix}}/backend">Home</a></li>
-                {% block nav_beforebasic %}{% endblock %}
-                <li><a href="#">Einstellungen</a>
-                    <ul>
-                        <li><a href="/backend/account">Accounts</a></li>
-                        <li><a href="/backend/role">Rollen</a></li>
-                    </ul>
-
-                </li>
-                {% block nav_afterbasic %}{% endblock %}
-                {% block nav_beforelogout %}{% endblock %}
-                <li><a href="/backend/logout">Logout</a></li>
-                {% block nav_afterlogout %}{% endblock %}
-            </ul>
-        </div>
-        {% endblock navigation_main %}
-<!--
-        {% block navigation_main %}
         <nav class="mainmenu">
             <ul>
-                <li><a href="{{prefix}}/">Home</a></li>
+                <li><a href="{{prefix}}/backend">Home</a></li>
                 {% block nav_beforebasic %}{% endblock %}
                 <li class="submenu"><a href="#">Basics</a>
                     <ul>
                         {% block nav_basic_before %}{% endblock %}
                         <li><a href="{{prefix}}/backend/account">Users</a></li>
-                        <li><a href="{{prefix}}/backend/roles">Rollen</a></li>
-                        <li><a href="{{prefix}}/backend/settings">Einstellungen</a></li>
+                        <li><a href="{{prefix}}/backend/role">Rollen</a></li>
+                        <li><a href="{{prefix}}/backend/rights">Rechte</a></li>
                         {% block nav_basic_after %}{% endblock %}
                     </ul>
                 </li>
@@ -73,21 +53,22 @@
             <div id="header_me">User: {{ me.name }} [ID: {{ me.id }} | Role: {{ me.role }}]</div>
         </nav>
         {% endblock %}
-        -->
         {% block header %}{% endblock %}
     </div>
     <div id="main">
+        {% block overlayIFrame %}
         <div id="overlayIFrame">
             <div id="overlayIFrameContent">
                 <div id="overlayIFrameContentHeader">
-                    <span id="overlayIFrameContentHeaderText"></span>
-                    <span id="overlayIFrameContentHeaderClose">(X)</span>
+                    <div id="overlayIFrameContentHeaderText"></div>
+                    <div id="overlayIFrameContentHeaderClose">(X)</div>
                 </div>
                 <div id="overlayIFrameContentContent">
                     <iframe id="overlay_iframe" width="100%" height="100%"></iframe>
                 </div>
             </div>
         </div>
+        {% endblock overlayIFrame %}
 
         <div id="content">{% block content %}{% endblock %}</div>
     </div>
