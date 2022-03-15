@@ -117,8 +117,9 @@ export async function tableGenerateByDB(id, params, database) {
                             counter++;
                         });
                         if ( params["menu"] && params["menu"] !== '' ) {
-                            let myMenu = params["menu"];
-                            myMenu = myMenu.replaceAll("%id%", col.id);
+                            let myMenu = params["menu"].toString();
+                            //myMenu = myMenu.replaceAll("%id%", col.id);
+                            myMenu = myMenu.replace(/%id%/g, col.id);
                             column[counter] = { value: myMenu }
                             add += "<td><input type='submit' value='save' name='fastSave'/></td>"
                         }

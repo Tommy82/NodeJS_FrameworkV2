@@ -1,4 +1,3 @@
-//#region Functions - Database
 import {app} from "../../system/class.app.js";
 
 /**
@@ -51,4 +50,19 @@ export function databaseSave(document) {
             .catch(err => { return reject(err); })
     })
 }
-//#endregion Functions - Database
+
+export function databaseRightsGetAll(roleID) {
+    return new Promise((resolve, reject) => {
+        app.DB.find("rolesRights", { roleID: roleID})
+            .then(data => { return resolve(data); })
+            .catch(err => { return reject(err); })
+    })
+}
+
+export function databaseRightsSave(document) {
+    return new Promise((resolve, reject) => {
+        app.DB.upsert("rolesRights", document)
+            .then(data => { return resolve(data); })
+            .catch(err => { return reject(err); })
+    })
+}

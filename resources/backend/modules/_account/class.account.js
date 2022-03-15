@@ -26,7 +26,7 @@ export default class Account {
         toAccountList: fWeb.toAccountList,
         toAccountSingle: fWeb.toAccountSingle,
         saveAccountSingle: fWeb.saveAccountSingle,
-        fastSaveAccountSingle: fWeb.fastSaveAccountSingle,
+        //fastSaveAccountSingle: fWeb.fastSaveAccountSingle,
     }
 
     /**

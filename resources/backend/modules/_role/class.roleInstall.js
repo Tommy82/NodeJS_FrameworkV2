@@ -1,6 +1,6 @@
 import {DBRoles, DBRolesRights} from "./settings.entities.js";
 import {app} from "../../system/class.app.js";
-import Role from "./class.roles.js";
+import Role from "./class.role.js";
 
 class RoleInstall {
     constructor() { }
@@ -38,7 +38,7 @@ class RoleInstall {
             }
         })
 
-        await Role.sync.all();
+        //await Role.sync.all();
     }
 
     async start() {

@@ -77,7 +77,7 @@ export function toAccountList(req, res) {
     params["sql"] = "SELECT `id`, `name`, `active`, `isBackend`, `isFrontend`, `roles` FROM `account` ";
     params["where"] = "id > 0";
     params["menu"] = "";
-    if ( app.check.rights(Account.module, "edit")) {
+    if ( app.helper.check.rights(Account.moduleName, "edit")) {
         params["menu"] = `<a class="toOverlay" href='/backend/account/%id%'><img src="/base/images/icons/edit.png" alt="" class="icon" href='/backend/account/%id%'></a>`;
     }
     params["colCheckbox"] = [2,3,4];

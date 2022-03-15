@@ -18,7 +18,6 @@ export default class Frontend {
         generateByDB: fTable.tableGenerateByDB,
         generateEditByID: fTable.generateEditByID,
         saveEditByID: fTable.saveEditByID,
-
     }
 
     HtmlElement = {

@@ -1,5 +1,6 @@
 //#region Functions - Web
 import {app} from "../../system/class.app.js";
+import { default as Role } from './class.role.js';
 
 
 export async function webGetList(req, res) {
@@ -7,7 +8,9 @@ export async function webGetList(req, res) {
     params["header"] = ["ID", "Modul", "Schlüssel", "Beschreibung", "StandardRolle", "Menü"];
     params["sql"] = "SELECT `id`, `moduleName`, `key`, `desc`, `defaultRole` FROM `rights`";
     params["where"] = "id > 0";
-    params["menu"] = `<a href='/backend/roles/%id%' class="fa-solid fa-pen-to-square"><label><i class="fa-solid fa-pen-to-square"></i></label></a>`;
+    if ( app.helper.check.rights(Role.moduleName, "edit")) {
+        params["menu"] = `<a class="toOverlay" href='/backend/role/%id%'><img src="/base/images/icons/edit.png" alt="" class="icon" href='/backend/role/%id%'></a>`;
+    }
 
     let autocomplete = [{fieldID: "role", filter: "role"}];
 
@@ -18,6 +21,18 @@ export async function webGetList(req, res) {
         })
         .catch(err => { console.error(err); });
 }
+
+export async function webGetDetails(req, res) {
+
+    let id = req.params.id;
+
+    Role.database.rightsGetAll(id)
+        .then(data => {
+            app.web.toTwigOutput(req, res, ["modules", "_role"], "details", {}, true);
+        })
+        .catch(err => { return reject(err); })
+}
+
 
 export async function webAutoComplete(search) {
     return new Promise((resolve, reject) => {

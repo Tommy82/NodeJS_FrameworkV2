@@ -25,6 +25,7 @@ function setDataTable(id) {
     let table = $('#' + id).DataTable({
         orderCellsTop: true,
         fixedHeader: true,
+        responsive: true,
         initComplete: function () {
             let api = this.api();
 
@@ -38,7 +39,7 @@ function setDataTable(id) {
                         $(api.column(colIdx).header()).index()
                     );
                     let title = $(cell).text();
-                    //$(cell).html('<input type="text" placeholder="' + title + '" />');
+
                     if ($(api.column(colIdx).header()).index() >= 0) {
                         $(cell).html('<input type="text" placeholder="' + title + '"/>');
                     }

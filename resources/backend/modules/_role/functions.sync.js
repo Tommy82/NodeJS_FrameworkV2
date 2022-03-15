@@ -1,13 +1,13 @@
-//#region Functions - Sync
 import {app} from "../../system/class.app.js";
-import Role from "./class.roles.js";
+import Role from "./class.role.js";
 
 export async function syncAll() {
     app.roles = await Role.database.getAll().catch(err => { app.logError(err, Role.moduleName); });
     if ( app.roles ) {
         for ( let i = 0; i < app.roles.length; i++ ) {
-            console.log(app.roles[i]);
+            app.roles[i].rights = await Role.database.rightsGetAll(app.roles[i].id);
+
+            //console.log(app.roles[i]);
         }
     }
 }
-//#endregion Functions - Sync
