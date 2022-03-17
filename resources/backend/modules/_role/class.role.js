@@ -26,6 +26,7 @@ export default class Role {
     static web = {
         getList: fWeb.webGetList,
         getDetails: fWeb.webGetDetails,
+        setDetails: fWeb.webSetDetails,
         autocomplete: fWeb.webAutoComplete,
     }
 
