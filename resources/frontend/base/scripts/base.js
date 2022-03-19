@@ -13,6 +13,8 @@ $(document).ready(function () {
         $('#overlayIFrame').hide();
         return false;
     });
+
+    $("form").submit(function(){ return sendForm($(this)) });
 });
 
 function overlayClose() {
@@ -321,3 +323,51 @@ function addAutoComplete(fieldID, filter) {
     });
 
 }
+
+
+function sendForm(form) {
+
+    let data = {};
+    $.each(form.serializeArray(), function(i, field) {
+        let input = $('input[name='+field.name+']');
+        field.value = $.trim(field.value);
+        data[field.name] = field.value;
+    })
+
+    let action = form.attr("action");
+    let method = form.attr("method");
+    if ( !action || action.trim() === "") {
+        action = location;
+    }
+
+    console.log(action);
+    console.log(method);
+    console.log(data);
+
+    $.ajax({
+        type: method,
+        url: action,
+        data: data,
+        success: function(res) { console.log(res); },
+        error: function(err) { console.log(err); }
+    })
+
+    return false;
+}
+
+/**
+ $("form").submit(function(){ return validateForm($(this)) });
+
+ function validateForm(form){
+    var retVal = true;
+    var re;
+    $.each(form.serializeArray(), function(i, field) {
+        var input = $('input[name='+field.name+']');
+        field.value = $.trim(field.value);
+        switch(field.name){
+            case "name" :
+                and another cases...
+        }
+    })
+}
+*/

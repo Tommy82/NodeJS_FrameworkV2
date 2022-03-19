@@ -137,7 +137,7 @@ export function saveAccountSingle(req, res) {
  * @param {int} id Interne ID der Accounts (db:account.id)
  * @returns {*[]}
  */
-function setEditableData(id, params = new app.frontend.parameters) {
+function setEditableData(id, params = app.frontend.parameters) {
     params.columns = [
         { key: "name", type: "text", name: "Loginname", check: "notempty", fastSave: true },
         { key: "active", type: "checkbox", name: "Aktiv", check: "", fastSave: true },
