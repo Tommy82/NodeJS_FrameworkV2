@@ -3,7 +3,7 @@ import {DBRoles} from "./settings.entities.js";
 import * as fDatabase from './functions.database.js';
 import * as fWeb from './functions.web.js';
 import * as fSync from './functions.sync.js';
-import {databaseRightsGetAll, databaseRightsSave} from "./functions.database.js";
+import * as fRights from './functions.rights.js';
 
 export default class Role {
     static moduleName = 'Role';
@@ -24,10 +24,14 @@ export default class Role {
     };
 
     static web = {
-        getList: fWeb.webGetList,
-        getDetails: fWeb.webGetDetails,
-        setDetails: fWeb.webSetDetails,
-        autocomplete: fWeb.webAutoComplete,
+        getList: fWeb.getList,
+        getDetails: fWeb.getDetails,
+        setDetails: fWeb.setDetails,
+        autocomplete: fWeb.AutoComplete,
+    }
+
+    static rights = {
+        getAllFromRole: fRights.GetAllFromRole,
     }
 
     static sync = {

@@ -26,6 +26,31 @@ export default class Frontend {
         checkBox: fHTMLElement.generateHTMLElementCheckBox
     }
 
+    parameters = {
+        /** SQL Abfrage */
+        sql: '',
+        /** SQL Query - Where */
+        where: '',
+        /** Post Data **/
+        body: [],
+        /** Header */
+        header: [],
+        /** Menu */
+        menu: '',
+        /** colCheckbox */
+        colCheckbox: [],
+        /** addAdd */
+        addAdd: '',
+        /** url_save */
+        url_save: '',
+        /** savedData */
+        savedData: {},
+        /** Tabellen für die Abfrage */
+        columns: [],
+        table: '',
+        id: 0,
+    }
+
     static afterStart = fAutoComplete.afterStart;
 }
 

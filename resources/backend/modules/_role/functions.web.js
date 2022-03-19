@@ -3,7 +3,7 @@ import {app} from "../../system/class.app.js";
 import { default as Role } from './class.role.js';
 
 
-export async function webGetList(req, res) {
+export async function getList(req, res) {
     let params = [];
     params["header"] = ["ID", "Key", "Name", "Beschreibung", "Menü"];
     params["sql"] = "SELECT `id`, `key`, `name`, `desc` FROM `roles` ";
@@ -23,34 +23,34 @@ export async function webGetList(req, res) {
 }
 
 
-export async function webGetDetails(req, res) {
+export async function getDetails(req, res, postParams = [], canClose = false) {
 
     let id = req.params.id;
-    let params = setEditableData(req.params.id);
+    let params = setEditableData(req.params.id, postParams);
 
-    Role.database.rightsGetAll(id)
+    //Role.database.rightsGetAll(id)
+    Role.rights.getAllFromRole(id)
         .then(lstRights => {
             app.frontend.table.generateEditByID(params, null)
                 .then(data => {
-                    console.log(data);
-                    app.web.toTwigOutput(req, res, ["base"], "backend_tableEditDefault", { TAB_EDIT: data, TAB_RIGHTS: lstRights, AUTOCOMPLETE: [] }, true);
+                    app.web.toTwigOutput(req, res, ["base"], "backend_tableEditDefault", { TAB_EDIT: data, TAB_RIGHTS: lstRights, AUTOCOMPLETE: [], canClose: canClose }, true);
                 })
                 .catch(err => { console.error(err); })
-
-
-            //app.web.toTwigOutput(req, res, ["modules", "_role"], "details", {}, true);
         })
         .catch(err => { return reject(err); })
 }
 
-export async function webSetDetails(req, res) {
-    res.json({ success: true, data: [] });
-    //.then(data => { res.json({ success: true, data: data }); })
-    //.catch(err => { res.json({ success: false }); })
+export async function setDetails(req, res) {
+    //TODO: Save Data
 
+    let postParams = [];
+
+    postParams = req.body;
+
+    getDetails(req, res, postParams,true).catch(err => { console.log(err); })
 }
 
-export async function webAutoComplete(search) {
+export async function AutoComplete(search) {
     return new Promise((resolve, reject) => {
         let sql = "SELECT `id`, `name`, `key` FROM `roles` ";
         if ( search ) {
@@ -82,11 +82,11 @@ export async function webAutoComplete(search) {
  * @param {int} id Interne ID der Accounts (db:account.id)
  * @returns {*[]}
  */
-function setEditableData(id) {
+function setEditableData(id, postParams = []) {
     let params = [];
     params["columns"] = [
-        { key: "name", type: "text", name: "Name", check: "notempty" },
-        { key: "desc", type: "text", name: "Beschreibung", check: "" },
+        { key: "name", type: "text", name: "Name", check: "notempty", postData: null },
+        { key: "desc", type: "text", name: "Beschreibung", check: "", postData: null },
     ];
     params["table"] = "roles";
     params["id"] = id;

@@ -72,17 +72,17 @@ export function toLogout(req, res) {
  */
 export function toAccountList(req, res) {
     //#region Set Parameters
-    let params = [];
-    params["header"] = ["ID", "Name", "Aktiv", "Backend", "Frontend", "Rollen", "Menü"];
-    params["sql"] = "SELECT `id`, `name`, `active`, `isBackend`, `isFrontend`, `roles` FROM `account` ";
-    params["where"] = "id > 0";
-    params["menu"] = "";
+    let params = app.frontend.parameters;
+    params.header = ["ID", "Name", "Aktiv", "Backend", "Frontend", "Rollen", "Menü"];
+    params.sql = "SELECT `id`, `name`, `active`, `isBackend`, `isFrontend`, `roles` FROM `account` ";
+    params.where = "id > 0";
+    params.menu = "";
     if ( app.helper.check.rights(Account.moduleName, "edit")) {
-        params["menu"] = `<a class="toOverlay" href='/backend/account/%id%'><img src="/base/images/icons/edit.png" alt="" class="icon" href='/backend/account/%id%'></a>`;
+        params.menu = `<a class="toOverlay" href='/backend/account/%id%'><img src="/base/images/icons/edit.png" alt="" class="icon" href='/backend/account/%id%'></a>`;
     }
-    params["colCheckbox"] = [2,3,4];
-    params["addAdd"] = true;
-    params["url_save"] = "/backend/account/0";
+    params.colCheckbox = [2,3,4];
+    params.addAdd = true;
+    params.url_save = "/backend/account/0";
     //#endregion Set Parameters
 
     // Frontend Javascript
@@ -102,9 +102,9 @@ export function toAccountList(req, res) {
  * @param {*} req Webserver - Request
  * @param {*} res Webserver - Response
  */
-export function toAccountSingle(req, res) {
+export function toAccountSingle(req, res, params = [], canClose = false) {
 
-    let params = setEditableData(req.params.id);
+    params = setEditableData(req.params.id, params);
     let autoComplete = [ { fieldID: 'roles', filter: 'role'} ];
 
     app.frontend.table.generateEditByID(params, null)
@@ -120,12 +120,14 @@ export function toAccountSingle(req, res) {
 export function saveAccountSingle(req, res) {
     let params = setEditableData(req.params.id);
 
-    params["body"] = req.body;
-    params["fastSave"] = true;
+    params.body = req.body;
 
     app.frontend.table.saveEditByID(params, null)
-        .then(data => { res.json({ success: true, data: data }); })
-        .catch(err => { res.json({ success: false }); })
+        .then(data => {
+            params.savedData = data;
+            toAccountSingle(req, res, params, true);
+        })
+        .catch(err => { console.error(err); })
 }
 
 /**
@@ -135,17 +137,16 @@ export function saveAccountSingle(req, res) {
  * @param {int} id Interne ID der Accounts (db:account.id)
  * @returns {*[]}
  */
-function setEditableData(id) {
-    let params = [];
-    params["columns"] = [
+function setEditableData(id, params = new app.frontend.parameters) {
+    params.columns = [
         { key: "name", type: "text", name: "Loginname", check: "notempty", fastSave: true },
         { key: "active", type: "checkbox", name: "Aktiv", check: "", fastSave: true },
         { key: "isBackend", type: "checkbox", name: "Login - Backend", check: "", fastSave: true },
         { key: "isFrontend", type: "checkbox", name: "Login - Frontend", check: "", fastSave: true},
         { key: "roles", type: "text", name: "Rollen", check: "notempty", fastSave: true },
-        { key: 'test1', type: "text", name: "Mein Test", check: "", notInTable: true, value: "hallo1", fastSave: false}
+        { key: 'test1', type: "text", name: "Mein Test", check: "", notInTable: true, value: "", fastSave: false}
     ];
-    params["table"] = "account";
-    params["id"] = id;
+    params.table = "account";
+    params.id = id;
     return params;
 }

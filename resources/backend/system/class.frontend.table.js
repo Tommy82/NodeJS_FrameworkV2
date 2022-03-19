@@ -44,7 +44,7 @@ export function tableGenerateFooter(footerData) {
  * Erstellen einer DataTable anhand von Datenbankeinträgen
  * Achtung! Die Tabelle MUSS das Feld "id" haben. Sollte es nicht da sein, muss dieses über die SQL Abfrage entsprechend angelegt werden!
  * @param {string} id Name der Tabelle
- * @param {array} params Parameter für die Abfrage ("sql", "where", "menu")
+ * @param {*} params Parameter für die Abfrage ("sql", "where", "menu")
  * @param {*} database Datenbank welche verwendet werden soll (null = Standarddatenbank)
  * @returns {Promise<string>} HTML DataTable
  */
@@ -57,9 +57,9 @@ export async function tableGenerateByDB(id, params, database) {
         if ( database == null || database === '' ) { database = app.DB; }
 
         // SQL Query erstellen
-        let sqlQuery = `${params["sql"]} `;
-        if ( params["where"] && params["where"].trim() !== '' ) {
-            sqlQuery += ` WHERE ${params["where"]} `;
+        let sqlQuery = `${params.sql} `;
+        if ( params.where && params.where.trim() !== '' ) {
+            sqlQuery += ` WHERE ${params.where} `;
         }
 
         // Query ausführen
@@ -70,8 +70,8 @@ export async function tableGenerateByDB(id, params, database) {
 
                 //#region Header
                 let header = [];
-                if ( params["header"] !== null && params["header"].length > 0 ) {
-                    params["header"].forEach(item => {
+                if ( params.header !== null && params.header.length > 0 ) {
+                    params.header.forEach(item => {
                         header.push({value: item});
                     })
                 } else {
@@ -93,7 +93,7 @@ export async function tableGenerateByDB(id, params, database) {
                         Object.keys(col).forEach(item => {
                             //#region Format - CheckBox
                             let isCheckBox = false;
-                            if ( params["colCheckbox"] && params["colCheckbox"].includes(counter)) { isCheckBox = true; }
+                            if ( params.colCheckbox && params.colCheckbox.includes(counter)) { isCheckBox = true; }
 
                             if ( isCheckBox ) {
                                 let checked = '';
@@ -116,8 +116,8 @@ export async function tableGenerateByDB(id, params, database) {
                             column[counter] = { value: col[item] };
                             counter++;
                         });
-                        if ( params["menu"] && params["menu"] !== '' ) {
-                            let myMenu = params["menu"].toString();
+                        if ( params.menu && params.menu !== '' ) {
+                            let myMenu = params.menu.toString();
                             //myMenu = myMenu.replaceAll("%id%", col.id);
                             myMenu = myMenu.replace(/%id%/g, col.id);
                             column[counter] = { value: myMenu }
@@ -131,16 +131,16 @@ export async function tableGenerateByDB(id, params, database) {
 
                 //#region Footer
                 let footer = [];
-                if ( params["addAdd"]) {
+                if ( params.addAdd) {
                     //response += add;
                     response += `<input type="button" value="Hinzufügen" onclick="dataTable_Add('${id}');" />`
-                    response += `<form action=\"${params["url_fastsave"]}\" method=\"post\">`;
+                    response += `<form action=\"${params.url_fastsave}\" method=\"post\">`;
                 }
                 //#endregion Footer
 
                 response += tableGenerate(id, header, content, footer);
 
-                if ( params["addAdd"]) { response += "</form>"; }
+                if ( params.addAdd) { response += "</form>"; }
 
                 return resolve(response);
             })
@@ -163,24 +163,24 @@ export async function generateEditByID(params, database) {
         }
 
         let sqlQuery = "SELECT `id` ";
-        if ( params && params["columns"].length > 0 ) {
-            params["columns"].forEach(col => {
+        if ( params && params.columns.length > 0 ) {
+            params.columns.forEach(col => {
                 if ( !col.notInTable ) {
                     sqlQuery += `, \`${col.key}\` `
                     }
                 }
             );
         }
-        sqlQuery += ` FROM \`${params["table"]}\` `;
-        sqlQuery += ` WHERE \`id\` = ${params["id"]} `;
+        sqlQuery += ` FROM \`${params.table}\` `;
+        sqlQuery += ` WHERE \`id\` = ${params.id} `;
         // Query ausführen
         await database.query(sqlQuery)
             .then(data => {
                 let myFrontendData = "<form method='post' action=''>";
 
                 myFrontendData += "<table id='editTable' style='width: 100%'>";
-                if ( params && params["columns"].length > 0 ) {
-                    params["columns"].forEach(col => {
+                if ( params && params.columns.length > 0 ) {
+                    params.columns.forEach(col => {
                         //#region Set Database Value
                         if ( !col.notInTable && data.length > 0 ) {
                             col.value = data[0][col.key];
@@ -203,8 +203,8 @@ export async function generateEditByID(params, database) {
                 }
                 myFrontendData += "</table>";
 
-                myFrontendData += "<input type='submit' value='Speichern'>";
-                myFrontendData += "<input type='submit' value='Abbrechen'>";
+                myFrontendData += "<input type='submit' value='Speichern' name='btnSave'>";
+                myFrontendData += "<input type='submit' value='Abbrechen' name='btnBreak'>";
                 myFrontendData += "</form>";
                 return resolve(myFrontendData);
             })
@@ -228,38 +228,45 @@ export async function saveEditByID(params, database) {
             database = app.DB;
         }
 
+        // Set FastSave
+        params.fastSave = false;
+        if ( params && params.body ) {
+            params.fastSave = params.body["fastSave"] && (params.body["fastSave"] === 1 || params.body["fastSave"] === "1" || params.body["fastSave"] === "save") ? true : false;
+        }
 
-        if ( params && params["columns"] && params["columns"].length > 0 ) {
+
+
+        if ( params && params.columns && params.columns.length > 0 ) {
                 let sqlQuery = "";
                 //#region Update Database
-                if ( params["id"] && parseInt(params["id"]) > 0 ) {
-                    sqlQuery += ` UPDATE \`${params["table"]}\` SET`;
+                if ( params.id && parseInt(params.id) > 0 ) {
+                    sqlQuery += ` UPDATE \`${params.table}\` SET`;
 
                     let first = true;
-                    params["columns"].forEach(col => {
-                        if ( !col.notInTable && (params["fastSave"] == false || ( params["fastSave"] === true && col.fastSave === true))) {
+                    params.columns.forEach(col => {
+                        if ( !col.notInTable && (params.fastSave == false || ( params.fastSave === true && col.fastSave === true))) {
                             if ( !first ) {
                                 sqlQuery += ", ";
                             } else {
                                 first = false;
                             }
 
-                            let value = params["body"][col.key];
+                            let value = params.body[col.key];
                             sqlQuery += appendValueToSQL("insert", col, value);
 
                         }
                     })
 
-                    sqlQuery += ` WHERE \`id\`= ${params["id"]} `;
+                    sqlQuery += ` WHERE \`id\`= ${params.id} `;
                 }
                 //#endregion Update Database
                 //#region Insert Database
                 else {
-                    sqlQuery += ` INSERT INTO \`${params["table"]}\` (`;
+                    sqlQuery += ` INSERT INTO \`${params.table}\` (`;
 
                     let first = true;
-                    params["columns"].forEach(col => {
-                        if ( !col.notInTable && (params["fastSave"] == false || ( params["fastSave"] === true && col.fastSave === true))) {
+                    params.columns.forEach(col => {
+                        if ( !col.notInTable && (params.fastSave == false || ( params.fastSave === true && col.fastSave === true))) {
                             if (!first) { sqlQuery += ", "; }
                             else { first = false; }
                             sqlQuery += " `" + col.key + "` ";
@@ -269,9 +276,9 @@ export async function saveEditByID(params, database) {
                     sqlQuery += `) VALUES (`;
 
                     first = true;
-                    params["columns"].forEach(col => {
+                    params.columns.forEach(col => {
                         if (!col.notInTable) {
-                            let value = params && params["body"] && params["body"][col.key] ? params["body"][col.key] : '';
+                            let value = params && params.body && params.body[col.key] ? params.body[col.key] : '';
 
                             if (!first) { sqlQuery += ", "; }
                             else { first = false; }
@@ -327,13 +334,13 @@ function appendValueToSQL(type, col, value) {
 function checkParams(type, params) {
 
     if ( !params ) { params = []; }
-    if ( !params["addAdd"] ) { params["addAdd"] = false; }
-    if ( !params["colCheckbox"] ) { params["colCheckbox"] = []; }
-    if ( !params["header"] ) { params["header"] = []; }
-    if ( !params["menu"] ) { params["menu"] = ''; }
-    if ( !params["sql"] ) { params["sql"] = ''; }
-    if ( !params["url_save"] ) { params["url_save"]  = "/backend/account/0"; }
-    if ( !params["where"] ) { params["where"] = ''; }
+    if ( !params.addAdd ) { params.addAdd = false; }
+    if ( !params.colCheckbox ) { params.colCheckbox = []; }
+    if ( !params.header ) { params.header = []; }
+    if ( !params.menu ) { params.menu = ''; }
+    if ( !params.sql ) { params.sql = ''; }
+    if ( !params.url_save ) { params.url_save  = "/backend/account/0"; }
+    if ( !params.where ) { params.where = ''; }
 
 
 

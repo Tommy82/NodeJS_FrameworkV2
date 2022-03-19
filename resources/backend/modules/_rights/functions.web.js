@@ -1,13 +1,13 @@
 import { app } from '../../system/class.app.js';
 
 export function toList(req, res) {
-    let params = [];
-    params["header"] = [];
-    params["sql"] = "SELECT `id`, `moduleName`, `key`, `desc`, `defaultRole` from `rights` ";
-    params["where"] = "where id > 0";
-    params["menu"] = "";
-    params["colCheckBox"] = [];
-    params["addAdd"] = false;
+    let params = app.frontend.parameters;
+
+    params.sql = "SELECT `id`, `moduleName`, `key`, `desc`, `defaultRole` from `rights` ";
+    params.where = "where id > 0";
+    params.menu = "";
+    params.colCheckBox = [];
+    params.addAdd = false;
 
     app.frontend.table.generateByDB('tblRights', params, null)
         .then(table => {

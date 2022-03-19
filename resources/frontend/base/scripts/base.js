@@ -12,8 +12,13 @@ $(document).ready(function () {
         e.preventDefault();
         $('#overlayIFrame').hide();
         return false;
-    })
+    });
 });
+
+function overlayClose() {
+    $('#overlayIFrame').hide();
+    return false;
+}
 
 function setDataTable(id) {
     // Setup - add a text input to each footer cell
@@ -288,7 +293,6 @@ function dataTable_Add(id) {
     $('#' + id + " tbody").append(template);
     console.log(template);
 }
-
 
 function addAutoComplete(fieldID, filter) {
     $( fieldID ).autocomplete({
