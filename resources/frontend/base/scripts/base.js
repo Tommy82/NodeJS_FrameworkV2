@@ -340,16 +340,24 @@ function sendForm(form) {
         action = location;
     }
 
-    console.log(action);
-    console.log(method);
-    console.log(data);
-
     $.ajax({
         type: method,
         url: action,
         data: data,
-        success: function(res) { console.log(res); },
-        error: function(err) { console.log(err); }
+        success: function(res) {
+            if ( res && res.success && res.success === "success") {
+                //Todo: Hier Fenster schließen ! (ggfl. Form im Frontend erstellen lassen!)
+                console.log("test");
+                window.close();
+            } else {
+                console.log(res);
+                window.alert("Fehler beim verarbeiten der Rückmeldedaten. Bitte prüfen Sie das Log!");
+            }
+        },
+        error: function(err) {
+            console.log(err);
+            window.alert("Es ist ein Fehler aufgetreten. Bitte prüfen Sie das Log!")
+        }
     })
 
     return false;

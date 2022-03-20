@@ -125,7 +125,8 @@ export function saveAccountSingle(req, res) {
     app.frontend.table.saveEditByID(params, null)
         .then(data => {
             params.savedData = data;
-            toAccountSingle(req, res, params, true);
+            //toAccountSingle(req, res, params, true);
+            res.send({ success: "success", data: [] });
         })
         .catch(err => { console.error(err); })
 }
