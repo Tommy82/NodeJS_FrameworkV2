@@ -47,7 +47,8 @@ export async function setDetails(req, res) {
 
     postParams = req.body;
 
-    getDetails(req, res, postParams,true).catch(err => { console.log(err); })
+    res.send({success: 'success', data: []});
+    //getDetails(req, res, postParams,true).catch(err => { console.log(err); })
 }
 
 export async function AutoComplete(search) {

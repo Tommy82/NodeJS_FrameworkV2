@@ -9,7 +9,8 @@ select,
 
 input[type=button],
 input[type=submit],
-input[type=reset] {
+input[type=reset],
+input[type=search] {
     height: 2.4em;
     width: 10em;
     padding: 0.4em;

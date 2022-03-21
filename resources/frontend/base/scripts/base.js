@@ -14,7 +14,7 @@ $(document).ready(function () {
         return false;
     });
 
-    $("form").submit(function(){ return sendForm($(this)) });
+    $("form").submit(function(e){ return sendForm($(this), e) });
 });
 
 function overlayClose() {
@@ -330,39 +330,46 @@ function addAutoComplete(fieldID, filter) {
 
 }
 
-function sendForm(form) {
+function sendForm(form, e) {
 
-    let data = {};
-    $.each(form.serializeArray(), function(i, field) {
-        let input = $('input[name='+field.name+']');
-        field.value = $.trim(field.value);
-        data[field.name] = field.value;
-    })
+    let currButton = $(document.activeElement).attr("name");
 
-    let action = form.attr("action");
-    let method = form.attr("method");
-    if ( !action || action.trim() === "") {
-        action = location;
-    }
+    if ( currButton === "btnSave" ) {
+        // Button Speichern
+        let data = {};
+        $.each(form.serializeArray(), function(i, field) {
+            let input = $('input[name='+field.name+']');
+            field.value = $.trim(field.value);
+            data[field.name] = field.value;
+        })
 
-    $.ajax({
-        type: method,
-        url: action,
-        data: data,
-        success: function(res) {
-            if ( res && res.success && res.success === "success") {
-                //parent.$("#overlayIFrame").hide(); // Schließen des Fensters
-                parent.location.href = parent.location; // Reload Parent Page
-            } else {
-                console.log(res);
-                window.alert("Fehler beim verarbeiten der Rückmeldedaten. Bitte prüfen Sie das Log!");
-            }
-        },
-        error: function(err) {
-            console.log(err);
-            window.alert("Es ist ein Fehler aufgetreten. Bitte prüfen Sie das Log!")
+        let action = form.attr("action");
+        let method = form.attr("method");
+        if ( !action || action.trim() === "") {
+            action = location;
         }
-    })
 
+        $.ajax({
+            type: method,
+            url: action,
+            data: data,
+            success: function(res) {
+                if ( res && res.success && res.success === "success") {
+                    //parent.$("#overlayIFrame").hide(); // Schließen des Fensters
+                    parent.location.href = parent.location; // Reload Parent Page
+                } else {
+                    console.log(res);
+                    window.alert("Fehler beim verarbeiten der Rückmeldedaten. Bitte prüfen Sie das Log!");
+                }
+            },
+            error: function(err) {
+                console.log(err);
+                window.alert("Es ist ein Fehler aufgetreten. Bitte prüfen Sie das Log!")
+            }
+        })
+    } else {
+        // Button Break !
+        parent.location.href = parent.location; // Reload Parent Page
+    }
     return false;
 }
