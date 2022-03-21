@@ -1,32 +1,29 @@
-input.default_style1 {
+input.base_style {
     height: 1.5em;
     width: 20em;
     padding: 0.4em;
     border: 0.1em solid RGB(150,150,150);
     border-radius: 0.5em;
 }
-select.default_style1,
-button.default_style1 {
+select.base_style,
+
+input[type=button].base_style,
+input[type=submit].base_style,
+input[type=reset].base_style {
     height: 2.4em;
-    width: 21em;
+    width: 10em;
     padding: 0.4em;
     border: 0.1em solid RGB(150,150,150);
     border-radius: 0.5em;
     cursor: pointer;
 }
-label.default_style1 {
+label.base_style {
     color: RGB(0,0,0);
     font-size: 1em;
 }
-input.default_style1:hover,
-select.default_style1:hover,
-button.default_style1:hover {
+input.base_style:hover,
+select.base_style:hover,
+button.base_style:hover {
     border-color: RGB(0,0,0);
     border-radius: 1em;
 }
-
-.tblsorter { display: table; }
-.tblsorter th, .tblSorter td { display: table-cell; vertical-align:middle; padding-left: 0.5em; }
-
-
-/** CHECKBOXEN **/

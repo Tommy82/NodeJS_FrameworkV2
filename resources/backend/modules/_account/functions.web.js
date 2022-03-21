@@ -89,7 +89,6 @@ export function toAccountList(req, res) {
     let tableID = 'tblRoles';
     let js = `setDataTable('${tableID}');`;
 
-
     app.frontend.table.generateByDB(tableID, params, null)
         .then(table => {
             app.web.toTwigOutput(req, res, ["base"], "backend_tableDefault", { TAB1: table, JS: js}, true);

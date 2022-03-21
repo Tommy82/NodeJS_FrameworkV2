@@ -142,7 +142,7 @@ export async function tableGenerateByDB(id, params, database) {
                 let footer = [];
                 if ( params.addAdd) {
                     response += add;
-                    response += `<input type="button" value="Hinzufügen" onclick="dataTable_Add('${id}');" />`;
+                    response += `<input type="button" value="Hinzufügen" onclick="dataTable_Add('${id}');" class="base_style" />`;
                     response += `<form action=\"${params.url_fastsave}\" method=\"post\">`;
                 }
                 //#endregion Footer
