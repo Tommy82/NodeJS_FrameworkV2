@@ -293,7 +293,11 @@ function setDataTable(id) {
 function dataTable_Add(id) {
     let template = $('#' + id + '_addRow').html();
     $('#' + id + " tbody").append(template);
-    console.log(template);
+}
+
+function dataTable_Break() {
+    // Reload Window
+    window.location = window.location.href;
 }
 
 function addAutoComplete(fieldID, filter) {

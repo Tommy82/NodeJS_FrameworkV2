@@ -145,7 +145,6 @@ function setEditableData(id, params = app.frontend.parameters) {
         { key: "isBackend", type: "checkbox", name: "Login - Backend", check: "", fastSave: true },
         { key: "isFrontend", type: "checkbox", name: "Login - Frontend", check: "", fastSave: true},
         { key: "roles", type: "text", name: "Rollen", check: "notempty", fastSave: true },
-        { key: 'test1', type: "text", name: "Mein Test", check: "", notInTable: true, value: "", fastSave: false}
     ];
     params.table = "account";
     params.id = id;

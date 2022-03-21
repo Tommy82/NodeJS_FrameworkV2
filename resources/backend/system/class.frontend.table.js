@@ -52,6 +52,7 @@ export async function tableGenerateByDB(id, params, database) {
     return new Promise(async (resolve, reject) => {
 
         let response = "";
+        let addAdded = false;
 
         // Datenbank zuordnen
         if ( database == null || database === '' ) { database = app.DB; }
@@ -103,14 +104,16 @@ export async function tableGenerateByDB(id, params, database) {
                             }
                             //#endregion Format - CheckBox
 
-                            // ID nicht mit adden
-                            if ( item === 'id' ) {
-                                add += `<td></td>`;
-                            } else {
-                                // Check if Textbox
-                                if ( isCheckBox ) { add += `<td><input type="checkbox" name="${item}" id="${item}" /></td>` }
-                                // Add as Text
-                                else { add += `<td><input type="text" name="${item}" id="${item}" /></td>` }
+                            if ( !addAdded ) {
+                                // ID nicht mit adden
+                                if ( item === 'id' ) {
+                                    add += `<td></td>`;
+                                } else {
+                                    // Check if Textbox
+                                    if ( isCheckBox ) { add += `<td><input type="checkbox" name="${item}" id="${item}" /></td>` }
+                                    // Add as Text
+                                    else { add += `<td><input type="text" name="${item}" id="${item}" /></td>` }
+                                }
                             }
 
                             column[counter] = { value: col[item] };
@@ -121,10 +124,16 @@ export async function tableGenerateByDB(id, params, database) {
                             //myMenu = myMenu.replaceAll("%id%", col.id);
                             myMenu = myMenu.replace(/%id%/g, col.id);
                             column[counter] = { value: myMenu }
-                            add += "<td><input type='submit' value='save' name='fastSave'/></td>"
+                            if ( !addAdded ) {
+                                add += "<td><input type='submit' value='Speichern' name='fastSave'/>&nbsp;<input type='button' value='Abbrechen' onclick='dataTable_Break();'></td>"
+                            }
                         }
                         content.push(column);
-                        add += "</tr></template>";
+                        if ( !addAdded ) {
+                            add += "</tr></template>";
+                        }
+
+                        addAdded = true;
                     });
                 }
                 //#endregion Content
@@ -132,12 +141,11 @@ export async function tableGenerateByDB(id, params, database) {
                 //#region Footer
                 let footer = [];
                 if ( params.addAdd) {
-                    //response += add;
-                    response += `<input type="button" value="Hinzufügen" onclick="dataTable_Add('${id}');" />`
+                    response += add;
+                    response += `<input type="button" value="Hinzufügen" onclick="dataTable_Add('${id}');" />`;
                     response += `<form action=\"${params.url_fastsave}\" method=\"post\">`;
                 }
                 //#endregion Footer
-
                 response += tableGenerate(id, header, content, footer);
 
                 if ( params.addAdd) { response += "</form>"; }
