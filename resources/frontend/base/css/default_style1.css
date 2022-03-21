@@ -27,3 +27,19 @@ button.base_style:hover {
     border-color: RGB(0,0,0);
     border-radius: 1em;
 }
+
+
+#editTable {
+    width: 100%;
+}
+
+#editTable tr td {
+    padding: 0.5em;
+}
+
+#editTable tr:hover {
+    background-color: RGB(230,230,230);
+}
+
+.btn_dataTableAdd, .btn_dataTableReload { margin-right: 1em;}
+.btn_dataTableAdd, .btn_dataTableReload { margin-bottom: 1em;}

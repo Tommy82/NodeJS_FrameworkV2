@@ -88,10 +88,11 @@ export function toAccountList(req, res) {
     // Frontend Javascript
     let tableID = 'tblRoles';
     let js = `setDataTable('${tableID}');`;
+    let title = "Benutzerverwaltung";
 
     app.frontend.table.generateByDB(tableID, params, null)
         .then(table => {
-            app.web.toTwigOutput(req, res, ["base"], "backend_tableDefault", { TAB1: table, JS: js}, true);
+            app.web.toTwigOutput(req, res, ["base"], "backend_tableDefault", { TAB1: table, JS: js, title: title}, true);
         })
         .catch(err => { console.error(err); });
 }
@@ -141,7 +142,7 @@ function setEditableData(id, params = app.frontend.parameters) {
     params.columns = [
         { key: "name", type: "text", name: "Loginname", check: "notempty", fastSave: true },
         { key: "active", type: "checkbox", name: "Aktiv", check: "", fastSave: true },
-        { key: "isBackend", type: "checkbox", name: "Login - Backend", check: "", fastSave: true },
+        { key: "isBackend", type: "checkbox", name: "Login - Backend", description: 'Darf sich der User im Backend anmelden?', check: "", fastSave: true },
         { key: "isFrontend", type: "checkbox", name: "Login - Frontend", check: "", fastSave: true},
         { key: "roles", type: "text", name: "Rollen", check: "notempty", fastSave: true },
     ];

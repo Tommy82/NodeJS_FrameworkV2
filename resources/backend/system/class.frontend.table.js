@@ -142,7 +142,8 @@ export async function tableGenerateByDB(id, params, database) {
                 let footer = [];
                 if ( params.addAdd) {
                     response += add;
-                    response += `<input type="button" value="Hinzufügen" onclick="dataTable_Add('${id}');" class="base_style" />`;
+                    response += `<input type="button" value="Hinzufügen" onclick="dataTable_Add('${id}');" class="base_style btn_dataTableAdd" />`;
+                    response += `<input type="button" value="Neu laden" onclick="javascript: window.location.href = location.href;" class="base_style btn_dataTableReload">`
                     response += `<form action=\"${params.url_fastsave}\" method=\"post\">`;
                 }
                 //#endregion Footer
@@ -198,13 +199,15 @@ export async function generateEditByID(params, database) {
 
                         //#region Set Frontend Data
                         myFrontendData += `<tr>`;
-                        myFrontendData += `<td><label for="${col.key}">${col.name}</label></td>`;
+                        myFrontendData += `<td class="edit_label"><label for="${col.key}">${col.name}</label></td>`;
                         switch ( col.type ) {
-                            case "text": myFrontendData += `<td>${app.frontend.HtmlElement.text(col)}</td>`; break;
-                            case "select": myFrontendData += `<td>${app.frontend.HtmlElement.select(col)}</td>`; break;
-                            case "checkbox": myFrontendData += `<td>${app.frontend.HtmlElement.checkBox(col)}`; break;
-                            default: myFrontendData += `<td></td>`; break;
+                            case "text": myFrontendData += `<td class="edit_input">${app.frontend.HtmlElement.text(col)}</td>`; break;
+                            case "select": myFrontendData += `<td class="edit_input">${app.frontend.HtmlElement.select(col)}</td>`; break;
+                            case "checkbox": myFrontendData += `<td class="edit_input">${app.frontend.HtmlElement.checkBox(col)}`; break;
+                            default: myFrontendData += `<td class="edit_input"></td>`; break;
                         }
+                        if ( !col.description ) { col.description = ''; }
+                        myFrontendData += `<td class="edit_description">${col.description}</td>`;
                         myFrontendData += `</tr>`;
                         //#endregion Set Frontend Data
                     });
