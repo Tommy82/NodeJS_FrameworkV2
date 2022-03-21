@@ -324,7 +324,6 @@ function addAutoComplete(fieldID, filter) {
 
 }
 
-
 function sendForm(form) {
 
     let data = {};
@@ -346,9 +345,8 @@ function sendForm(form) {
         data: data,
         success: function(res) {
             if ( res && res.success && res.success === "success") {
-                //Todo: Hier Fenster schließen ! (ggfl. Form im Frontend erstellen lassen!)
-                console.log("test");
-                window.close();
+                //parent.$("#overlayIFrame").hide(); // Schließen des Fensters
+                parent.location.href = parent.location; // Reload Parent Page
             } else {
                 console.log(res);
                 window.alert("Fehler beim verarbeiten der Rückmeldedaten. Bitte prüfen Sie das Log!");
@@ -362,20 +360,3 @@ function sendForm(form) {
 
     return false;
 }
-
-/**
- $("form").submit(function(){ return validateForm($(this)) });
-
- function validateForm(form){
-    var retVal = true;
-    var re;
-    $.each(form.serializeArray(), function(i, field) {
-        var input = $('input[name='+field.name+']');
-        field.value = $.trim(field.value);
-        switch(field.name){
-            case "name" :
-                and another cases...
-        }
-    })
-}
-*/
