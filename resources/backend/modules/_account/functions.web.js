@@ -143,8 +143,8 @@ function setEditableData(id, params = app.frontend.parameters) {
         { key: "name", type: "text", name: "Loginname", check: "notempty", fastSave: true },
         { key: "active", type: "checkbox", name: "Aktiv", check: "", fastSave: true },
         { key: "isBackend", type: "checkbox", name: "Login - Backend", description: 'Darf sich der User im Backend anmelden?', check: "", fastSave: true },
-        { key: "isFrontend", type: "checkbox", name: "Login - Frontend", check: "", fastSave: true},
-        { key: "roles", type: "text", name: "Rollen", check: "notempty", fastSave: true },
+        { key: "isFrontend", type: "checkbox", name: "Login - Frontend", description: 'Darf sich der User im Frontend anmelden?', check: "", fastSave: true},
+        { key: "roles", type: "text", name: "Rolle", check: "notempty", description: 'Welche Rolle hat dieser User? [Wichtig für Rechteverwaltung!]', fastSave: true },
     ];
     params.table = "account";
     params.id = id;

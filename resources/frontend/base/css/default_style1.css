@@ -1,15 +1,15 @@
-input.base_style {
-    height: 1.5em;
+input {
+    height: 1.1em;
     width: 20em;
     padding: 0.4em;
     border: 0.1em solid RGB(150,150,150);
     border-radius: 0.5em;
 }
-select.base_style,
+select,
 
-input[type=button].base_style,
-input[type=submit].base_style,
-input[type=reset].base_style {
+input[type=button],
+input[type=submit],
+input[type=reset] {
     height: 2.4em;
     width: 10em;
     padding: 0.4em;
@@ -17,13 +17,18 @@ input[type=reset].base_style {
     border-radius: 0.5em;
     cursor: pointer;
 }
-label.base_style {
+
+input[type=checkbox] {
+    width: 1em;
+}
+
+label {
     color: RGB(0,0,0);
     font-size: 1em;
 }
-input.base_style:hover,
-select.base_style:hover,
-button.base_style:hover {
+input:hover,
+select:hover,
+button:hover {
     border-color: RGB(0,0,0);
     border-radius: 1em;
 }
@@ -35,11 +40,17 @@ button.base_style:hover {
 
 #editTable tr td {
     padding: 0.5em;
+    text-align: left;
 }
 
 #editTable tr:hover {
     background-color: RGB(230,230,230);
 }
 
-.btn_dataTableAdd, .btn_dataTableReload { margin-right: 1em;}
-.btn_dataTableAdd, .btn_dataTableReload { margin-bottom: 1em;}
+#editTable input[type=text] { width: 90%; }
+
+.btn_dataTableAdd, .btn_dataTableReload {
+    margin-right: 1em;
+    margin-bottom: 1em
+}
+

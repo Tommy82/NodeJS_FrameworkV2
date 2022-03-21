@@ -293,6 +293,8 @@ function setDataTable(id) {
 function dataTable_Add(id) {
     let template = $('#' + id + '_addRow').html();
     $('#' + id + " tbody").append(template);
+    $('.btn_dataTableAdd').prop('disabled', true);
+    $('.btn_dataTableReload').prop('disabled', true);
 }
 
 function dataTable_Break() {
