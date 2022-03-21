@@ -119,6 +119,11 @@ export async function tableGenerateByDB(id, params, database) {
                             column[counter] = { value: col[item] };
                             counter++;
                         });
+
+                        if ( !params.noMenu && (!params.menu || params.menu === '' ) ) {
+                            params.menu = '-';
+                        }
+
                         if ( params.menu && params.menu !== '' ) {
                             let myMenu = params.menu.toString();
                             //myMenu = myMenu.replaceAll("%id%", col.id);
@@ -460,19 +465,4 @@ function appendValueToSQL(type, col, value) {
             break;
     }
     return response;
-}
-
-function checkParams(type, params) {
-
-    if ( !params ) { params = []; }
-    if ( !params.addAdd ) { params.addAdd = false; }
-    if ( !params.colCheckbox ) { params.colCheckbox = []; }
-    if ( !params.header ) { params.header = []; }
-    if ( !params.menu ) { params.menu = ''; }
-    if ( !params.sql ) { params.sql = ''; }
-    if ( !params.url_save ) { params.url_save  = "/backend/account/0"; }
-    if ( !params.where ) { params.where = ''; }
-
-
-
 }

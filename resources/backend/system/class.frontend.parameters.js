@@ -24,4 +24,6 @@ export default class Parameters {
     appendBeforeSaveButtons= '';
     /** JSON-Array | Wichtig für Erstellung einer Tabelle aus einem Objekt **/
     orgObject = [];
+    /** keine Menüspalte vorhanden? **/
+    noMenu = false;
 }

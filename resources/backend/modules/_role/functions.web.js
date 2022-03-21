@@ -9,7 +9,7 @@ export async function getList(req, res) {
     params["header"] = ["ID", "Key", "Name", "Beschreibung", "Menü"];
     params["sql"] = "SELECT `id`, `key`, `name`, `desc` FROM `roles` ";
     params["where"] = "id > 0";
-    if ( app.helper.check.rights(Role.moduleName, "edit")) {
+    if ( app.helper.check.rights.bySession(req, Role.moduleName, "change")) {
         params["menu"] = `<a class="toOverlay" href='/backend/role/%id%'><img src="/base/images/icons/edit.png" alt="" class="icon" href='/backend/role/%id%'></a>`;
     }
 

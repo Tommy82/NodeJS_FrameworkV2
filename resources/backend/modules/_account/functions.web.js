@@ -34,8 +34,7 @@ export async function checkLogin(req, res) {
             req.session.user = {
                 id: currData[0].id,
                 username: username,
-                role: currData[0].role,
-
+                role: currData[0].roles,
             }
 
             let redirect = req.query.redirect;
@@ -71,14 +70,16 @@ export function toLogout(req, res) {
  * @param {*} res Webserver - Response
  */
 export function toAccountList(req, res) {
+
     //#region Set Parameters
     let params = new app.frontend.parameters();
     params.header = ["ID", "Name", "Aktiv", "Backend", "Frontend", "Rollen", "Menü"];
     params.sql = "SELECT `id`, `name`, `active`, `isBackend`, `isFrontend`, `roles` FROM `account` ";
     params.where = "id > 0";
     params.menu = "";
-    if ( app.helper.check.rights(Account.moduleName, "edit")) {
-        params.menu = `<a class="toOverlay" href='/backend/account/%id%'><img src="/base/images/icons/edit.png" alt="" class="icon" href='/backend/account/%id%'></a>`;
+
+    if ( app.helper.check.rights.bySession(req, Account.moduleName, "change")) {
+        params.menu += `<a class="toOverlay" href='/backend/account/%id%'><img src="/base/images/icons/edit.png" alt="" class="icon" href='/backend/account/%id%'></a>`;
     }
     params.colCheckbox = [2,3,4];
     params.addAdd = true;

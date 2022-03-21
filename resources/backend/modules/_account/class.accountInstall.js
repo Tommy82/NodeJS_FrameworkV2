@@ -8,7 +8,11 @@ class AccountInstall {
 
     entities = [  DBAccount ];
 
-    rights = [ ];
+    rights = [
+        { key: "add", desc: "", defaultRole: "admin" },
+        { key: "change", desc: "", defaultRole: "admin" },
+        { key: "delete", desc: "", defaultRole: "admin" },
+    ];
 
     moduleName = Account.moduleName;
 

@@ -43,10 +43,44 @@ class RoleInstall {
 
     async start() {
         app.frontend.autocomplete.push({ filter: "role", callback: Role.web.autocomplete });
+
+        app.roles = await Role.database.getAll()
+            .catch(err => { console.error(err); });
+
+        if ( app.roles && app.roles.length > 0 ) {
+            for ( let i = 0; i < app.roles.length; i++ ) {
+                app.roles[0].rights = await Role.rights.getAllFromRole(app.roles[i].id).catch(err => { console.error(err); })
+            }
+        }
+
+        app.helper.check.rights = {
+            bySession: checkRightBySession,
+            byRole: checkRightByRole,
+        }
     }
 }
 
 app.addModule(new RoleInstall());
 
+function checkRightBySession(req, moduleName, key) {
+    let response = false;
+    if ( req && req.session && req.session.user && req.session.user.role ) {
+        response = checkRightByRole(req.session.user.role, moduleName, key);
+    }
+    return response;
+}
 
+function checkRightByRole(role, moduleName, key) {
+    let response = false;
+
+    let found = app.roles.find(x => x.key === role);
+    if ( found ) {
+        let foundRight = found.rights.find(x => x.module === moduleName && x.key === key);
+        if ( foundRight && (foundRight.allowed === true || foundRight.allowedRole === true )) {
+            response = true;
+        }
+    }
+
+    return response;
+}
 
