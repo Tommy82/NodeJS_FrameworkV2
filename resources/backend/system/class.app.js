@@ -189,6 +189,8 @@ class ClassApp {
 
         // Add Frontend Functions that need the App
         Frontend.afterStart();
+
+        this.events.emit("app:start:finish");
     }
 
     /**

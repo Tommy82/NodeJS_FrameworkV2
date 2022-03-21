@@ -11,8 +11,11 @@ import './resources/backend/modules/_role/_index.js';
 // Import Custom Module
 import './index_custom.js';
 
-// Absolutes Backup falls Seite nicht gefunden!
-app.web.addRoute("get", "*", Home.web.frontend.toHome, false, false);
+// Wird ganz am Ende ausgeführt, nachdem alle Module gestartet sind!
+app.events.on('app:start:finish', () => {
+    // Absolutes Backup falls Seite nicht gefunden!
+    app.web.addRoute("get", "*", Home.web.frontend.toHome, false, false);
+})
 
 app.init(); // Initialisierung der App (inklusive Installation und Starten!)
 
