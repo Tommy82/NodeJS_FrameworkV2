@@ -38,7 +38,6 @@ export default class Account {
         getByName: fDatabase.databaseGetByName,
         save: fDatabase.databaseSave
     };
-
 }
 
 

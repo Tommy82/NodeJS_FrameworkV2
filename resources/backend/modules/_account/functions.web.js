@@ -72,7 +72,7 @@ export function toLogout(req, res) {
  */
 export function toAccountList(req, res) {
     //#region Set Parameters
-    let params = app.frontend.parameters;
+    let params = new app.frontend.parameters();
     params.header = ["ID", "Name", "Aktiv", "Backend", "Frontend", "Rollen", "Menü"];
     params.sql = "SELECT `id`, `name`, `active`, `isBackend`, `isFrontend`, `roles` FROM `account` ";
     params.where = "id > 0";
@@ -138,7 +138,7 @@ export function saveAccountSingle(req, res) {
  * @param {int} id Interne ID der Accounts (db:account.id)
  * @returns {*[]}
  */
-function setEditableData(id, params = app.frontend.parameters) {
+function setEditableData(id, params = new app.frontend.parameters()) {
     params.columns = [
         { key: "name", type: "text", name: "Loginname", check: "notempty", fastSave: true },
         { key: "active", type: "checkbox", name: "Aktiv", check: "", fastSave: true },

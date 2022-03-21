@@ -6,12 +6,12 @@
  */
 export function generateHTMLElementText(data) {
     data = checkData(data, "text");
-    return `<input type="text" id="${data.key}" name="${data.key}" value="${data.value}" class="${data.class}">`;
+    return `<input type="text" id="${data.key}" name="${data.ident ? data.ident : data.key}" value="${data.value}" class="${data.class}">`;
 }
 
 export function generateHTMLElementSelect(data) {
     data = checkData(data, "select");
-    let response = `<select id="${data.key}" name="${data.key}" size="${data.size}">`;
+    let response = `<select id="${data.key}" name="${data.ident ? data.ident : data.key}" size="${data.size}">`;
     if ( data.options.length > 0 ) {
         data.options.forEach(item => {
             response += `<option value="${item.value}">${item.name}</option>`;
@@ -28,7 +28,7 @@ export function generateHTMLElementCheckBox(data) {
     if ( data.value === 1 || data.value === "1" || data.value === "on" ) {
         checked = 'checked';
     }
-    return `<input type="checkbox" id="${data.key}" name="${data.key}" ${checked} class="${data.class}">`;
+    return `<input type="checkbox" id="${data.key}" name="${data.ident ? data.ident : data.key}" ${checked} class="${data.class}">`;
 }
 
 function checkData(data, type = null) {

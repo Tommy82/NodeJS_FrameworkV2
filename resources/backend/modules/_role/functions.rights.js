@@ -18,14 +18,23 @@ export function GetAllFromRole(id) {
                     role.rights = [];
 
                     // Lade alle Rechte
-                    Rights.database.getAll(true)
+                    Rights.database.getAll(false)
                         .then(lstRights => {
                             if ( lstRights && lstRights.length > 0 ) {
                                 lstRights.forEach(item => {
-                                    if ( item.defaultRole === role.key ) {
-                                        let found = role.rights.find(x => x.module === item.moduleName && item.key === item.key);
-                                        if ( !found ) { role.rights.push({ module: item.moduleName, key: item.key, allowed: false, allowedRole: true }); }
-                                        else { found.allowedRole = true; }
+                                    let found = role.rights.find(x => x.module === item.moduleName && x.key === item.key);
+                                    if ( !found ) {
+                                        role.rights.push({
+                                            module: item.moduleName,
+                                            key: item.key,
+                                            allowed: false,
+                                            allowedRole: item.defaultRole === role.key ? true : false,
+                                            roleID: role.id,
+                                            rightID: item.id
+                                        });
+                                    }
+                                    else {
+                                        found.allowedRole = item.defaultRole === role.key ? true : false;
                                     }
                                 })
                             }
@@ -33,10 +42,15 @@ export function GetAllFromRole(id) {
                             // Laden aller Rollenbedingten Rechte
                             fDB.databaseRightsGetAll(id)
                                 .then(lstRoleRights => {
-                                    //console.log(role);
-                                    //console.log(lstRights);
-                                    //console.log(lstRoleRights);
-                                    return resolve(role);
+                                    if ( lstRoleRights && lstRoleRights.length > 0 ) {
+                                        lstRoleRights.forEach(item => {
+                                            let found = role.rights.find(x => x.roleID === item.roleID && x.rightID === item.rightID);
+                                            if ( found ) {
+                                                found.allowed = item.allowed === 1 || item.allowed === '1' ? true : false;
+                                            }
+                                        });
+                                    }
+                                    return resolve(role.rights);
                                 })
                                 .catch(err => { return reject(err); })
 

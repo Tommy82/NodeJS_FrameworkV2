@@ -35,20 +35,20 @@ button:hover {
 }
 
 
-#editTable {
+.editTable {
     width: 100%;
 }
 
-#editTable tr td {
+.editTable tr td {
     padding: 0.5em;
     text-align: left;
 }
 
-#editTable tr:hover {
+.editTable tr:hover {
     background-color: RGB(230,230,230);
 }
 
-#editTable input[type=text] { width: 90%; }
+.editTable input[type=text] { width: 90%; }
 
 .btn_dataTableAdd, .btn_dataTableReload {
     margin-right: 1em;

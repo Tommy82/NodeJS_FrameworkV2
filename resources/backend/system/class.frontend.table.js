@@ -187,7 +187,7 @@ export async function generateEditByID(params, database) {
             .then(data => {
                 let myFrontendData = "<form method='post' action=''>";
 
-                myFrontendData += "<table id='editTable' style='width: 100%'>";
+                myFrontendData += "<table class='editTable' style='width: 100%'>";
                 if ( params && params.columns.length > 0 ) {
                     params.columns.forEach(col => {
                         //#region Set Database Value
@@ -203,7 +203,7 @@ export async function generateEditByID(params, database) {
                         switch ( col.type ) {
                             case "text": myFrontendData += `<td class="edit_input">${app.frontend.HtmlElement.text(col)}</td>`; break;
                             case "select": myFrontendData += `<td class="edit_input">${app.frontend.HtmlElement.select(col)}</td>`; break;
-                            case "checkbox": myFrontendData += `<td class="edit_input">${app.frontend.HtmlElement.checkBox(col)}`; break;
+                            case "checkbox": myFrontendData += `<td class="edit_input">${app.frontend.HtmlElement.checkBox(col)}</td>`; break;
                             default: myFrontendData += `<td class="edit_input"></td>`; break;
                         }
                         if ( !col.description ) { col.description = ''; }
@@ -213,7 +213,9 @@ export async function generateEditByID(params, database) {
                     });
                 }
                 myFrontendData += "</table>";
-
+                if ( params.appendBeforeSaveButtons !== '') {
+                    myFrontendData += params.appendBeforeSaveButtons;
+                }
                 myFrontendData += "<input type='submit' value='Speichern' name='btnSave'>";
                 myFrontendData += "<input type='submit' value='Abbrechen' name='btnBreak'>";
                 myFrontendData += "</form>";
@@ -224,6 +226,124 @@ export async function generateEditByID(params, database) {
             })
     })
 }
+
+/**
+ * Erstellt ein Freontend Layout (Table) anhand eines Arrayobjektes
+ * @param params
+ * @returns {Promise<void>}
+ */
+export async function generateByObject(params = new app.frontend.parameters()) {
+    return new Promise(async (resolve, reject) => {
+        //#region Header
+        let header = [];
+
+        if ( params.header && params.header.length > 0 ) {
+            params.header.forEach(item => {
+                header.push({value: item});
+            })
+        } else {
+            params.columns.forEach(item => {
+                header.push({ value: item.name});
+            })
+        }
+        //#endregion Header
+
+        //#region Content
+        let content = [];
+        if ( !params.columns || params.columns.length === 0 ) {
+            // ToDo - Fülle anhand params.orgObject
+        }
+
+        if ( params.orgObject && params.orgObject.length > 0 ) {
+            await app.helper.lists.asyncForEach(params.orgObject, async (obj) => {
+            //params.orgObject.forEach(async obj => {
+                let column = [];
+                let counter = 0;
+                await app.helper.lists.asyncForEach(params.columns, async(item) => {
+                //await params.columns.forEach( async item => {
+                    let key = item.key;
+                    let value = "";
+
+                    if ( item.value && typeof(item.value) === "function" ) {
+
+                        let param1 = item.valueParam1 ? item.valueParam1 : null;
+                        let param2 = item.valueParam2 ? item.valueParam2 : null;
+                        let param3 = item.valueParam3 ? item.valueParam3 : null;
+
+                        if ( param1 && typeof(param1) === "string") { param1 = generateStringByColumn(obj, param1); }
+                        if ( param2 && typeof(param2) === "string") { param1 = generateStringByColumn(obj, param2); }
+                        if ( param3 && typeof(param3) === "string") { param1 = generateStringByColumn(obj, param3); }
+
+                        switch ( item.valueParamCount ) {
+                            case 0: value = item.value; break;
+                            case 1: value = await item.value(param1); break;
+                            case 2: value = await item.value(param1, param2);break;
+                            case 3: value = await item.value(param1, param2, param3);break;
+                        }
+                    } else {
+                        value = item.value ? item.value : obj[key];
+                    }
+                    let ident = item.ident;
+
+
+
+                    //#region Format - CheckBox
+                    let isCheckBox = false;
+                    if ( params.colCheckbox && params.colCheckbox.includes(counter)) { isCheckBox = true; }
+
+                    if ( isCheckBox ) {
+                        let checked = '';
+                        if ( value === 1 || value === '1') { checked = 'checked'; }
+                        //col[item] = `<input type='checkbox' ${checked} disabled="disabled" />`
+                        value = `<input type='checkbox' ${checked} disabled="disabled" />`;
+                    }
+                    //#endregion Format - CheckBox
+
+                    if ( typeof(ident) == 'string' && ident.includes('%')) {
+                        ident = generateStringByColumn(obj, ident);
+                    }
+
+                    if ( item.editAble === true ) {
+                        let tmpItem = {};
+                        tmpItem.value = value;
+                        tmpItem.key = ident && ident !== null ? ident : key;
+                        tmpItem.class = "";
+                        tmpItem.ident = ident && ident !== null ? ident : key;
+                        switch ( item.type ) {
+                            case "text": value = `${app.frontend.HtmlElement.text(tmpItem)}`; break;
+                            case "select": value = `${app.frontend.HtmlElement.select(tmpItem)}`; break;
+                            case "checkbox": value = `${app.frontend.HtmlElement.checkBox(tmpItem)}`; break;
+                        }
+                    }
+
+                    column[counter] = { value: value };
+                    counter++;
+                });
+                content.push(column);
+            })
+        }
+        //#endregion Content
+
+        //#region Footer
+        let footer = [];
+        //#endregion Footer
+
+        let response = tableGenerate(params.id, header, content, footer);;
+        return resolve(response);
+    })
+}
+
+function generateStringByColumn(column, text) {
+    let response = text;
+
+    if ( column && typeof(column) === "object") {
+        Object.keys(column).forEach(item => {
+            response = app.helper.converter.replaceAll(response, '%' + item + '%', column[item]);
+        })
+    }
+    return response;
+}
+
 
 /**
  * Speichert das Frontend Layout in die Datenbank

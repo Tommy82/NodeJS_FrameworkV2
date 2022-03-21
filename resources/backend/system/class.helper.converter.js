@@ -3,6 +3,7 @@
 //#region Converter
 export class Converter {
     male_female = male_female;
+    replaceAll = replaceAll;
 }
 
 /** Calculate the "Male" or "Female" from the FirstName
@@ -68,3 +69,8 @@ function male_female(firstName) {
     }
     return response;
 }//#endregion Converter
+
+function replaceAll(str, find, replace) {
+    let escapedFind=find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+    return str.replace(new RegExp(escapedFind, 'g'), replace);
+}

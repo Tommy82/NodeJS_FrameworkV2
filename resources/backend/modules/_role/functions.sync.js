@@ -6,8 +6,6 @@ export async function syncAll() {
     if ( app.roles ) {
         for ( let i = 0; i < app.roles.length; i++ ) {
             app.roles[i].rights = await Role.database.rightsGetAll(app.roles[i].id);
-
-            //console.log(app.roles[i]);
         }
     }
 }
