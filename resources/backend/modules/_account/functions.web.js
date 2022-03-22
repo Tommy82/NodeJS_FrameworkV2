@@ -8,8 +8,13 @@ import { default as Role } from '../_role/class.role.js';
  * @param {*} res Webserver - Response
  */
 export function webToLogin(req, res) {
-    // Ausgabe des Login - Templates
-    app.web.toOutput(req, res, ["modules", "_account"], "login", {}, true);
+    try {
+        // Ausgabe des Login - Templates
+        app.web.toOutput(req, res, ["modules", "_account"], "login", {}, true);
+    } catch ( err ) {
+        app.logError(err, Account.moduleName + ":web:webToLogin");
+        app.web.toErrorPage(req, res, err, true, true, false);
+    }
 }
 
 /**
@@ -18,40 +23,46 @@ export function webToLogin(req, res) {
  * @param {*} res Webserver - Response
  */
 export async function checkLogin(req, res) {
-    let username = req.body.username;
-    let password = req.body.password;
+    try {
+        let username = req.body.username;
+        let password = req.body.password;
 
-    if ( username && password ) {
-        let loggedIn = false;
+        if ( username && password ) {
+            let loggedIn = false;
 
-        let currData = await Account.database.getByName(username).catch(err => { throw err; });
-        if ( currData && currData.length > 0 ) {
-            if (await app.helper.security.comparePassword(password, currData[0].password).catch(err => { app.logError(err); })) {
-                loggedIn = true;
+            let currData = await Account.database.getByName(username).catch(err => { throw err; });
+            if ( currData && currData.length > 0 ) {
+                if (await app.helper.security.comparePassword(password, currData[0].password).catch(err => { app.logError(err); })) {
+                    loggedIn = true;
+                }
             }
-        }
-        if ( loggedIn ) {
-            req.session.loggedIn_Backend = true;
-            req.session.user = {
-                id: currData[0].id,
-                username: username,
-                role: currData[0].roles,
-            }
+            if ( loggedIn ) {
+                req.session.loggedIn_Backend = true;
+                req.session.user = {
+                    id: currData[0].id,
+                    username: username,
+                    role: currData[0].roles,
+                }
 
-            let redirect = req.query.redirect;
-            if ( redirect && redirect.trim() !== '') {
-                res.redirect(redirect);
+                let redirect = req.query.redirect;
+                if ( redirect && redirect.trim() !== '') {
+                    res.redirect(redirect);
+                } else {
+                    res.redirect("/backend");
+                }
             } else {
-                res.redirect("/backend");
+                res.send("Falsche Zugangsdaten");
             }
+            res.end();
         } else {
-            res.send("Falsche Zugangsdaten");
+            res.send("Fehlende Benutzerdaten");
+            res.end();
         }
-        res.end();
-    } else {
-        res.send("Fehlende Benutzerdaten");
-        res.end();
+    } catch ( err ) {
+        app.logError(err, Account.moduleName + ":web:checkLogin");
+        app.web.toErrorPage(req, res, err, true, true, false);
     }
+
 }
 
 /**
@@ -60,9 +71,14 @@ export async function checkLogin(req, res) {
  * @param {*} res Webserver - Response
  */
 export function toLogout(req, res) {
-    req.session.loggedIn_Frontend = null;
-    req.session.loggedIn_Backend = null;
-    res.redirect("/backend/login");
+    try {
+        req.session.loggedIn_Frontend = null;
+        req.session.loggedIn_Backend = null;
+        res.redirect("/backend/login");
+    } catch ( err ) {
+        app.logError(err, Account.moduleName + ":web:toLogout");
+        app.web.toErrorPage(req, res, err, true, true, false);
+    }
 }
 
 /**
@@ -99,7 +115,7 @@ export function toAccountList(req, res) {
             .catch(err => { console.error(err); });
     } catch ( err ) {
         app.logError(err, Account.moduleName + ":web:toAccountList");
-        app.web.toErrorPage(req, res, err, true, true);
+        app.web.toErrorPage(req, res, err, true, true, false);
     }
 }
 
@@ -109,13 +125,17 @@ export function toAccountList(req, res) {
  * @param {*} res Webserver - Response
  */
 export function toAccountSingle(req, res, params = [], canClose = false) {
+    try {
+        params = setEditableData(req.params.id, params);
+        let autoComplete = [ { fieldID: 'roles', filter: 'role'} ];
 
-    params = setEditableData(req.params.id, params);
-    let autoComplete = [ { fieldID: 'roles', filter: 'role'} ];
-
-    app.frontend.table.generateEditByID(params, null)
-        .then(data => { app.web.toOutput(req, res, ["base"], "backend_tableEditDefault", { TAB_EDIT: data, AUTOCOMPLETE: autoComplete }, true); })
-        .catch(err => { console.error(err); })
+        app.frontend.table.generateEditByID(params, null)
+            .then(data => { app.web.toOutput(req, res, ["base"], "backend_tableEditDefault", { TAB_EDIT: data, AUTOCOMPLETE: autoComplete }, true); })
+            .catch(err => { console.error(err); })
+    } catch ( err ) {
+        app.logError(err, Account.moduleName + ":web:toAccountSingle");
+        app.web.toErrorPage(req, res, err, true, true, false);
+    }
 }
 
 /**
@@ -124,22 +144,28 @@ export function toAccountSingle(req, res, params = [], canClose = false) {
  * @param {*} res Webserver - Response
  */
 export async function saveAccountSingle(req, res) {
-    let params = setEditableData(req.params.id);
+    try {
+        let params = setEditableData(req.params.id);
 
-    params.body = req.body;
+        params.body = req.body;
 
-    params = await checkSaveData(params);
-    if ( !params || params.errors.length > 0 ) {
-        res.send({success: "error", data: params.errors})
-    } else {
-        app.frontend.table.saveEditByID(params, null)
-            .then(data => {
-                params.savedData = data;
-                //toAccountSingle(req, res, params, true);
-                res.send({ success: "success", data: [] });
-            })
-            .catch(err => { console.error(err); })
+        params = await checkSaveData(params);
+        if ( !params || params.errors.length > 0 ) {
+            res.send({success: "error", data: params.errors})
+        } else {
+            app.frontend.table.saveEditByID(params, null)
+                .then(data => {
+                    params.savedData = data;
+                    //toAccountSingle(req, res, params, true);
+                    res.send({ success: "success", data: [] });
+                })
+                .catch(err => { console.error(err); })
+        }
+    } catch ( err ) {
+        app.logError(err, Account.moduleName + ":web:saveAccountSingle");
+        app.web.toErrorPage(req, res, err, true, true, false);
     }
+
 }
 
 /**
