@@ -22,17 +22,36 @@ function overlayClose() {
     return false;
 }
 
-function setDataTable(id) {
+function setDataTable(id, params) {
+    if ( !params ) {
+        params = {
+            searching: true,
+            paging: true,
+            filter: true,
+            info: true,
+        }
+    } else {
+        if ( params.filter === undefined ) { params.filter = true; }
+        if ( params.searching === undefined ) { params.searching = true; }
+        if ( params.info === undefined) { params.info = true; }
+        if ( params.paging === undefined ) { params.paging = true; }
+    }
+
     // Setup - add a text input to each footer cell
-    $('#' + id + ' thead tr')
-        .clone(true)
-        .addClass('filters')
-        .appendTo('#' + id + ' thead');
+    if ( params.filter ) {
+        $('#' + id + ' thead tr')
+            .clone(true)
+            .addClass('filters')
+            .appendTo('#' + id + ' thead');
+    };
 
     let table = $('#' + id).DataTable({
-        orderCellsTop: true,
-        fixedHeader: true,
-        responsive: true,
+        orderCellsTop: false,
+        fixedHeader: false,
+        responsive: false,
+        searching: params.searching,
+        paging: params.paging,
+        info: params.info,
         initComplete: function () {
             let api = this.api();
 
