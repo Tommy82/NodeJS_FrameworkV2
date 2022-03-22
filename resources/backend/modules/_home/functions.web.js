@@ -6,7 +6,7 @@ import {app} from "../../system/class.app.js";
  * @param {*} res Webserver - Response
  */
 export function toHome_backend(req, res) {
-    app.web.toTwigOutput(req, res, ["modules", "_home"], "backend", [], true);
+    app.web.toOutput(req, res, ["modules", "_home"], "backend", [], true);
 }
 
 /**
@@ -15,5 +15,5 @@ export function toHome_backend(req, res) {
  * @param {*} res Webserver - Response
  */
 export function toHome_frontend(req, res) {
-    app.web.toTwigOutput(req, res, ["modules", "_home"], "frontend", [], false);
+    app.web.toOutput(req, res, ["modules", "_home"], "frontend", [], false);
 }

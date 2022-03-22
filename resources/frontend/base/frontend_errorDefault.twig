@@ -1,0 +1,18 @@
+{% extends basicSite %}
+
+{% block content %}
+<h3>Leider ist ein Fehler auf der Seite aufgetreten!</h3>
+<br>
+<a href="/">Zurück zur Startseite</a>    <br>
+
+{% if ERRORMESSAGE is not empty %}
+<br>
+Message:<br>
+{{ ERRORMESSAGE }}
+{% endif %}
+{% if ERRORDETAILS is not empty %}
+<br><br>
+Details:<br>
+{{ ERRORDETAILS }}
+{% endif %}
+{% endblock %}

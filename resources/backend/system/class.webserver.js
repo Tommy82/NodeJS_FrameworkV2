@@ -187,4 +187,43 @@ export default class ClassWebserver {
         if ( fs.existsSync(_altFileName)) { res.render(_altFileName, !params ? {} : params); }
         else { res.render(_fileName, !params ? {} : params); }
     }
+
+    /**
+     * Send Data to Template
+     * @param {object} req  Website-Request
+     * @param {object} res  Website-Response
+     * @param {Array} filePath Path to File ( without Filename! )
+     * @param {string} fileName Filename (without Path)
+     * @param {object} params Params for Twig Template
+     * @param {boolean} isBackend ist die Seite eine "Backend" Seite ? (Wichtig für BasicSite)
+     */
+    toOutput(req, res, filePath, fileName, params, isBackend) {
+        // TemplateSystem = Twig
+        this.toTwigOutput(req, res, filePath, fileName, params, isBackend);
+    }
+
+    /**
+     * Send Data to Error Template
+     * @param {object} req  Website-Request
+     * @param {object} res  Website-Response
+     * @param {*} error Fehlermeldungen
+     * @param {boolean} isBackend ist die Seite eine "Backend" Seite ? (Wichtig für BasicSite)
+     */
+    toErrorPage(req, res, error, isBackend, showError = true, showErrorDetails = false) {
+        let fileName = "frontend_errorDefault";
+        if ( isBackend ) {
+            fileName = "backend_errorDefault";
+        }
+
+        let params = {
+            ERRORMESSAGE: '',
+            ERRORDETAILS: ''
+        };
+
+        if ( showError ) { params.ERRORMESSAGE = error.message; }
+        if ( showErrorDetails ) { params.ERRORDETAILS = error.stack; }
+
+
+        this.toOutput(req, res, ["base"], fileName, params, isBackend);
+    }
 }

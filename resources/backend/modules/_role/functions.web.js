@@ -18,7 +18,7 @@ export async function getList(req, res) {
     app.frontend.table.generateByDB('tblRoles', params, null)
         .then(table => {
             let js = "setDataTable('tblRoles');";
-            app.web.toTwigOutput(req, res, ["base"], "backend_tableDefault", { TAB1: table, JS: js, AUTOCOMPLETE: autocomplete }, true);
+            app.web.toOutput(req, res, ["base"], "backend_tableDefault", { TAB1: table, JS: js, AUTOCOMPLETE: autocomplete }, true);
         })
         .catch(err => { console.error(err); });
 }
@@ -37,7 +37,7 @@ export async function getDetails(req, res) {
                     params.appendBeforeSaveButtons = tabRights
                     app.frontend.table.generateEditByID(params, null)
                         .then(data => {
-                            app.web.toTwigOutput(req, res, ["base"], "backend_tableEditDefault", { TAB_EDIT: data, TAB_RIGHTS: tabRights, AUTOCOMPLETE: [] }, true);
+                            app.web.toOutput(req, res, ["base"], "backend_tableEditDefault", { TAB_EDIT: data, TAB_RIGHTS: tabRights, AUTOCOMPLETE: [] }, true);
                         })
                         .catch(err => { console.error(err); })
                 })

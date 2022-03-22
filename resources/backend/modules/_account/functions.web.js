@@ -9,7 +9,7 @@ import { default as Role } from '../_role/class.role.js';
  */
 export function webToLogin(req, res) {
     // Ausgabe des Login - Templates
-    app.web.toTwigOutput(req, res, ["modules", "_account"], "login", {}, true);
+    app.web.toOutput(req, res, ["modules", "_account"], "login", {}, true);
 }
 
 /**
@@ -71,32 +71,36 @@ export function toLogout(req, res) {
  * @param {*} res Webserver - Response
  */
 export function toAccountList(req, res) {
+    try {
+        //#region Set Parameters
+        let params = new app.frontend.parameters();
+        params.header = ["ID", "Name", "Aktiv", "Backend", "Frontend", "Rollen", "Menü"];
+        params.sql = "SELECT `id`, `name`, `active`, `isBackend`, `isFrontend`, `roles` FROM `account` ";
+        params.where = "id > 0";
+        params.menu = "";
 
-    //#region Set Parameters
-    let params = new app.frontend.parameters();
-    params.header = ["ID", "Name", "Aktiv", "Backend", "Frontend", "Rollen", "Menü"];
-    params.sql = "SELECT `id`, `name`, `active`, `isBackend`, `isFrontend`, `roles` FROM `account` ";
-    params.where = "id > 0";
-    params.menu = "";
+        if ( app.helper.check.rights.bySession(req, Account.moduleName, "change")) {
+            params.menu += `<a class="toOverlay" href='/backend/account/%id%'><img src="/base/images/icons/edit.png" alt="" class="icon" href='/backend/account/%id%'></a>`;
+        }
+        params.colCheckbox = [2,3,4];
+        params.addAdd = true;
+        params.url_save = "/backend/account/0";
+        //#endregion Set Parameters
 
-    if ( app.helper.check.rights.bySession(req, Account.moduleName, "change")) {
-        params.menu += `<a class="toOverlay" href='/backend/account/%id%'><img src="/base/images/icons/edit.png" alt="" class="icon" href='/backend/account/%id%'></a>`;
+        // Frontend Javascript
+        let tableID = 'tblRoles';
+        let js = `setDataTable('${tableID}');`;
+        let title = "Benutzerverwaltung";
+
+        app.frontend.table.generateByDB(tableID, params, null)
+            .then(table => {
+                app.web.toOutput(req, res, ["base"], "backend_tableDefault", { TAB1: table, JS: js, title: title}, true);
+            })
+            .catch(err => { console.error(err); });
+    } catch ( err ) {
+        app.logError(err, Account.moduleName + ":web:toAccountList");
+        app.web.toErrorPage(req, res, err, true, true);
     }
-    params.colCheckbox = [2,3,4];
-    params.addAdd = true;
-    params.url_save = "/backend/account/0";
-    //#endregion Set Parameters
-
-    // Frontend Javascript
-    let tableID = 'tblRoles';
-    let js = `setDataTable('${tableID}');`;
-    let title = "Benutzerverwaltung";
-
-    app.frontend.table.generateByDB(tableID, params, null)
-        .then(table => {
-            app.web.toTwigOutput(req, res, ["base"], "backend_tableDefault", { TAB1: table, JS: js, title: title}, true);
-        })
-        .catch(err => { console.error(err); });
 }
 
 /**
@@ -110,7 +114,7 @@ export function toAccountSingle(req, res, params = [], canClose = false) {
     let autoComplete = [ { fieldID: 'roles', filter: 'role'} ];
 
     app.frontend.table.generateEditByID(params, null)
-        .then(data => { app.web.toTwigOutput(req, res, ["base"], "backend_tableEditDefault", { TAB_EDIT: data, AUTOCOMPLETE: autoComplete }, true); })
+        .then(data => { app.web.toOutput(req, res, ["base"], "backend_tableEditDefault", { TAB_EDIT: data, AUTOCOMPLETE: autoComplete }, true); })
         .catch(err => { console.error(err); })
 }
 
