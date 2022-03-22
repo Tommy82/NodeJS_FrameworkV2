@@ -366,7 +366,7 @@ function sendForm(form, e) {
                                     $('#' + error.field).addClass('error');
                                 };
                                 if ( error && error.text && error.text !== '' ) {
-                                    errorMessage += "- " + error.text;
+                                    errorMessage += "- " + error.text + "\r\n";
                                 }
                             });
                             window.alert(errorMessage);

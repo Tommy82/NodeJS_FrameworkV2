@@ -218,7 +218,7 @@ export async function generateEditByID(params, database) {
                     });
                 }
                 myFrontendData += "</table>";
-                if ( params.appendBeforeSaveButtons !== '') {
+                if (params.appendBeforeSaveButtons && params.appendBeforeSaveButtons !== '') {
                     myFrontendData += params.appendBeforeSaveButtons;
                 }
                 myFrontendData += "<input type='submit' value='Speichern' name='btnSave'>";

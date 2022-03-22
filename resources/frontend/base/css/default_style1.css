@@ -19,6 +19,10 @@ input[type=search] {
     cursor: pointer;
 }
 
+.error {
+    border: 0.1em solid red;
+}
+
 input[type=checkbox] {
     width: 1em;
 }
@@ -54,4 +58,3 @@ button:hover {
     margin-right: 1em;
     margin-bottom: 1em
 }
-

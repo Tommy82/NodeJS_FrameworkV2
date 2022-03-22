@@ -158,13 +158,18 @@ function setEditableData(id, params = new app.frontend.parameters()) {
     return params;
 }
 
+/**
+ * Prüfung der Daten vor dem Speichern
+ * @param params
+ * @returns {Promise<unknown>}
+ */
 async function checkSaveData(params) {
     return new Promise(async (resolve, reject) => {
         //#region Check Account Name
         if ( params && params.body && params.body["name"] && params.body["name"] !== '') {
             await Account.database.getByName(params.body["name"])
                 .then(data => {
-                    if ( data && data[0].id !== params.id) {
+                    if ( data && parseInt(data[0].id) !== parseInt(params.id) ) {
                         params.errors.push({field: "name", text: "Name bereits vorhanden"});
                     }
                 })
@@ -178,22 +183,21 @@ async function checkSaveData(params) {
         //#endregion Check Account Name
 
         //#region Check Rolle
-        if ( params && params.body && params.body["role"] && params.body["role"] != '') {
-            await Role.database.getByKey(params.body["role"])
+        if ( params && params.body && params.body["roles"] && params.body["roles"] != '') {
+            await Role.database.getByKey(params.body["roles"])
                 .then(data => {
                     if ( !data || data.length === 0 ) {
-                        params.errors.push({ field: "role", text: "Rolle nicht gefunden!"});
+                        params.errors.push({ field: "roles", text: "Rolle nicht gefunden!"});
                     }
                 })
                 .catch(err => {
                     app.logError(err, Account.moduleName + ":web.checkSaveData");
-                    params.errors.push({ field: "role", text: "Interner Fehler bei der Abfrage!"});
+                    params.errors.push({ field: "roles", text: "Interner Fehler bei der Abfrage!"});
                 });
         } else {
-            params.errors.push({field: "role", text: "Rolle darf nicht leer sein!"});
+            params.errors.push({field: "roles", text: "Rolle darf nicht leer sein!"});
         }
         //#endregion Check Rolle
-
         return resolve(params);
     })
 }
