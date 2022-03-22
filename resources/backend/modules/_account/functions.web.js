@@ -1,5 +1,6 @@
 import {app} from "../../system/class.app.js";
 import { default as Account } from './class.account.js';
+import { default as Role } from '../_role/class.role.js';
 
 /**
  * Starte Ausgabe - Login vom Backend
@@ -118,18 +119,23 @@ export function toAccountSingle(req, res, params = [], canClose = false) {
  * @param {*} req Webserver - Request
  * @param {*} res Webserver - Response
  */
-export function saveAccountSingle(req, res) {
+export async function saveAccountSingle(req, res) {
     let params = setEditableData(req.params.id);
 
     params.body = req.body;
 
-    app.frontend.table.saveEditByID(params, null)
-        .then(data => {
-            params.savedData = data;
-            //toAccountSingle(req, res, params, true);
-            res.send({ success: "success", data: [] });
-        })
-        .catch(err => { console.error(err); })
+    params = await checkSaveData(params);
+    if ( !params || params.errors.length > 0 ) {
+        res.send({success: "error", data: params.errors})
+    } else {
+        app.frontend.table.saveEditByID(params, null)
+            .then(data => {
+                params.savedData = data;
+                //toAccountSingle(req, res, params, true);
+                res.send({ success: "success", data: [] });
+            })
+            .catch(err => { console.error(err); })
+    }
 }
 
 /**
@@ -150,4 +156,44 @@ function setEditableData(id, params = new app.frontend.parameters()) {
     params.table = "account";
     params.id = id;
     return params;
+}
+
+async function checkSaveData(params) {
+    return new Promise(async (resolve, reject) => {
+        //#region Check Account Name
+        if ( params && params.body && params.body["name"] && params.body["name"] !== '') {
+            await Account.database.getByName(params.body["name"])
+                .then(data => {
+                    if ( data && data[0].id !== params.id) {
+                        params.errors.push({field: "name", text: "Name bereits vorhanden"});
+                    }
+                })
+                .catch(err => {
+                    app.logError(err, Account.moduleName + ":web.checkSaveData");
+                    params.errors.push({ field: "name", text: "Interner Fehler bei der Abfrage!"});
+                })
+        } else {
+            params.errors.push({field: "name", text: "Name darf nicht leer sein!"});
+        }
+        //#endregion Check Account Name
+
+        //#region Check Rolle
+        if ( params && params.body && params.body["role"] && params.body["role"] != '') {
+            await Role.database.getByKey(params.body["role"])
+                .then(data => {
+                    if ( !data || data.length === 0 ) {
+                        params.errors.push({ field: "role", text: "Rolle nicht gefunden!"});
+                    }
+                })
+                .catch(err => {
+                    app.logError(err, Account.moduleName + ":web.checkSaveData");
+                    params.errors.push({ field: "role", text: "Interner Fehler bei der Abfrage!"});
+                });
+        } else {
+            params.errors.push({field: "role", text: "Rolle darf nicht leer sein!"});
+        }
+        //#endregion Check Rolle
+
+        return resolve(params);
+    })
 }

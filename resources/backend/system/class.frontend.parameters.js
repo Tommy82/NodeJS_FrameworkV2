@@ -26,4 +26,9 @@ export default class Parameters {
     orgObject = [];
     /** keine Menüspalte vorhanden? **/
     noMenu = false;
+    /**
+     * Fehlermeldungen für das Frontend
+     * @example [{field: "role", text: "Rolle darf nicht leer sein!"}]
+    **/
+    errors = [];
 }

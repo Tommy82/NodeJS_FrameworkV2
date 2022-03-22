@@ -358,8 +358,26 @@ function sendForm(form, e) {
                     //parent.$("#overlayIFrame").hide(); // Schließen des Fensters
                     parent.location.href = parent.location; // Reload Parent Page
                 } else {
-                    console.log(res);
-                    window.alert("Fehler beim verarbeiten der Rückmeldedaten. Bitte prüfen Sie das Log!");
+                    if ( res && res.success && res.success === "error" ) {
+                        if ( res.data && res.data.length > 0 ) {
+                            let errorMessage = "Folgende Fehler sind aufgetreten:\r\n\r\n";
+                            res.data.forEach(error => {
+                                if ( error && error.field && error.field !== '') {
+                                    $('#' + error.field).addClass('error');
+                                };
+                                if ( error && error.text && error.text !== '' ) {
+                                    errorMessage += "- " + error.text;
+                                }
+                            });
+                            window.alert(errorMessage);
+                        } else {
+                            console.log(res);
+                            window.alert("Fehler beim verarbeiten der Rückmeldedaten. Bitte prüfen Sie das Log!");
+                        }
+                    } else {
+                        console.log(res);
+                        window.alert("Fehler beim verarbeiten der Rückmeldedaten. Bitte prüfen Sie das Log!");
+                    }
                 }
             },
             error: function(err) {
