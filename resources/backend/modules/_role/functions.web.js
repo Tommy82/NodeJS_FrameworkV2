@@ -3,64 +3,94 @@ import {app} from "../../system/class.app.js";
 import { default as Role } from './class.role.js';
 import { default as Rights } from '../_rights/class.rights.js';
 
-
 export async function getList(req, res) {
-    let params = [];
-    params["header"] = ["ID", "Key", "Name", "Beschreibung", "Menü"];
-    params["sql"] = "SELECT `id`, `key`, `name`, `desc` FROM `roles` ";
-    params["where"] = "id > 0";
-    if ( app.helper.check.rights.bySession(req, Role.moduleName, "change")) {
-        params["menu"] = `<a class="toOverlay" href='/backend/role/%id%'><img src="/base/images/icons/edit.png" alt="" class="icon" href='/backend/role/%id%'></a>`;
+    try {
+        let params = [];
+        params["header"] = ["ID", "Key", "Name", "Beschreibung", "Menü"];
+        params["sql"] = "SELECT `id`, `key`, `name`, `desc` FROM `roles` ";
+        params["where"] = "id > 0";
+        if ( app.helper.check.rights.bySession(req, Role.moduleName, "change")) {
+            params["menu"] = `<a class="toOverlay" href='/backend/role/%id%'><img src="/base/images/icons/edit.png" alt="" class="icon" href='/backend/role/%id%'></a>`;
+        }
+
+        let autocomplete = [{fieldID: "role", filter: "role"}];
+
+        app.frontend.table.generateByDB('tblRoles', params, null)
+            .then(table => {
+                let js = "setDataTable('tblRoles');";
+                app.web.toOutput(req, res, ["base"], "backend_tableDefault", { TAB1: table, JS: js, AUTOCOMPLETE: autocomplete }, true);
+            })
+            .catch(err => {
+                app.logError(err, Role.moduleName + ":web:getList");
+                app.web.toErrorPage(req, res, err, true, true, false);
+            });
+    } catch ( err ) {
+        app.logError(err, Role.moduleName + ":web:getList");
+        app.web.toErrorPage(req, res, err, true, true, false);
     }
-
-    let autocomplete = [{fieldID: "role", filter: "role"}];
-
-    app.frontend.table.generateByDB('tblRoles', params, null)
-        .then(table => {
-            let js = "setDataTable('tblRoles');";
-            app.web.toOutput(req, res, ["base"], "backend_tableDefault", { TAB1: table, JS: js, AUTOCOMPLETE: autocomplete }, true);
-        })
-        .catch(err => { console.error(err); });
 }
 
-
 export async function getDetails(req, res) {
-    let id = req.params.id;
-    let params = setEditableData(req.params.id);
+    try {
+        let id = req.params.id;
+        let params = setEditableData(req.params.id);
 
-    //Role.database.rightsGetAll(id)
-    Role.rights.getAllFromRole(id)
-        .then(lstRights => {
+        //Role.database.rightsGetAll(id)
+        Role.rights.getAllFromRole(id)
+            .then(lstRights => {
 
-            app.frontend.table.generateByObject(setEditableDataRights(lstRights))
-                .then(tabRights => {
-                    params.appendBeforeSaveButtons = tabRights
-                    app.frontend.table.generateEditByID(params, null)
-                        .then(data => {
-                            app.web.toOutput(req, res, ["base"], "backend_tableEditDefault", { TAB_EDIT: data, TAB_RIGHTS: tabRights, AUTOCOMPLETE: [] }, true);
-                        })
-                        .catch(err => { console.error(err); })
-                })
-                .catch(err => { console.error(err); })
-        })
-        .catch(err => { console.error(err); })
+                app.frontend.table.generateByObject(setEditableDataRights(lstRights))
+                    .then(tabRights => {
+                        params.appendBeforeSaveButtons = tabRights
+                        app.frontend.table.generateEditByID(params, null)
+                            .then(data => {
+                                app.web.toOutput(req, res, ["base"], "backend_tableEditDefault", { TAB_EDIT: data, TAB_RIGHTS: tabRights, AUTOCOMPLETE: [] }, true);
+                            })
+                            .catch(err => {
+                                app.logError(err, Role.moduleName + ":web:getList");
+                                app.web.toErrorPage(req, res, err, true, true, false);
+                            })
+                    })
+                    .catch(err => {
+                        app.logError(err, Role.moduleName + ":web:getList");
+                        app.web.toErrorPage(req, res, err, true, true, false);
+                    })
+            })
+            .catch(err => {
+                app.logError(err, Role.moduleName + ":web:getList");
+                app.web.toErrorPage(req, res, err, true, true, false);
+            })
+    } catch ( err ) {
+        app.logError(err, Role.moduleName + ":web:getDetails");
+        app.web.toErrorPage(req, res, err, true, true, false);
+    }
+
 }
 
 export async function setDetails(req, res) {
-    let params = setEditableData(req.params.id);
+    try {
+        let params = setEditableData(req.params.id);
 
-    params.body = req.body;
+        params.body = req.body;
 
-    app.frontend.table.saveEditByID(params, null)
-        .then(async data => {
-            params.savedData = data;
-            if ( params.id === 0 && data.insertId > 0 ) { params.id = data.insertId; }
+        app.frontend.table.saveEditByID(params, null)
+            .then(async data => {
+                params.savedData = data;
+                if ( params.id === 0 && data.insertId > 0 ) { params.id = data.insertId; }
 
-            await saveRights(params);
-            //toAccountSingle(req, res, params, true);
-            res.send({ success: "success", data: [] });
-        })
-        .catch(err => { console.error(err); })
+                await saveRights(params);
+                //toAccountSingle(req, res, params, true);
+                res.send({ success: "success", data: [] });
+            })
+            .catch(err => {
+                app.logError(err, Role.moduleName + ":web:getList");
+                app.web.toErrorPage(req, res, err, true, true, false);
+            })
+    } catch ( err ) {
+        app.logError(err, Role.moduleName + ":web:setDetails");
+        app.web.toErrorPage(req, res, err, true, true, false);
+    }
+
 }
 
 async function saveRights(params) {
