@@ -35,6 +35,7 @@ class AccountInstall {
 
     /** Was soll vor der Installation ausgeführt werden? */
     async init() {
+        app.modules.account = Account;
     }
 
     /** Was soll während der Installation ausgeführt werden? */
@@ -44,7 +45,6 @@ class AccountInstall {
     /** Was soll bei jedem Serverstart ausgeführt werden? */
     async start() {
         this.installAdminAccount();
-        app.modules.account = Account;
     }
 
     /**
