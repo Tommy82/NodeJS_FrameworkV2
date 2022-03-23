@@ -60,7 +60,7 @@ class RoleInstall {
     }
 }
 
-app.addModule(new RoleInstall());
+app.addInstallModule(new RoleInstall());
 
 function checkRightBySession(req, moduleName, key) {
     let response = false;

@@ -26,7 +26,7 @@ class RightsInstall {
     }
 }
 
-app.addModule(new RightsInstall());
+app.addInstallModule(new RightsInstall());
 
 async function install_rights() {
     return new Promise(async (resolve, reject) => {
