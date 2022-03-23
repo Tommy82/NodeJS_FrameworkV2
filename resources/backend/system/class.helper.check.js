@@ -1,12 +1,23 @@
-import { app } from "./class.app.js";
+/**
+ * Hilfsfunktionen zum Prüfen
+ *
+ * @module:     System
+ * @version:    1.0
+ * @revision:   1
+ * @author:     Thomas Göttsching
+ * @company:    Thomas Göttsching
+ *
+ * Wichtiger Hinweis: Änderungen an dieser Datei können die Updatefähigkeit beeinträchtigen.
+ * Daher wird dringend davon abgeraten!
+ */
 
-export class Check {
-    isNumeric = isNumeric;
-};
+export class Functions {
+    static isNumeric = isNumeric;
+}
 
 /**
- * Prüft ob ein String eine Zahl ist (Float)
- * @param str
+ * Prüft, ob ein String eine Zahl ist (Float)
+ * @param {string} str zu prüfender Text
  * @returns {boolean}
  */
 function isNumeric(str) {

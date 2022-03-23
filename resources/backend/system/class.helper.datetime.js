@@ -1,16 +1,25 @@
+/**
+ * Hilfsfunktionen für Datum und Uhrzeit
+ *
+ * @module:     System
+ * @version:    1.0
+ * @revision:   1
+ * @author:     Thomas Göttsching
+ * @company:    Thomas Göttsching
+ *
+ * Wichtiger Hinweis: Änderungen an dieser Datei können die Updatefähigkeit beeinträchtigen.
+ * Daher wird dringend davon abgeraten!
+ */
 
-
-//#region DateTime
-
-/** Class fpr DateTime Functions */
-export class DateTime {
-    getCurrentDateTime = getCurrentDateTime;
-    toRealString = toRealString;
-    toRealUTCString = toRealUTCString;
+export class Functions {
+    static getCurrentDateTime = getCurrentDateTime;
+    static toRealString = toRealString;
+    static toRealUTCString = toRealUTCString;
 }
 
-/** get the current DateTime and UTC-DateTime
- * @return {{utcMonth: number, utcMinutes: number, year: number, minutes: number, utcYear: number, utcDay: number, seconds: number, month: number, hour: number, utcSeconds: number, utcMilliSeconds: number, day: number, utcHours: number, milliSeconds: number}}
+/**
+ * Laden des aktuellen Datums inkl. Uhrzeit in verschiedenen Formaten
+ * @returns {{utcMonth: number, utcMinutes: number, year: number, toLocaleDateString: {(): string, (locales?: (string | string[]), options?: Intl.DateTimeFormatOptions): string}, minutes: number, utcYear: number, toDateString: () => string, toUTCString: () => string, realString: string, utcDay: number, toLocaleTimeString: {(): string, (locales?: (string | string[]), options?: Intl.DateTimeFormatOptions): string}, seconds: number, month: number, hour: number, utcSeconds: number, toString: () => string, toTimeString: () => string, utcMilliSeconds: number, day: number, utcHours: number, milliSeconds: number, realUTCString: string, toISOString: () => string, toLocaleString: {(): string, (locales?: (string | string[]), options?: Intl.DateTimeFormatOptions): string}}}
  */
 function getCurrentDateTime() {
     let date_ob = new Date();
@@ -46,7 +55,8 @@ function getCurrentDateTime() {
     }
 }
 
-/** Convert the Timestamp to a real DateTime String with Format "yyyy-MM-dd hh:mm:ss"
+/**
+ * Konvertiert einen Timestamp in ein DateTime String mit dem Format "yyyy-MM-dd hh:mm:ss"
  * @param {object} date_ob Timestamp
  * @return {string} Real Timestamp - DateString
  */
@@ -65,7 +75,8 @@ function toRealString(date_ob) {
     return year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds;
 }
 
-/** Convert the Timestamp to a real UTC DateTime String with Format "yyyy-MM-dd hh:mm:ss"
+/**
+ * Konvertiert einen Timestamp in ein DateTime String (UTC Format!) mit dem Format "yyyy-MM-dd hh:mm:ss"
  * @param date_ob
  * @return {string}
  */
@@ -81,4 +92,3 @@ function toRealUTCString(date_ob) {
     let seconds = date_ob.getUTCSeconds();
     return year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds + "Z";
 }
-//#endregion DateTime

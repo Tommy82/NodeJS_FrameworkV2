@@ -1,12 +1,25 @@
-//#region Security
+/**
+ * Hilfsfunktionen für Sicherheitsfeatures
+ *
+ * @module:     System
+ * @version:    1.0
+ * @revision:   1
+ * @author:     Thomas Göttsching
+ * @company:    Thomas Göttsching
+ *
+ * Wichtiger Hinweis: Änderungen an dieser Datei können die Updatefähigkeit beeinträchtigen.
+ * Daher wird dringend davon abgeraten!
+ */
+
 import bcrypt from 'bcryptjs';
 
-export class Security {
-    hashPassword = hashPassword;
-    comparePassword = comparePassword;
+export class Functions {
+    static hashPassword = hashPassword;
+    static comparePassword = comparePassword;
 }
 
-/** Encrypt a Password by bcrypt and returns the Hash
+/**
+ * Codiert ein Password via "bcrypt" und gibt den Hash zurück
  * @param {string} password Normal Password
  * @return {Promise<string>} crypt Password | Hash
  */
@@ -18,7 +31,8 @@ async function hashPassword(password) {
     })
 }
 
-/** Check if Password is correct
+/**
+ * Prüft, ob ein Kennwort korrekt ist
  * @param {string} password Normal Password that User inputs
  * @param {string} hash Crypt Password from Database
  * @return {Promise<boolean>}
@@ -30,4 +44,3 @@ async function comparePassword(password, hash) {
             .then( state => { return resolve(state); })
     })
 }
-//#endregion Security

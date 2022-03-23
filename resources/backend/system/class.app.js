@@ -1,6 +1,6 @@
 import { settings, database } from "../../config/settings.js";
 import { default as WebServer } from "./class.webserver.js";
-import { default as Helper } from './class.helper.js';
+import { Functions as fHelper } from './class.helper.js';
 import { default as DBConnection } from './class.database.js';
 import { EventEmitter } from 'events';
 
@@ -100,7 +100,7 @@ class ClassApp {
         this.settings = settings;
         this.SetDirectories();
         this.events = new EventEmitter();
-        this.helper = new Helper();
+        this.helper = fHelper;
         this.web = new WebServer(this);
         this.frontend = new Frontend();
         this.checkLogFile();

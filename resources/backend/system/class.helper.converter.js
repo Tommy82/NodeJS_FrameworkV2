@@ -1,13 +1,24 @@
+/**
+ * Hilfsfunktionen zum Konvertieren von Daten
+ *
+ * @module:     System
+ * @version:    1.0
+ * @revision:   1
+ * @author:     Thomas Göttsching
+ * @company:    Thomas Göttsching
+ *
+ * Wichtiger Hinweis: Änderungen an dieser Datei können die Updatefähigkeit beeinträchtigen.
+ * Daher wird dringend davon abgeraten!
+ */
 
-
-//#region Converter
-export class Converter {
-    male_female = male_female;
-    replaceAll = replaceAll;
+export class Functions {
+    static male_female = male_female;
+    static replaceAll = replaceAll;
 }
 
-/** Calculate the "Male" or "Female" from the FirstName
- * @param {string} firstName FirstName
+/**
+ * Prüft, ob der Vorname ein "männlicher", "weiblicher" oder "beides" möglich ist
+ * @param {string} firstName Vorname
  */
 function male_female(firstName) {
 
@@ -70,6 +81,13 @@ function male_female(firstName) {
     return response;
 }//#endregion Converter
 
+/**
+ * Ersetzt alle Zeichen eines Abschnitts innerhalb eines Stings
+ * @param {string} str Kompletter Text
+ * @param {string} find Abschnitt, welcher ersetzt werden soll
+ * @param {string} replace Abschnitt, womit ersetzt werden soll
+ * @returns {string}
+ */
 function replaceAll(str, find, replace) {
     let escapedFind=find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
     return str.replace(new RegExp(escapedFind, 'g'), replace);
