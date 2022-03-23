@@ -1,3 +1,16 @@
+/**
+ * Datenbank (Tabellen + Spalten) des Moduls [Account]
+ *
+ * @module:     Account
+ * @version:    1.0
+ * @revision:   1
+ * @author:     Thomas Göttsching
+ * @company:    Thomas Göttsching
+ *
+ * Wichtiger Hinweis: Änderungen an dieser Datei können die Updatefähigkeit beeinträchtigen.
+ * Daher wird dringend davon abgeraten!
+ */
+
 import orm from 'typeorm';
 
 export const DBAccount = new orm.EntitySchema({

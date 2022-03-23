@@ -1,5 +1,19 @@
+/**
+ * Datenbankfunktionen des Moduls [Account]
+ *
+ * @module:     Account
+ * @version:    1.0
+ * @revision:   1
+ * @author:     Thomas Göttsching
+ * @company:    Thomas Göttsching
+ *
+ * Wichtiger Hinweis: Änderungen an dieser Datei können die Updatefähigkeit beeinträchtigen.
+ * Daher wird dringend davon abgeraten!
+ */
+
 import {app} from "../../system/class.app.js";
 
+/** Funktionsklasse zur verwaltung der export Funktionen in dieser Datei **/
 export class Functions {
     static getByID = getById;
     static getByName = getByName;
@@ -11,7 +25,7 @@ export class Functions {
  * @param {int} id interne ID des Accounts (db:account.id)
  * @returns {Promise<unknown>}
  */
-export function getById(id) {
+function getById(id) {
     return new Promise((resolve, reject) => {
         app.DB.findById('account', [id])
             .then(data => { return resolve(data); })
@@ -24,7 +38,7 @@ export function getById(id) {
  * @param {string} name LoginName / Benutzername (db:account.name)
  * @returns {Promise<unknown>}
  */
-export function getByName(name) {
+function getByName(name) {
     return new Promise((resolve, reject) => {
         app.DB.find('account', { name: name })
             .then(data => { return resolve(data); })
@@ -37,7 +51,7 @@ export function getByName(name) {
  * @param {*} document Datensatz (db:account)
  * @returns {Promise<unknown>}
  */
-export function save(document) {
+function save(document) {
     return new Promise((resolve, reject) => {
         app.DB.upsert('account', document)
             .then(data => { return resolve(data); })

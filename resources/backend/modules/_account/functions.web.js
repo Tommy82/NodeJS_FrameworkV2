@@ -1,7 +1,21 @@
+/**
+ * Webfunktionen des Moduls [Account]
+ *
+ * @module:     Account
+ * @version:    1.0
+ * @revision:   1
+ * @author:     Thomas Göttsching
+ * @company:    Thomas Göttsching
+ *
+ * Wichtiger Hinweis: Änderungen an dieser Datei können die Updatefähigkeit beeinträchtigen.
+ * Daher wird dringend davon abgeraten!
+ */
+
 import {app} from "../../system/class.app.js";
 import { default as Account } from './class.account.js';
 import { default as Role } from '../_role/class.role.js';
 
+/** Funktionsklasse zur verwaltung der export Funktionen in dieser Datei **/
 export class Functions {
     static toLogin = toLogin;
     static checkLogin = checkLogin;

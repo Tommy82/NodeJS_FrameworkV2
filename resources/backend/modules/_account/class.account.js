@@ -1,3 +1,16 @@
+/**
+ * Hauptklasse des Moduls [Account]
+ *
+ * @module:     Account
+ * @version:    1.0
+ * @revision:   1
+ * @author:     Thomas Göttsching
+ * @company:    Thomas Göttsching
+ *
+ * Wichtiger Hinweis: Änderungen an dieser Datei können die Updatefähigkeit beeinträchtigen.
+ * Daher wird dringend davon abgeraten!
+ */
+
 import { Functions as fWeb } from './functions.web.js';
 import { Functions as fDatabase } from './functions.database.js';
 
@@ -13,6 +26,7 @@ export default class Account {
 
     /** Datenbank Komponente dieses Moduls */
     static database = fDatabase;
+
 }
 
 
