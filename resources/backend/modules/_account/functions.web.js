@@ -2,12 +2,21 @@ import {app} from "../../system/class.app.js";
 import { default as Account } from './class.account.js';
 import { default as Role } from '../_role/class.role.js';
 
+export class Functions {
+    static toLogin = toLogin;
+    static checkLogin = checkLogin;
+    static toLogout = toLogout;
+    static toAccountList = toAccountList;
+    static toAccountSingle = toAccountSingle;
+    static saveAccountSingle = saveAccountSingle;
+}
+
 /**
  * Starte Ausgabe - Login vom Backend
  * @param {*} req Webserver - Request
  * @param {*} res Webserver - Response
  */
-export function webToLogin(req, res) {
+function toLogin(req, res) {
     try {
         // Ausgabe des Login - Templates
         app.web.toOutput(req, res, ["modules", "_account"], "login", {}, true);
@@ -22,7 +31,7 @@ export function webToLogin(req, res) {
  * @param {*} req Webserver - Request
  * @param {*} res Webserver - Response
  */
-export async function checkLogin(req, res) {
+async function checkLogin(req, res) {
     try {
         let username = req.body.username;
         let password = req.body.password;
@@ -70,7 +79,7 @@ export async function checkLogin(req, res) {
  * @param {*} req Webserver - Request
  * @param {*} res Webserver - Response
  */
-export function toLogout(req, res) {
+function toLogout(req, res) {
     try {
         req.session.loggedIn_Frontend = null;
         req.session.loggedIn_Backend = null;
@@ -86,7 +95,7 @@ export function toLogout(req, res) {
  * @param {*} req Webserver - Request
  * @param {*} res Webserver - Response
  */
-export function toAccountList(req, res) {
+function toAccountList(req, res) {
     try {
         //#region Set Parameters
         let params = new app.frontend.parameters();
@@ -124,7 +133,7 @@ export function toAccountList(req, res) {
  * @param {*} req Webserver - Request
  * @param {*} res Webserver - Response
  */
-export function toAccountSingle(req, res, params = [], canClose = false) {
+function toAccountSingle(req, res, params = [], canClose = false) {
     try {
         params = setEditableData(req.params.id, params);
         let autoComplete = [ { fieldID: 'roles', filter: 'role'} ];
@@ -143,7 +152,7 @@ export function toAccountSingle(req, res, params = [], canClose = false) {
  * @param {*} req Webserver - Request
  * @param {*} res Webserver - Response
  */
-export async function saveAccountSingle(req, res) {
+async function saveAccountSingle(req, res) {
     try {
         let params = setEditableData(req.params.id);
 
