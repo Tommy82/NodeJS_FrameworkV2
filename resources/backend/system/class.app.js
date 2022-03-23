@@ -108,10 +108,15 @@ class ClassApp {
      */
     frontend = undefined;
 
+    server_logfile = 'server.txt'; // Wird nach abschluss überschrieben, Backup falls etwas beim Startvorgang schief geht!
+
     /**
      * Instanziiert die App Klasse
      */
     constructor() {
+        let currTimestamp = fHelper.dateTime.getCurrentDateTime();
+        this.server_logfile = "server_" + currTimestamp.year + "_" + currTimestamp.month + "_" + currTimestamp.day + ".txt";
+
         this.settings = settings;
         this.SetDirectories();
         this.events = new EventEmitter();
@@ -119,6 +124,7 @@ class ClassApp {
         this.web = new WebServer(this);
         this.frontend = new Frontend();
         this.checkLogFile();
+
     }
 
     /**
@@ -241,10 +247,15 @@ class ClassApp {
      * @param moduleName
      */
     logError(error, moduleName) {
+        if ( !moduleName ) { moduleName = '--unknown--'; }
         console.log(">>> --------------------------- >>> ");
         if ( moduleName ) { console.log(`Module: ${moduleName}`)}
         console.error(error);
         console.log("<<< --------------------------- <<< ");
+        let newMessage = "\n" + `Log: ${this.helper.dateTime.getCurrentDateTime().realString} [${moduleName}][Fehler-Simple] ${error.message}`;
+        fs.appendFile(this.directories.logs + '/' + this.server_logfile, newMessage, function (err) { if (err) throw err; });
+        newMessage = "\n" + `Log: ${this.helper.dateTime.getCurrentDateTime().realString} [${moduleName}][Fehler-Full] ${error.stack}`;
+        fs.appendFile(this.directories.logs + '/' + this.server_logfile, newMessage, function (err) { if (err) throw err; });
     }
 
     /**
@@ -276,8 +287,8 @@ class ClassApp {
                     break;
             }
             console.log("<<< --------------------------- <<< ");
-            fs.appendFile(this.directories.logs + '/server.txt', "\n" + this.helper.dateTime.getCurrentDateTime().realString, function (err) { if (err) throw err; });
-            fs.appendFile(this.directories.logs + '/server.txt', "\n" + JSON.stringify(message), function (err) { if (err) throw err; });
+            fs.appendFile(this.directories.logs + '/' + this.server_logfile, "\n" + this.helper.dateTime.getCurrentDateTime().realString, function (err) { if (err) throw err; });
+            fs.appendFile(this.directories.logs + '/' + this.server_logfile, "\n" + JSON.stringify(message), function (err) { if (err) throw err; });
         } else {
             this.logSimple(message, moduleName);
         }
@@ -291,7 +302,7 @@ class ClassApp {
     logSimple(message, moduleName) {
         let newMessage = "\n" + `Log: ${this.helper.dateTime.getCurrentDateTime().realString} [${moduleName}] ${message}`;
         console.log(newMessage);
-        fs.appendFile(this.directories.logs + '/server.txt', newMessage, function (err) { if (err) throw err; });
+        fs.appendFile(this.directories.logs + '/' + this.server_logfile, newMessage, function (err) { if (err) throw err; });
     }
 }
 //#endregion ClassApp
