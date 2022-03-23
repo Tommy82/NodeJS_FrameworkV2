@@ -1,13 +1,26 @@
+/**
+ * Datenbank (Tabellen + Spalten) des Moduls [Role]
+ *
+ * @module:     Account
+ * @version:    1.0
+ * @revision:   1
+ * @author:     Thomas Göttsching
+ * @company:    Thomas Göttsching
+ *
+ * Wichtiger Hinweis: Änderungen an dieser Datei können die Updatefähigkeit beeinträchtigen.
+ * Daher wird dringend davon abgeraten!
+ */
+
 import orm from 'typeorm';
 
 // Rollen
 export const DBRoles = new orm.EntitySchema({
     name: 'roles',
     columns: {
-        id: { type: 'int', primary: true, generated: true },
-        key: { type: 'varchar', length: 50 },
-        name: { type: 'varchar', length: 50 },
-        desc: { type: 'varchar', length: 255 },
+        id: { type: 'int', primary: true, generated: true },    // Interne ID
+        key: { type: 'varchar', length: 50 },                   // einzigartiger Schlüssel der Rolle
+        name: { type: 'varchar', length: 50 },                  // Name der Rolle
+        desc: { type: 'varchar', length: 255 },                 // Beschreibung der Rolle
     }
 });
 

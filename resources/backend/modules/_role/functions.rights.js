@@ -1,13 +1,29 @@
+/**
+ * Funktionen für die Rechteverwaltung
+ *
+ * @module:     Account
+ * @version:    1.0
+ * @revision:   1
+ * @author:     Thomas Göttsching
+ * @company:    Thomas Göttsching
+ *
+ * Wichtiger Hinweis: Änderungen an dieser Datei können die Updatefähigkeit beeinträchtigen.
+ * Daher wird dringend davon abgeraten!
+ */
+
 import { default as Rights } from '../_rights/class.rights.js';
 import { default as Role } from './class.role.js';
-import * as fDB from './functions.database.js';
+
+export class Functions {
+    static getAllFromRole = getAllFromRole;
+}
 
 /**
  * Lädt alle Rechte einer Rolle
  * @param {int} id Interne ID der Rolle (db:role.id)
  * @constructor
  */
-export function GetAllFromRole(id) {
+async function getAllFromRole(id) {
     return new Promise((resolve, reject) => {
 
         // Lade Rolle
@@ -40,7 +56,7 @@ export function GetAllFromRole(id) {
                             }
 
                             // Laden aller Rollenbedingten Rechte
-                            fDB.databaseRightsGetAll(id)
+                            Role.database.rightsGetAll(id)
                                 .then(lstRoleRights => {
                                     if ( lstRoleRights && lstRoleRights.length > 0 ) {
                                         lstRoleRights.forEach(item => {

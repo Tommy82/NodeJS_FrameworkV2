@@ -1,9 +1,34 @@
-//#region Functions - Web
+/**
+ * Web Funktionen des Moduls [Role]
+ *
+ * @module:     Account
+ * @version:    1.0
+ * @revision:   1
+ * @author:     Thomas Göttsching
+ * @company:    Thomas Göttsching
+ *
+ * Wichtiger Hinweis: Änderungen an dieser Datei können die Updatefähigkeit beeinträchtigen.
+ * Daher wird dringend davon abgeraten!
+ */
+
+
 import {app} from "../../system/class.app.js";
 import { default as Role } from './class.role.js';
 import { default as Rights } from '../_rights/class.rights.js';
 
-export async function getList(req, res) {
+export class Functions {
+    static getList = getList;
+    static getDetails = getDetails;
+    static setDetails = setDetails;
+}
+
+/**
+ * Ausgabe - Liste aller Rollen
+ * @param {*} req Website - Request
+ * @param {*} res Website - Response
+ * @returns {Promise<void>}
+ */
+async function getList(req, res) {
     try {
         let params = [];
         params["header"] = ["ID", "Key", "Name", "Beschreibung", "Menü"];
@@ -30,7 +55,13 @@ export async function getList(req, res) {
     }
 }
 
-export async function getDetails(req, res) {
+/**
+ * Einzeldetails einer bestimmten Rolle
+ * @param {*} req Website - Request
+ * @param {*} res Website - Response
+ * @returns {Promise<void>}
+ */
+async function getDetails(req, res) {
     try {
         let id = req.params.id;
         let params = setEditableData(req.params.id);
@@ -67,7 +98,12 @@ export async function getDetails(req, res) {
 
 }
 
-export async function setDetails(req, res) {
+/**
+ * Prüfung und Speichern der Einzeldetails der Rolle
+ * @example http://[uri]/backend/role
+ * @returns {Promise<void>}
+ */
+async function setDetails(req, res) {
     try {
         let params = setEditableData(req.params.id);
 
@@ -93,7 +129,12 @@ export async function setDetails(req, res) {
 
 }
 
-async function saveRights(params) {
+/**
+ * Speichern der einzelnen Rechte für die Rolle
+ * @param params
+ * @returns {Promise<unknown>}
+ */
+function saveRights(params) {
     return new Promise(async (resolve, reject) => {
         if (params.id === 0) {
             return reject("RoleID is null");
@@ -132,31 +173,6 @@ async function saveRights(params) {
     })
 }
 
-export async function AutoComplete(search) {
-    return new Promise((resolve, reject) => {
-        let sql = "SELECT `id`, `name`, `key` FROM `roles` ";
-        if ( search ) {
-            sql += ` WHERE \`name\` like '%${search.trim()}%' `;
-            if ( app.helper.check.isNumeric(search)) {
-                sql += ` OR \`id\` = ${parseInt(search)} `;
-            }
-        }
-        sql += " limit 0, 5";
-        app.DB.query(sql)
-            .then(data => {
-                let response = [];
-                if ( data && data.length > 0 ) {
-                    data.forEach(item => {
-                        // response.push(`${item.id} | ${item.name}`); // TODO: Update Value, ggfl. Override nach senden
-                        response.push(`${item.key}`);
-                    })
-                }
-                return resolve(response);
-            })
-            .catch(err => { return reject(err); })
-    })
-}
-
 /**
  * Prüfung / Erstellung - Parameter
  * - für die Erstellung der Tabelle
@@ -174,6 +190,11 @@ function setEditableData(id, params = new app.frontend.parameters()) {
     return params;
 }
 
+/**
+ *
+ * @param data
+ * @returns {*}
+ */
 function setEditableDataRights(data) {
     let response = new app.frontend.parameters();
     response.id = "tblRoleRights";
@@ -196,7 +217,7 @@ function setEditableDataRights(data) {
  * @param orgObject
  * @returns {number}
  */
-export function getRoleRightValue(rightID, orgObject) {
+function getRoleRightValue(rightID, orgObject) {
     let response = 0;
     if ( orgObject && Array.isArray(orgObject)) {
         let found = orgObject.find(x => parseInt(x.rightID) === parseInt(rightID));
