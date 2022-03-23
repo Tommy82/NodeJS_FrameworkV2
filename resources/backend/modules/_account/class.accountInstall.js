@@ -52,7 +52,7 @@ class AccountInstall {
      * - überschreiben der Datenbankeinträge, falls geändert
      */
     installAdminAccount() {
-        if ( Administrator.username && Administrator.username != "" && Administrator.password && Administrator.password != "") {
+        if ( Administrator.username && Administrator.username !== "" && Administrator.password && Administrator.password !== "") {
             Account.database.getByName(Administrator.username)
                 .then(async data => {
                     let document = {
@@ -67,7 +67,7 @@ class AccountInstall {
                         roles: 'admin'
                     };
                     Account.database.save(document)
-                        .then(data => { app.log("Administrator Account Updated", Account.moduleName); })
+                        .then(() => { app.log("Administrator Account Updated", Account.moduleName); })
                         .catch(err => { app.logError(err, Account.moduleName); })
                 })
                 .catch(err => { app.logError(err, Account.moduleName); })

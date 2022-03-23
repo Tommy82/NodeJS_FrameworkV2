@@ -1,5 +1,5 @@
 /**
- * Routingfunktionen des Moduls [Account]
+ * Routing funktionen des Moduls [Account]
  *
  * @module:     Account
  * @version:    1.0
