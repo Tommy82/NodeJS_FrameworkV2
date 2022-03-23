@@ -64,7 +64,16 @@ class ClassApp {
      * InstallModule (werden nach Start wieder entfernt)
      * @type {[]}
      */
-    modules = [];
+    installModules = [];
+
+    /**
+     * Bekanntmachung der Module im gesamten System
+     * - so kann auch von anderen Modulen leichter auf das jeweilige Modul zugegriffen werden
+     * - Achtung! Module sind NICHT instanziiert und dies wird auch nicht empfohlen!
+     * @example app.modules.account = Account (Standardmodul Account)
+     * @type {{}}
+     */
+    modules = {};
 
     /**
      * Rechte
@@ -125,7 +134,7 @@ class ClassApp {
          */
         let entityArray = [];
 
-        await this.helper.lists.asyncForEach(this.modules, async(module) => {
+        await this.helper.lists.asyncForEach(this.installModules, async(module) => {
             if ( module ) {
                 // Starten der Init Funktion
                 let moduleName = 'undefined';
@@ -163,7 +172,7 @@ class ClassApp {
      * @returns {Promise<void>}
      */
     async install() {
-        await this.helper.lists.asyncForEach(this.modules, async(module) => {
+        await this.helper.lists.asyncForEach(this.installModules, async(module) => {
             if ( module && module.install) { await module.install(); }
         })
 
@@ -176,7 +185,7 @@ class ClassApp {
      */
     async start() {
         // Ausführen der Startfunktion
-        await this.helper.lists.asyncForEach(this.modules, async(module) => {
+        await this.helper.lists.asyncForEach(this.installModules, async(module) => {
             if ( module && module.start ) { await module.start(); }
         });
 
@@ -194,11 +203,12 @@ class ClassApp {
     }
 
     /**
-     * Hinzufügen eines Moduls
+     * Hinzufügen eines InstallationsModuls
      * - Wichtig! Muss vor dem Initialisieren und Installieren geschehen!
+     * - Wichtig! Diese Liste wird nach Start wieder gelöscht!
      */
-    addModule(module) {
-        this.modules.push(module);
+    addInstallModule(module) {
+        this.installModules.push(module);
     }
 
     /**
