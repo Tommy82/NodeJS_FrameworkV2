@@ -1,3 +1,16 @@
+/**
+ * Frontend Funktionen - Parameter
+ *
+ * @module:     System
+ * @version:    1.0
+ * @revision:   1
+ * @author:     Thomas Göttsching
+ * @company:    Thomas Göttsching
+ *
+ * Wichtiger Hinweis: Änderungen an dieser Datei können die Updatefähigkeit beeinträchtigen.
+ * Daher wird dringend davon abgeraten!
+ */
+
 export default class Parameters {
     /** SQL Abfrage */
     sql = '';
@@ -19,8 +32,11 @@ export default class Parameters {
     savedData= {};
     /** Tabellen für die Abfrage */
     columns= [];
+    /** Name der Tabelle in der Datenbank **/
     table= '';
+    /** ID des Datensatzes in der Datenbank **/
     id= 0;
+    /** weitere HTML Elemente vor auf dem Edit Feld vor dem Speichern **/
     appendBeforeSaveButtons= '';
     /** JSON-Array | Wichtig für Erstellung einer Tabelle aus einem Objekt **/
     orgObject = [];

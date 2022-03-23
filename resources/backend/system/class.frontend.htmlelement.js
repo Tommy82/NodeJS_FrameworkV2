@@ -1,15 +1,43 @@
 /**
+ * Frontend Funktionen - HtmlElemente
+ *
+ * @module:     System
+ * @version:    1.0
+ * @revision:   1
+ * @author:     Thomas Göttsching
+ * @company:    Thomas Göttsching
+ *
+ * Wichtiger Hinweis: Änderungen an dieser Datei können die Updatefähigkeit beeinträchtigen.
+ * Daher wird dringend davon abgeraten!
+ */
+
+export class Functions {
+    static text = generateHTMLElementText;
+    static select = generateHTMLElementSelect;
+    static checkBox = generateHTMLElementCheckBox;
+}
+
+/**
  * Erstellt ein HTML Input Feld anhand der angegebenen Daten
  * @param {{}} data Daten
  * - key = id+name
  * - value = einzutragender Wert
  */
-export function generateHTMLElementText(data) {
+function generateHTMLElementText(data) {
     data = checkData(data, "text");
     return `<input type="text" id="${data.key}" name="${data.ident ? data.ident : data.key}" value="${data.value}" class="${data.class}">`;
 }
 
-export function generateHTMLElementSelect(data) {
+/**
+ * Erstellt ein HTML Select Feld anhand der angegebenen Daten
+ * @param {{}}data
+ * - key = id+name
+ * - ident = Eindeutige Identifizierung (vorrangig vor key)
+ * - size = Angezeigte Länge (Standard: 1)
+ * - options = Array der Elemente in der Liste [ {value = 1, name= "text" } ]
+ * @returns {string}
+ */
+function generateHTMLElementSelect(data) {
     data = checkData(data, "select");
     let response = `<select id="${data.key}" name="${data.ident ? data.ident : data.key}" size="${data.size}">`;
     if ( data.options.length > 0 ) {
@@ -22,7 +50,15 @@ export function generateHTMLElementSelect(data) {
 
 }
 
-export function generateHTMLElementCheckBox(data) {
+/**
+ * Erstellt eine Checkbox anhand der angegebenen Daten
+ * @param {{}}data Parameter für die Erstellung
+ * - value |  1 = checked / 0 = not checked
+ * - key = id + name
+ * - ident = eindeutige kennung (vorrangig vor key)
+ * @returns {string}
+ */
+function generateHTMLElementCheckBox(data) {
     data = checkData(data, "checkbox");
     let checked = "";
     if ( data.value === 1 || data.value === "1" || data.value === "on" ) {
@@ -31,6 +67,12 @@ export function generateHTMLElementCheckBox(data) {
     return `<input type="checkbox" id="${data.key}" name="${data.ident ? data.ident : data.key}" ${checked} class="${data.class}">`;
 }
 
+/**
+ * Prüfung der Daten für die HtmlElemente
+ * @param {{}} data zu prüfende Daten
+ * @param {string} type Art des HtmlElements
+ * @returns {*}
+ */
 function checkData(data, type = null) {
 
     if ( !data.value ) { data.value = ""; }

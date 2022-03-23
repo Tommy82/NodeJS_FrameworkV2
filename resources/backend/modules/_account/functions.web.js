@@ -262,7 +262,7 @@ async function checkSaveData(params) {
             if (params && params.body && params.body["name"] && params.body["name"] !== '') {
                 await Account.database.getByName(params.body["name"])
                     .then(data => {
-                        if (data && parseInt(data[0].id) !== parseInt(params.id)) {
+                        if (data && data.length > 0 && parseInt(data[0].id) !== parseInt(params.id)) {
                             params.errors.push({field: "name", text: "Name bereits vorhanden"});
                         }
                     })

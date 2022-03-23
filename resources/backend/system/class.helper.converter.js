@@ -14,6 +14,7 @@
 export class Functions {
     static male_female = male_female;
     static replaceAll = replaceAll;
+    static valueForSQL = valueForSQL;
 }
 
 /**
@@ -91,4 +92,33 @@ function male_female(firstName) {
 function replaceAll(str, find, replace) {
     let escapedFind=find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
     return str.replace(new RegExp(escapedFind, 'g'), replace);
+}
+
+function valueForSQL(type, col, value) {
+    let response = "";
+
+    if ( type === "insert" ) {
+        response += ` \`${col.key}\` = `;
+    }
+
+    switch ( col.type ) {
+        case 'checkbox':
+            value = value && value === 'on' ? '1' : '0';
+            if ( value === undefined ) { value = '0'; }
+            response += ` ${value} `;
+            break;
+        case 'integer':
+            response += ` ${parseInt(value)} `;
+            break;
+        case 'float':
+            response += ` ${parseFloat(value)} `;
+            break;
+        case 'double':
+            response += ` ${parseFloat(value)} `;
+            break;
+        default:
+            response += ` '${value}' `;
+            break;
+    }
+    return response;
 }

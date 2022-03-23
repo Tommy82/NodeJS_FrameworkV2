@@ -1,6 +1,27 @@
+/**
+ * Frontend Funktionen - Tabellen
+ *
+ * @module:     System
+ * @version:    1.0
+ * @revision:   1
+ * @author:     Thomas Göttsching
+ * @company:    Thomas Göttsching
+ *
+ * Wichtiger Hinweis: Änderungen an dieser Datei können die Updatefähigkeit beeinträchtigen.
+ * Daher wird dringend davon abgeraten!
+ */
+
 import {app} from "./class.app.js";
 
-export function tableGenerate(id, head, content, footer) {
+export class Functions {
+    static generate = tableGenerate;
+    static generateByDB = tableGenerateByDB;
+    static generateEditByID = generateEditByID;
+    static generateByObject = generateByObject;
+    static saveEditByID = saveEditByID;
+}
+
+function tableGenerate(id, head, content, footer) {
     let data = `<table id="${id}" class="display myDataTable">`;
     data += tableGenerateHead(head);
     data += tableGenerateContent(content);
@@ -9,7 +30,7 @@ export function tableGenerate(id, head, content, footer) {
     return data;
 }
 
-export function tableGenerateHead(headData) {
+function tableGenerateHead(headData) {
     let data = "<thead>";
     if ( headData && headData.length > 0 ) {
         headData.forEach(item => {
@@ -20,7 +41,7 @@ export function tableGenerateHead(headData) {
     return data;
 }
 
-export function tableGenerateContent(contentData) {
+function tableGenerateContent(contentData) {
     let data = "<tbody>"
     if ( contentData && contentData.length > 0 ) {
         for ( let i = 0; i < contentData.length; i++ ) {
@@ -35,9 +56,8 @@ export function tableGenerateContent(contentData) {
     return data;
 }
 
-export function tableGenerateFooter(footerData) {
-    let data = `<tfoot>${footerData}</tfoot>`;
-    return data;
+function tableGenerateFooter(footerData) {
+    return `<tfoot>${footerData}</tfoot>`;
 }
 
 /**
@@ -48,7 +68,7 @@ export function tableGenerateFooter(footerData) {
  * @param {*} database Datenbank welche verwendet werden soll (null = Standarddatenbank)
  * @returns {Promise<string>} HTML DataTable
  */
-export async function tableGenerateByDB(id, params, database) {
+async function tableGenerateByDB(id, params, database) {
     return new Promise(async (resolve, reject) => {
 
         let response = "";
@@ -169,7 +189,7 @@ export async function tableGenerateByDB(id, params, database) {
  * @param {*} database Datenbank (null = Standarddatenbank)
  * @returns {Promise<string|*>}
  */
-export async function generateEditByID(params, database) {
+async function generateEditByID(params, database) {
     return new Promise(async (resolve, reject) => {
         // Datenbank zuordnen
         if (database == null || database === '') {
@@ -237,7 +257,7 @@ export async function generateEditByID(params, database) {
  * @param params
  * @returns {Promise<void>}
  */
-export async function generateByObject(params = new app.frontend.parameters()) {
+async function generateByObject(params = new app.frontend.parameters()) {
     return new Promise(async (resolve, reject) => {
         //#region Header
         let header = [];
@@ -338,6 +358,12 @@ export async function generateByObject(params = new app.frontend.parameters()) {
     })
 }
 
+/**
+ * Ersetzt ein Platzhalter (%[COLUMN]%) in einem String mit dem Wert des Datzensatzes
+ * @param {*} column Datensatz
+ * @param {string} text Text welcher ersetzt werden soll
+ * @returns {*}
+ */
 function generateStringByColumn(column, text) {
     let response = text;
 
@@ -349,16 +375,14 @@ function generateStringByColumn(column, text) {
     return response;
 }
 
-
 /**
  * Speichert das Frontend Layout in die Datenbank
  * @param {[]} params
  * @param {*} database
  * @returns {Promise<void>}
  */
-export async function saveEditByID(params, database) {
+async function saveEditByID(params, database) {
     return new Promise((resolve, reject) => {
-
         // Datenbank zuordnen
         if (database == null || database === '') {
             database = app.DB;
@@ -388,7 +412,7 @@ export async function saveEditByID(params, database) {
                             }
 
                             let value = params.body[col.key];
-                            sqlQuery += appendValueToSQL("insert", col, value);
+                            sqlQuery += app.helper.converter.valueForSQL("insert", col, value);
 
                         }
                     })
@@ -419,7 +443,7 @@ export async function saveEditByID(params, database) {
                             if (!first) { sqlQuery += ", "; }
                             else { first = false; }
 
-                            sqlQuery += appendValueToSQL("update", col, value);
+                            sqlQuery += app.helper.converter.valueForSQL("update", col, value);
                         }
                     });
                     sqlQuery += `) `;
@@ -438,31 +462,4 @@ export async function saveEditByID(params, database) {
     })
 }
 
-function appendValueToSQL(type, col, value) {
-    let response = "";
 
-    if ( type === "insert" ) {
-        response += ` \`${col.key}\` = `;
-    }
-
-    switch ( col.type ) {
-        case 'checkbox':
-            value = value && value === 'on' ? '1' : '0';
-            if ( value === undefined ) { value = '0'; }
-            response += ` ${value} `;
-            break;
-        case 'integer':
-            response += ` ${parseInt(value)} `;
-            break;
-        case 'float':
-            response += ` ${parseFloat(value)} `;
-            break;
-        case 'double':
-            response += ` ${parseFloat(value)} `;
-            break;
-        default:
-            response += ` '${value}' `;
-            break;
-    }
-    return response;
-}
