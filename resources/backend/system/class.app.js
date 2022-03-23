@@ -1,3 +1,17 @@
+/**
+ * Systemklasse
+ *
+ * @module:     System
+ * @version:    1.0
+ * @revision:   1
+ * @author:     Thomas Göttsching
+ * @company:    Thomas Göttsching
+ *
+ * Wichtiger Hinweis: Änderungen an dieser Datei können die Updatefähigkeit beeinträchtigen.
+ * Daher wird dringend davon abgeraten!
+ */
+
+
 import { settings, database } from "../../config/settings.js";
 import { default as WebServer } from "./class.webserver.js";
 import { Functions as fHelper } from './class.helper.js';
@@ -19,6 +33,7 @@ class Directories {
     import;
     /** Export Verzeichnis @type string */
     export;
+    /** Verzeichnis für Logdateien */
     logs;
 }
 
