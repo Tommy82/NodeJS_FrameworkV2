@@ -13,5 +13,7 @@ Aktuell werden folgende Features unterstützt:
 - Frontend - Twig Templates
 - Frontend - Automatische DataTable anhand DB Tabelle
 - Frontend - Automatische DataTable anhand eines Objektes
+- Drucken 
+- PDF aus HTML
 
 Weitere Informationen entnehmen Sie bitte dem Wiki
