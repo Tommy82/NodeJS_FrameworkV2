@@ -16,6 +16,7 @@ import { settings, database } from "../../config/settings.js";
 import { default as WebServer } from "./class.webserver.js";
 import { Functions as fHelper } from './class.helper.js';
 import { default as DBConnection } from './class.database.js';
+import { default as Printer } from './class.printer.js';
 import { EventEmitter } from 'events';
 
 import fs from 'fs';
@@ -35,6 +36,10 @@ class Directories {
     export;
     /** Verzeichnis für Logdateien */
     logs;
+    /** Verzeichnis für Druckerspooler **/
+    export_printer;
+    /** Exportierte PDF Dateien **/
+    export_pdf;
 }
 
 //#region ClassApp
@@ -74,6 +79,11 @@ class ClassApp {
      * Allgemeine Hilfsklasse
      */
     helper;
+
+    /**
+     * Allgemeine Druckfunktionen
+     */
+    printer;
 
     /**
      * InstallModule (werden nach Start wieder entfernt)
@@ -123,6 +133,7 @@ class ClassApp {
         this.helper = fHelper;
         this.web = new WebServer(this);
         this.frontend = new Frontend();
+        this.printer = new Printer();
         this.checkLogFile();
 
     }
@@ -137,9 +148,11 @@ class ClassApp {
         this.directories.root = fs.realpathSync('.');                                      // Root Path
         this.directories.backend = path.join(this.directories.root, 'resources', 'backend');    // Backend Source
         this.directories.frontend = path.join(this.directories.root, 'resources', 'frontend');  // Frontend Source
-        this.directories.import = path.join(this.directories.root, 'resources', 'import');      // Import Source
-        this.directories.export = path.join(this.directories.root, 'resources', 'export');      // Export Source
+        this.directories.import = path.join(this.directories.root, 'import');      // Import Source
+        this.directories.export = path.join(this.directories.root, 'export');      // Export Source
         this.directories.logs = path.join(this.directories.root, 'resources', 'logFiles');      // Logfiles
+        this.directories.export_printer = path.join(this.directories.root, 'export', 'printer');
+        this.directories.export_pdf = path.join(this.directories.root, 'export', 'pdf');
     }
 
     /**
