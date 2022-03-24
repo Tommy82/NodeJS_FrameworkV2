@@ -226,4 +226,13 @@ export default class ClassWebserver {
 
         this.toOutput(req, res, ["base"], fileName, params, isBackend);
     }
+
+    toUpdatePage(req, res, isBackend) {
+        let fileName = "frontend_updateDefault";
+        if ( isBackend ) { fileName = "backend_updateDefault"; }
+        let params = {
+        }
+
+        this.toOutput(req, res, ["base"], fileName, params, isBackend);
+    }
 }
