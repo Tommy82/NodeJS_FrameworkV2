@@ -3,9 +3,15 @@
     font-family: -apple-system, BlinkMacSystemFont, "segoe ui", roboto, oxygen, ubuntu, cantarell, "fira sans", "droid sans", "helvetica neue", Arial, sans-serif;
     font-size: 16px;
 }
-body {
-    background-color: #435165;
+
+.fas {
+    color: #ffffff;
 }
+
+body {
+    background-color: #bfd8f2;
+}
+
 .login {
     width: 400px;
     background-color: #ffffff;
@@ -31,7 +37,7 @@ body {
     align-items: center;
     width: 50px;
     height: 50px;
-    background-color: #3274d6;
+    background-color: #868686;
     color: #ffffff;
 }
 .login form input[type="password"], .login form input[type="text"] {
@@ -44,15 +50,17 @@ body {
 .login form input[type="submit"] {
     width: 100%;
     padding: 15px;
-    margin-top: 20px;
-    background-color: #3274d6;
+    background-color: #868686;
     border: 0;
     cursor: pointer;
     font-weight: bold;
     color: #ffffff;
     transition: background-color 0.2s;
+    line-height: 0.5em;
+    margin: 0.1em;
+    margin-top: 0.5em;
 }
 .login form input[type="submit"]:hover {
-    background-color: #2868c7;
-    transition: background-color 0.2s;
+    /*! background-color: #2868c7; */
+    /*! transition: background-color 0.2s; */
 }

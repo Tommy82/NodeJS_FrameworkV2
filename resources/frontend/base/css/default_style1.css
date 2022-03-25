@@ -30,6 +30,7 @@ input[type=checkbox] {
 label {
     color: RGB(0,0,0);
     font-size: 1em;
+    border-radius: 0.5em;
 }
 input:hover,
 select:hover,
@@ -57,4 +58,8 @@ button:hover {
 .btn_dataTableAdd, .btn_dataTableReload {
     margin-right: 1em;
     margin-bottom: 1em
+}
+
+.fas {
+    color: #000000;
 }
