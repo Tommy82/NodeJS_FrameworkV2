@@ -123,7 +123,7 @@ function toAccountList(req, res) {
         params.menu = "";
 
         if (app.helper.check.rights.bySession(req, Account.moduleName, "change")) {
-            params.menu += `<a class="toOverlay" href='/backend/account/%id%'><img src="/base/images/icons/edit.png" alt="" class="icon"></a>`;
+            params.menu += `<a class="toOverlay" href='/backend/account/%id%?overlay=1'><img src="/base/images/icons/edit.png" alt="" class="icon"></a>`;
         }
         params.colCheckbox = [2, 3, 4];
         params.addAdd = true;

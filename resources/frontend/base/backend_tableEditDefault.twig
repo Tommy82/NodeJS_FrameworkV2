@@ -1,10 +1,13 @@
 {% extends basicSite %}
 
-<!-- Deaktivieren des Hauptmenüs -->
-{% block navigation_main %}{% endblock %}
+<!-- Prüfen ob Overlay, Falls ja Menü + Frames ausstellen -->
+{% if isOverlay == true  %}
+    <!-- Deaktivieren des Hauptmenüs -->
+    {% block navigation_main %}{% endblock %}
 
-<!-- Deaktiviere Overlay in Overlay -->
-{% block overlayIFrame %}{% endblock %}
+    <!-- Deaktiviere Overlay in Overlay -->
+    {% block overlayIFrame %}{% endblock %}
+{% endif %}
 
 {% block content %}
     {{ TAB_EDIT }}

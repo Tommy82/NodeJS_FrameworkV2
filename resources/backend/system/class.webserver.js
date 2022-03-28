@@ -181,6 +181,11 @@ export default class ClassWebserver {
             basicSite = "/base/frontend_base_custom.twig";
         }
 
+        params.isOverlay = false;
+        if ( req.query.overlay === 1 || req.query.overlay === '1') {
+            params.isOverlay = true;
+        }
+
         if ( fs.existsSync(this.#app.directories.frontend + basicSiteCustom)) { params.basicSite = basicSiteCustom; }
         else { params.basicSite = basicSite; }
 
