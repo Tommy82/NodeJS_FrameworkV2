@@ -199,8 +199,8 @@ async function generateEditByID(params, database) {
         let sqlQuery = "SELECT `id` ";
         if ( params && params.columns.length > 0 ) {
             params.columns.forEach(col => {
-                if ( !col.notInTable ) {
-                    sqlQuery += `, \`${col.key}\` `
+                    if ( !col.notInTable ) {
+                        sqlQuery += `, \`${col.key}\` `
                     }
                 }
             );
@@ -281,11 +281,11 @@ async function generateByObject(params = new app.frontend.parameters()) {
 
         if ( params.orgObject && params.orgObject.length > 0 ) {
             await app.helper.lists.asyncForEach(params.orgObject, async (obj) => {
-            //params.orgObject.forEach(async obj => {
+                //params.orgObject.forEach(async obj => {
                 let column = [];
                 let counter = 0;
                 await app.helper.lists.asyncForEach(params.columns, async(item) => {
-                //await params.columns.forEach( async item => {
+                    //await params.columns.forEach( async item => {
                     let key = item.key;
                     let value = "";
 
@@ -336,8 +336,35 @@ async function generateByObject(params = new app.frontend.parameters()) {
                         tmpItem.ident = ident && ident !== null ? ident : key;
                         switch ( item.type ) {
                             case "text": value = `${app.frontend.HtmlElement.text(tmpItem)}`; break;
+                            case "int":
+                                try {
+                                    tmpItem.value = parseInt(tmpItem.value);
+                                    value = `${app.frontend.HtmlElement.text(tmpItem)}`;
+                                } catch ( err ) { value = '0'; }
+                                break;
+                            case "double":
+                                try {
+                                    if ( !item.round ) { item.round = 2; }
+                                    tmpItem.value = parseFloat(tmpItem.value).toFixed(item.round);
+                                    value = `${app.frontend.HtmlElement.text(tmpItem)}`;
+                                } catch ( err ) { value = '0'; }
+                                break;
                             case "select": value = `${app.frontend.HtmlElement.select(tmpItem)}`; break;
                             case "checkbox": value = `${app.frontend.HtmlElement.checkBox(tmpItem)}`; break;
+                        }
+                    } else {
+                        switch ( item.type ) {
+                            case "int":
+                                try {
+                                    value = parseInt(value);
+                                } catch ( err ) { value = '0'; }
+                                break;
+                            case "double":
+                                if ( !item.round ) { item.round = 2; }
+                                value = parseFloat(value).toFixed(item.round);
+                                break;
+                            default:
+                                break;
                         }
                     }
 
@@ -397,67 +424,67 @@ async function saveEditByID(params, database) {
 
 
         if ( params && params.columns && params.columns.length > 0 ) {
-                let sqlQuery = "";
-                //#region Update Database
-                if ( params.id && parseInt(params.id) > 0 ) {
-                    sqlQuery += ` UPDATE \`${params.table}\` SET`;
+            let sqlQuery = "";
+            //#region Update Database
+            if ( params.id && parseInt(params.id) > 0 ) {
+                sqlQuery += ` UPDATE \`${params.table}\` SET`;
 
-                    let first = true;
-                    params.columns.forEach(col => {
-                        if ( !col.notInTable && (params.fastSave == false || ( params.fastSave === true && col.fastSave === true))) {
-                            if ( !first ) {
-                                sqlQuery += ", ";
-                            } else {
-                                first = false;
-                            }
-
-                            let value = params.body[col.key];
-                            sqlQuery += app.helper.converter.valueForSQL("insert", col, value);
-
+                let first = true;
+                params.columns.forEach(col => {
+                    if ( !col.notInTable && (params.fastSave == false || ( params.fastSave === true && col.fastSave === true))) {
+                        if ( !first ) {
+                            sqlQuery += ", ";
+                        } else {
+                            first = false;
                         }
-                    })
 
-                    sqlQuery += ` WHERE \`id\`= ${params.id} `;
-                }
+                        let value = params.body[col.key];
+                        sqlQuery += app.helper.converter.valueForSQL("insert", col, value);
+
+                    }
+                })
+
+                sqlQuery += ` WHERE \`id\`= ${params.id} `;
+            }
                 //#endregion Update Database
-                //#region Insert Database
-                else {
-                    sqlQuery += ` INSERT INTO \`${params.table}\` (`;
+            //#region Insert Database
+            else {
+                sqlQuery += ` INSERT INTO \`${params.table}\` (`;
 
-                    let first = true;
-                    params.columns.forEach(col => {
-                        if ( !col.notInTable && (params.fastSave == false || ( params.fastSave === true && col.fastSave === true))) {
-                            if (!first) { sqlQuery += ", "; }
-                            else { first = false; }
-                            sqlQuery += " `" + col.key + "` ";
-                        }
-                    });
+                let first = true;
+                params.columns.forEach(col => {
+                    if ( !col.notInTable && (params.fastSave == false || ( params.fastSave === true && col.fastSave === true))) {
+                        if (!first) { sqlQuery += ", "; }
+                        else { first = false; }
+                        sqlQuery += " `" + col.key + "` ";
+                    }
+                });
 
-                    sqlQuery += `) VALUES (`;
+                sqlQuery += `) VALUES (`;
 
-                    first = true;
-                    params.columns.forEach(col => {
-                        if (!col.notInTable) {
-                            let value = params && params.body && params.body[col.key] ? params.body[col.key] : '';
+                first = true;
+                params.columns.forEach(col => {
+                    if (!col.notInTable) {
+                        let value = params && params.body && params.body[col.key] ? params.body[col.key] : '';
 
-                            if (!first) { sqlQuery += ", "; }
-                            else { first = false; }
+                        if (!first) { sqlQuery += ", "; }
+                        else { first = false; }
 
-                            sqlQuery += app.helper.converter.valueForSQL("update", col, value);
-                        }
-                    });
-                    sqlQuery += `) `;
+                        sqlQuery += app.helper.converter.valueForSQL("update", col, value);
+                    }
+                });
+                sqlQuery += `) `;
 
-                }
-                //#endregion Insert Database
+            }
+            //#endregion Insert Database
 
-                app.DB.query(sqlQuery)
-                    .then(data => {
-                        return resolve(data);
-                    })
-                    .catch(err => {
-                        return reject(err);
-                    })
+            app.DB.query(sqlQuery)
+                .then(data => {
+                    return resolve(data);
+                })
+                .catch(err => {
+                    return reject(err);
+                })
         }
     })
 }
