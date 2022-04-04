@@ -356,12 +356,16 @@ async function generateByObject(params = new app.frontend.parameters()) {
                         switch ( item.type ) {
                             case "int":
                                 try {
-                                    value = parseInt(value);
+                                    if ( value && value != '' ) { value = parseInt(value); }
+                                    else { value = '0' };
                                 } catch ( err ) { value = '0'; }
                                 break;
                             case "double":
                                 if ( !item.round ) { item.round = 2; }
-                                value = parseFloat(value).toFixed(item.round);
+                                if ( value && value != '' ) {
+                                    value = parseFloat(value).toFixed(item.round);
+                                }
+                                else { value = '0' };
                                 break;
                             default:
                                 break;
