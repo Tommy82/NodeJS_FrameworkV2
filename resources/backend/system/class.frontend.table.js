@@ -294,16 +294,22 @@ async function generateByObject(params = new app.frontend.parameters()) {
                         let param1 = item.valueParam1 ? item.valueParam1 : null;
                         let param2 = item.valueParam2 ? item.valueParam2 : null;
                         let param3 = item.valueParam3 ? item.valueParam3 : null;
+                        let param4 = item.valueParam4 ? item.valueParam4 : null;
+                        let param5 = item.valueParam5 ? item.valueParam5 : null;
 
                         if ( param1 && typeof(param1) === "string") { param1 = generateStringByColumn(obj, param1); }
-                        if ( param2 && typeof(param2) === "string") { param1 = generateStringByColumn(obj, param2); }
-                        if ( param3 && typeof(param3) === "string") { param1 = generateStringByColumn(obj, param3); }
+                        if ( param2 && typeof(param2) === "string") { param2 = generateStringByColumn(obj, param2); }
+                        if ( param3 && typeof(param3) === "string") { param3 = generateStringByColumn(obj, param3); }
+                        if ( param4 && typeof(param4) === "string") { param4 = generateStringByColumn(obj, param4); }
+                        if ( param5 && typeof(param5) === "string") { param5 = generateStringByColumn(obj, param5); }
 
                         switch ( item.valueParamCount ) {
-                            case 0: value = item.value; break;
+                            case 0: value = item.value(); break;
                             case 1: value = await item.value(param1); break;
                             case 2: value = await item.value(param1, param2);break;
                             case 3: value = await item.value(param1, param2, param3);break;
+                            case 4: value = await item.value(param1, param2, param3, param4);break;
+                            case 5: value = await item.value(param1, param2, param3, param4, param5);break;
                         }
                     } else {
                         value = item.value ? item.value : obj[key];
@@ -400,6 +406,7 @@ function generateStringByColumn(column, text) {
 
     if ( column && typeof(column) === "object") {
         Object.keys(column).forEach(item => {
+            if ( !column[item] ) { column[item] = ''; }
             response = app.helper.converter.replaceAll(response, '%' + item + '%', column[item]);
         })
     }
