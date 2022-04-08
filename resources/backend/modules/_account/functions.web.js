@@ -127,7 +127,7 @@ function toAccountList(req, res) {
         }
         params.colCheckbox = [2, 3, 4];
         params.addAdd = true;
-        params.url_save = "/backend/account/0";
+        params.url_fastsave = "/backend/account/0";
         //#endregion Set Parameters
 
         // Frontend Javascript
