@@ -150,7 +150,7 @@ async function tableGenerateByDB(id, params, database) {
                             myMenu = myMenu.replace(/%id%/g, col.id);
                             column[counter] = { value: myMenu }
                             if ( !addAdded ) {
-                                add += "<td><input type='submit' value='Speichern' name='fastSave'/>&nbsp;<input type='button' value='Abbrechen' onclick='dataTable_Break();'></td>"
+                                add += "<td><input type='submit' value='Speichern' name='btnSave'/>&nbsp;<input type='button' value='Abbrechen' name='btnBreak' onclick='dataTable_Break();'></td>"
                             }
                         }
                         content.push(column);
