@@ -13,6 +13,7 @@
 
 import { Functions as fWeb } from './functions.web.js';
 import { Functions as fDatabase } from './functions.database.js';
+import { Functions as fCheck } from './functions.check.js';
 
 /** Modul - Account */
 export default class Account {
@@ -26,6 +27,8 @@ export default class Account {
 
     /** Datenbank Komponente dieses Moduls */
     static database = fDatabase;
+
+    static check = fCheck;
 
 }
 

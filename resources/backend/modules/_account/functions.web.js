@@ -23,6 +23,7 @@ export class Functions {
     static toAccountList = toAccountList;
     static toAccountSingle = toAccountSingle;
     static saveAccountSingle = saveAccountSingle;
+    static delAccountSingle = delAccountSingle;
 }
 
 /**
@@ -121,9 +122,11 @@ function toAccountList(req, res) {
         params.sql = "SELECT `id`, `name`, `active`, `isBackend`, `isFrontend`, `roles` FROM `account` ";
         params.where = "id > 0";
         params.menu = "";
-
         if (app.helper.check.rights.bySession(req, Account.moduleName, "change")) {
             params.menu += `<a class="toOverlay" href='/backend/account/%id%?overlay=1'><img src="/base/images/icons/edit.png" alt="" class="icon"></a>`;
+        }
+        if (app.helper.check.rights.bySession(req, Account.moduleName, "delete")) {
+            params.menu += `<a href="/backend/account/%id%/del" value1="Benutzer" value2="%id%" value3="%name%" class="btnDelete""><span><img src="/base/images/icons/delete.png" alt="" class="icon"></a></span>`;
         }
         params.colCheckbox = [2, 3, 4];
         params.addAdd = true;
@@ -136,11 +139,14 @@ function toAccountList(req, res) {
         let title = "Benutzerverwaltung";
 
         app.frontend.table.generateByDB(tableID, params, null)
-            .then(table => {
+            .then(response => {
+                params = response.params;
+                let table = response.data;
                 app.web.toOutput(req, res, ["base"], "backend_tableDefault", {TAB1: table, JS: js, title: title}, true);
             })
             .catch(err => {
-                console.error(err);
+                app.logError(err, Account.moduleName + ":web:toAccountList");
+                app.web.toErrorPage(req, res, err, true, true, false);
             });
     } catch (err) {
         app.logError(err, Account.moduleName + ":web:toAccountList");
@@ -168,7 +174,8 @@ function toAccountSingle(req, res, params = [], canClose = false) {
                 }, true);
             })
             .catch(err => {
-                console.error(err);
+                app.logError(err, Account.moduleName + ":web:toAccountSingle");
+                app.web.toErrorPage(req, res, err, true, true, false);
             })
     } catch (err) {
         app.logError(err, Account.moduleName + ":web:toAccountSingle");
@@ -198,7 +205,8 @@ async function saveAccountSingle(req, res) {
                     res.send({success: "success", data: []});
                 })
                 .catch(err => {
-                    console.error(err);
+                    app.logError(err, Account.moduleName + ":web:saveAccountSingle");
+                    app.web.toErrorPage(req, res, err, true, true, false);
                 })
         }
     } catch (err) {
@@ -206,6 +214,36 @@ async function saveAccountSingle(req, res) {
         app.web.toErrorPage(req, res, err, true, true, false);
     }
 
+}
+
+async function delAccountSingle(req, res) {
+    let id = req.params.id;
+    if ( id && id != "" && parseInt(id) > 0 ) {
+        if (app.helper.check.rights.bySession(req, Account.moduleName, "delete")) {
+            Account.check.canDelete(id)
+                .then(canDelete => {
+                    if ( canDelete ) {
+
+                        Account.database.deleteById(id)
+                            .then(() => { res.send({ success: "success", data: []}); })
+                            .catch(err => {
+                                app.logError(err);
+                                res.send({ success: "error", error: "Fehler beim Löschen der Daten"});
+                            })
+
+                    } else {
+                        res.send({ success: "error", error: "Benutzer kann nicht gelöscht werden da er verwendet wird!"});
+                    }
+                })
+                .catch(err => {
+
+                })
+            } else {
+                res.send({ success: "error", error: "Access denied" });
+            }
+    } else {
+        res.send({ success: "error", error: "ID not found" });
+    }
 }
 
 /**

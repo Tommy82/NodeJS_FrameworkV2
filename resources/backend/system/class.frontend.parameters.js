@@ -47,4 +47,31 @@ export default class Parameters {
      * @example [{field: "role", text: "Rolle darf nicht leer sein!"}]
     **/
     errors = [];
+
+    /** Daten für die Frontend Ausgabe **/
+    output = {
+        /** Seitentitel **/
+        title: '',
+        /** Scripte (z.B. Javascript **/
+        scripts: '',
+        /** Styles **/
+        styles: ''
+    }
+
+    /**
+     * Hinzufügen eines neuen Scripts für das Frontend
+     * @param script
+     */
+    addScript(script) {
+        this.output.scripts += script;
+    }
+
+    /**
+     * Hinzufügen eines neuen Styles für das Frontend
+     * @param style
+     */
+    addStyle(style) {
+        this.output.styles += style;
+    }
+
 }

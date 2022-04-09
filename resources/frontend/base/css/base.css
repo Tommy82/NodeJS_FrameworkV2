@@ -162,6 +162,7 @@ nav #header_me {
 .myDataTable .icon {
     width: 1.2em;
     border: 0.1em solid black;
+    margin-right: 0.5em;
 }
 
 #overlayIFrame {
@@ -212,8 +213,6 @@ nav #header_me {
     height: calc(100% - 1.5em); /* 100% - Header */
     overflow: auto;
 }
-
-
 
 thead input {
     width: 100%;

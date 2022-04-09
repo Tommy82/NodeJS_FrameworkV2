@@ -31,4 +31,6 @@ app.web.addRoute("get", "/backend/account", Account.web.toAccountList, false, tr
 app.web.addRoute("get", "/backend/account/:id", Account.web.toAccountSingle, false, true);
 // Senden der geänderten Accountdaten
 app.web.addRoute("post", "/backend/account/:id", Account.web.saveAccountSingle, false, true);
+// Löschen der AccountDaten
+app.web.addRoute("get", "/backend/account/:id/del", Account.web.delAccountSingle, false, true);
 //#endregion Account

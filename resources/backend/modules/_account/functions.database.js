@@ -18,6 +18,7 @@ export class Functions {
     static getByID = getById;
     static getByName = getByName;
     static save = save;
+    static deleteById = deleteById;
 }
 
 /**
@@ -54,6 +55,19 @@ function getByName(name) {
 function save(document) {
     return new Promise((resolve, reject) => {
         app.DB.upsert('account', document)
+            .then(data => { return resolve(data); })
+            .catch(err => { return reject(err); })
+    })
+}
+
+/**
+ * Löschen eines Accounts / Benutzers
+ * @param id
+ * @returns {Promise<unknown>}
+ */
+function deleteById(id) {
+    return new Promise((resolve, reject) => {
+        app.DB.deleteById('account', id)
             .then(data => { return resolve(data); })
             .catch(err => { return reject(err); })
     })

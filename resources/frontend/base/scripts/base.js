@@ -1,7 +1,8 @@
 $(document).ready(function () {
     $('.toOverlay').click(function(e) {
         e.preventDefault();
-        let uri = "http://localhost:3000" + $(this).attr("href");
+        //let uri = "http://localhost:3000" + $(this).attr("href");
+        let uri = $(this).attr("href");
 
         $('#overlay_iframe').attr("src", uri);
         $('#overlayIFrame').show();
@@ -15,6 +16,16 @@ $(document).ready(function () {
     });
 
     $("form").submit(function(e){ return sendForm($(this), e) });
+
+    $('.btnDelete').click(function(e) {
+        e.preventDefault();
+        let uri = $(this).attr("href");
+        let param1 = $(this).attr("value1");
+        let param2 = $(this).attr("value2");
+        let param3 = $(this).attr("value3");
+
+        askForDelete(uri, param1, param2, param3);
+    });
 });
 
 function overlayClose() {
@@ -347,6 +358,60 @@ function addAutoComplete(fieldID, filter) {
         }
     });
 
+}
+
+function askForDelete(uri, type, id, name) {
+
+    // ToDo: ggfl. abfragen ob andere Abfrage möglich
+
+    let message = "Soll der Datensatz wirklich gelöscht werden?";
+
+    if ( id && id != '' ) {
+        message += "<br>- Id: " + id;
+    }
+
+    if ( name && name != '' ) {
+        message += "<br>- Name: " + name;
+    }
+
+    $.confirm({
+        title: 'Datensatz entfernen',
+        content: message,
+        boxWidth: '30%',
+        useBootstrap: false,
+        buttons: [
+            {
+                text: 'Ja',
+                action: function() {
+                    $.ajax({
+                        url: uri,
+                        dataType: "json",
+                        data: {
+                        },
+                        success: function( data ) {
+                            $(this.parent).dialog('close');
+                            if ( data && data.success && data.success === "success" ) {
+                                window.location = window.location.href;
+                            } else {
+                                if ( data && data.success === "error" ) {
+                                    window.alert(data.error);
+                                } else {
+                                    window.alert("Fehler beim Löschen der Daten");
+                                }
+                            }
+
+                        }
+                    })
+                }
+            },
+            {
+                text: 'Nein',
+                action: function() {
+                    $(this.parent).dialog('close');
+                }
+            }
+        ]
+    })
 }
 
 function sendForm(form, e) {
