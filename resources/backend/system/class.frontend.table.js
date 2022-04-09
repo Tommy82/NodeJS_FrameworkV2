@@ -147,7 +147,8 @@ async function tableGenerateByDB(id, params, database) {
                         if ( params.menu && params.menu !== '' ) {
                             let myMenu = params.menu.toString();
                             //myMenu = myMenu.replaceAll("%id%", col.id);
-                            myMenu = myMenu.replace(/%id%/g, col.id);
+                            //myMenu = myMenu.replace(/%id%/g, col.id);
+                            myMenu = generateStringByColumn(col, myMenu);
                             column[counter] = { value: myMenu }
                             if ( !addAdded ) {
                                 add += "<td><input type='submit' value='Speichern' name='btnSave'/>&nbsp;<input type='button' value='Abbrechen' name='btnBreak' onclick='dataTable_Break();'></td>"
@@ -176,7 +177,10 @@ async function tableGenerateByDB(id, params, database) {
 
                 if ( params.addAdd) { response += "</form>"; }
 
-                return resolve(response);
+                return resolve({
+                    params: params,
+                    data: response,
+                });
             })
             .catch(err => { return reject(err); })
     })
@@ -244,7 +248,11 @@ async function generateEditByID(params, database) {
                 myFrontendData += "<input type='submit' value='Speichern' name='btnSave'>";
                 myFrontendData += "<input type='submit' value='Abbrechen' name='btnBreak'>";
                 myFrontendData += "</form>";
-                return resolve(myFrontendData);
+                //return resolve(myFrontendData);
+                return resolve({
+                    params: params,
+                    data: myFrontendData
+                })
             })
             .catch(err => {
                 return reject(err);
@@ -391,7 +399,10 @@ async function generateByObject(params = new app.frontend.parameters()) {
         //#endregion Footer
 
         let response = tableGenerate(params.id, header, content, footer);;
-        return resolve(response);
+        return resolve({
+            data: response,
+            params: params,
+        });
     })
 }
 
@@ -491,7 +502,10 @@ async function saveEditByID(params, database) {
 
             app.DB.query(sqlQuery)
                 .then(data => {
-                    return resolve(data);
+                    return resolve({
+                        data: data,
+                        params: params
+                    });
                 })
                 .catch(err => {
                     return reject(err);
