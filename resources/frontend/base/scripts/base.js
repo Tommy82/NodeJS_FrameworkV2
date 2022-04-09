@@ -57,9 +57,9 @@ function setDataTable(id, params) {
     };
 
     let table = $('#' + id).DataTable({
-        orderCellsTop: false,
-        fixedHeader: false,
-        responsive: false,
+        orderCellsTop: params.filter,
+        fixedHeader: true,
+        responsive: true,
         searching: params.searching,
         paging: params.paging,
         info: params.info,
