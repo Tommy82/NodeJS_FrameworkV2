@@ -100,7 +100,7 @@ async function addRolesToGlobal() {
 
     if ( app.roles && app.roles.length > 0 ) {
         for ( let i = 0; i < app.roles.length; i++ ) {
-            app.roles[0].rights = await Role.rights.getAllFromRole(app.roles[i].id).catch(err => { console.error(err); })
+            app.roles[i].rights = await Role.rights.getAllFromRole(app.roles[i].id).catch(err => { console.error(err); })
         }
     }
 }
