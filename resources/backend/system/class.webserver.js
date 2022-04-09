@@ -189,6 +189,13 @@ export default class ClassWebserver {
         if ( fs.existsSync(this.#app.directories.frontend + basicSiteCustom)) { params.basicSite = basicSiteCustom; }
         else { params.basicSite = basicSite; }
 
+        if ( !params ) { params = {}};
+        params.me = {
+            id: req && req.session && req.session.user && req.session.user.id ? req.session.user.id : 0,
+            name: req && req.session && req.session.user && req.session.user.username ? req.session.user.username : '',
+            role: req && req.session && req.session.user && req.session.user.role ? req.session.user.role : '',
+        };
+
         if ( fs.existsSync(_altFileName)) { res.render(_altFileName, !params ? {} : params); }
         else { res.render(_fileName, !params ? {} : params); }
     }
