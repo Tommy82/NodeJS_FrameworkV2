@@ -68,7 +68,7 @@ function tableGenerateFooter(footerData) {
  * @param {*} database Datenbank welche verwendet werden soll (null = Standarddatenbank)
  * @returns {Promise<string>} HTML DataTable
  */
-async function tableGenerateByDB(id, params, database) {
+async function tableGenerateByDB(id, frontendName, params, database) {
     return new Promise(async (resolve, reject) => {
 
         let response = "";
@@ -176,6 +176,10 @@ async function tableGenerateByDB(id, params, database) {
                 response += tableGenerate(id, header, content, footer);
 
                 if ( params.addAdd) { response += "</form>"; }
+
+                // Hinzufügen der Daten für das Frontend
+                params.addScript(`setDataTable('${id}');`);
+                params.addData(frontendName, response);
 
                 return resolve({
                     params: params,

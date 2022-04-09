@@ -48,7 +48,7 @@ export default class Parameters {
     **/
     errors = [];
 
-    /** Daten für die Frontend Ausgabe **/
+    /** Daten für die Frontend Ausgabe (ACHTUNG! Diese Daten werden KOMPLETT an das Frontend übermittelt! (Thema: Security!)) **/
     output = {
         /** Seitentitel **/
         title: '',
@@ -74,4 +74,7 @@ export default class Parameters {
         this.output.styles += style;
     }
 
+    addData(key, data) {
+        this.output[key] = data;
+    }
 }

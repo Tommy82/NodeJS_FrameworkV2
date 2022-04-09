@@ -26,11 +26,14 @@ export class Functions {
  */
 async function canDelete(id) {
     return new Promise((resolve, reject) => {
-
+        // Laden des Datensatzes
         fDatabase.getByID(id)
             .then(account => {
                 let canDelete = true;
+
+                // Prüfen ob Datensatz vorhanden
                 if ( account && account.length > 0 ) {
+                    // Setzen des ersten Datensatzes
                     account = account[0];
 
                     // Prüfe ob Benutzer = Admin Account

@@ -28,6 +28,7 @@ export default class Account {
     /** Datenbank Komponente dieses Moduls */
     static database = fDatabase;
 
+    /** Prüffunktionen des Moduls **/
     static check = fCheck;
 
 }
