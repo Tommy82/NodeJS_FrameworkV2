@@ -30,25 +30,35 @@ export class Functions {
  */
 async function getList(req, res) {
     try {
-        let params = [];
-        params["header"] = ["ID", "Key", "Name", "Beschreibung", "Menü"];
-        params["sql"] = "SELECT `id`, `key`, `name`, `desc` FROM `roles` ";
-        params["where"] = "id > 0";
+
+        let params = new app.frontend.parameters();
+
+        params.header = ["ID", "Key", "Name", "Beschreibung", "Menü"];
+        params.sql = "SELECT `id`, `key`, `name`, `desc` FROM `roles` ";
+        params.where = "id > 0";
+        params.addAdd = true;
+        params.url_fastsave = '/backend/role/0';
+
+        // Menü
+        params.menu = '';
         if ( app.helper.check.rights.bySession(req, Role.moduleName, "change")) {
-            params["menu"] = `<a class="toOverlay" href='/backend/role/%id%?overlay=1'><img src="/base/images/icons/edit.png" alt="" class="icon" href='/backend/role/%id%'></a>`;
+            params.menu += `<a class="toOverlay" href='/backend/role/%id%?overlay=1'><img src="/base/images/icons/edit.png" alt="" class="icon" href='/backend/role/%id%'></a>`;
+        }
+        // Wenn Löschen erlaubt, setze Button für Löschen
+        if (app.helper.check.rights.bySession(req, Role.moduleName, "delete")) {
+            params.menu += `<a href="/backend/role/%id%/del" value1="Rolle" value2="%id%" value3="%name%" class="btnDelete""><span><img src="/base/images/icons/delete.png" alt="" class="icon"></a></span>`;
         }
 
-        let autocomplete = [{fieldID: "role", filter: "role"}];
 
-        app.frontend.table.generateByDB('tblRoles', params, null)
-            .then(table => {
-                let js = "setDataTable('tblRoles');";
-                app.web.toOutput(req, res, ["base"], "backend_tableDefault", { TAB1: table, JS: js, AUTOCOMPLETE: autocomplete }, true);
+        app.frontend.table.generateByDB('tblRoles', "TAB1", params, null)
+            .then(response => {
+                // Ausgabe
+                app.web.toOutput(req, res, ["base"], "backend_tableDefault", response.params.output, true);
             })
             .catch(err => {
                 app.logError(err, Role.moduleName + ":web:getList");
                 app.web.toErrorPage(req, res, err, true, true, false);
-            });
+            })
     } catch ( err ) {
         app.logError(err, Role.moduleName + ":web:getList");
         app.web.toErrorPage(req, res, err, true, true, false);
@@ -69,13 +79,20 @@ async function getDetails(req, res) {
         //Role.database.rightsGetAll(id)
         Role.rights.getAllFromRole(id)
             .then(lstRights => {
-
                 app.frontend.table.generateByObject(setEditableDataRights(lstRights))
-                    .then(tabRights => {
-                        params.appendBeforeSaveButtons = tabRights
+                    .then(response => {
+                        params.output = response.params.output;
+                        let tabRights = response.data;
+                        params.appendBeforeSaveButtons = tabRights;
+
                         app.frontend.table.generateEditByID(params, null)
-                            .then(data => {
-                                app.web.toOutput(req, res, ["base"], "backend_tableEditDefault", { TAB_EDIT: data, TAB_RIGHTS: tabRights, AUTOCOMPLETE: [] }, true);
+                            .then(response => {
+                                params = response.params;
+                                params.addData('TAB_EDIT', response.data);
+                                params.addData('TAB_RIGHTS', tabRights);
+                                params.addData("AUTOCOMPLETE", []);
+
+                                app.web.toOutput(req, res, ["base"], "backend_tableEditDefault", params.output, true);
                             })
                             .catch(err => {
                                 app.logError(err, Role.moduleName + ":web:getList");

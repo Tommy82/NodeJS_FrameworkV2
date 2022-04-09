@@ -145,7 +145,7 @@ function toAccountList(req, res) {
         //#endregion Set Parameters
 
         // Generierung der Tabelle
-        app.frontend.table.generateByDB("tblRoles", "TAB1", params, null)
+        app.frontend.table.generateByDB("tblAccounts", "TAB1", params, null)
             .then(response => {
                 // Ausgabe
                 app.web.toOutput(req, res, ["base"], "backend_tableDefault", response.params.output, true);
