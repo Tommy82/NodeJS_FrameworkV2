@@ -167,7 +167,9 @@ function toAccountSingle(req, res, params = [], canClose = false) {
         let autoComplete = [{fieldID: 'roles', filter: 'role'}];
 
         app.frontend.table.generateEditByID(params, null)
-            .then(data => {
+            .then(response => {
+                let data = response.data;
+                params = response.params;
                 app.web.toOutput(req, res, ["base"], "backend_tableEditDefault", {
                     TAB_EDIT: data,
                     AUTOCOMPLETE: autoComplete
@@ -216,6 +218,12 @@ async function saveAccountSingle(req, res) {
 
 }
 
+/**
+ * Löschen - Löschen eines Accounts
+ * @param {*} req Webserver - Request
+ * @param {*} res Webserver - Response
+ * @returns {Promise<void>}
+ */
 async function delAccountSingle(req, res) {
     let id = req.params.id;
     if ( id && id != "" && parseInt(id) > 0 ) {
