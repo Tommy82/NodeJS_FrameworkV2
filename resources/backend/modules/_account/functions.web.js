@@ -14,6 +14,7 @@
 import {app} from "../../system/class.app.js";
 import {default as Account} from './class.account.js';
 import {default as Role} from '../_role/class.role.js';
+import {Administrator} from "../../../config/settings.js";
 
 /** Funktionsklasse zur verwaltung der export Funktionen in dieser Datei **/
 export class Functions {
@@ -24,6 +25,8 @@ export class Functions {
     static toAccountSingle = toAccountSingle;
     static saveAccountSingle = saveAccountSingle;
     static delAccountSingle = delAccountSingle;
+    static toMe = toMe;
+    static saveMe = saveMe;
 }
 
 /**
@@ -188,6 +191,58 @@ function toAccountSingle(req, res, params = [], canClose = false) {
     } catch (err) {
         app.logError(err, Account.moduleName + ":web:toAccountSingle");
         app.web.toErrorPage(req, res, err, true, true, false);
+    }
+}
+
+function toMe(req, res) {
+    let id = req.params.id;
+
+    if ( req && req.session && req.session.user && req.session.user.id && parseInt(id) === parseInt(req.session.user.id)) {
+        Account.database.getByID(parseInt(id))
+            .then(lstAccount => {
+                let output = {
+                    email: lstAccount && lstAccount.length > 0 ? lstAccount[0].email : ""
+                }
+                app.web.toOutput(req, res, ["modules", "_account"], "me", output, true);
+            })
+            .catch(err => {
+                app.logError(err);
+                app.web.toErrorPage(req, res, err, true, true, true);
+            })
+    } else {
+        app.web.toErrorPage(req, res, new Error("Access denied"), true, true, false);
+    }
+}
+
+async function saveMe(req, res) {
+    let id = req.params.id;
+
+    if ( req && req.session && req.session.user && req.session.user.id && parseInt(id) === parseInt(req.session.user.id)) {
+
+        let email = req.body["email"];
+        let password = req.body["password"];
+
+        let document = {
+            id: parseInt(id),
+            email: email,
+        }
+
+        if ( password && password.trim() != '' ) {
+            password = await app.helper.security.hashPassword(password);
+            document.password = password;
+        }
+
+        Account.database.save(document)
+            .then(() => {
+                res.send({success: "success", data: [], redirect: '/backend'});
+            })
+            .catch(err => {
+                res.send({success: "error", error: err.message });
+            })
+
+
+    } else {
+        res.send({success: "error", error: "Access denied", redirect: '/backend'});
     }
 }
 

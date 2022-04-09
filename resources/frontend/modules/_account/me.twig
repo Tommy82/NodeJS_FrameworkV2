@@ -1,0 +1,32 @@
+{% extends basicSite %}
+
+{% block content %}
+    {{ title }}
+    <br>
+    <form action="" method="post">
+        <table>
+            <thead></thead>
+            <tbody>
+                <tr>
+                    <td>Benutzername:</td>
+                    <td>{{ me.name }}</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Email:</td>
+                    <td><input type="text" name="email" value="{{ email }}"></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>Kennwort:</td>
+                    <td><input type="password" name="password"></td>
+                    <td>Achtung! Falls nicht geändert werden soll, dieses Feld leer lassen!</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><input type="submit" value="Übernehmen" name="btnSave"></td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+{% endblock %}

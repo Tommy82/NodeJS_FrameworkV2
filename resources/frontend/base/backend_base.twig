@@ -44,7 +44,7 @@
                 <li class="submenu"><a href="#">Ich</a>
                     <ul>
                         {% block nav_me_before %}{% endblock %}
-                        <li><a href="{{prefix}}/backend/users/me">Eigene Einstellungen</a></li>
+                        <li><a href="{{prefix}}/backend/account/{{ me.id }}/me">Eigene Einstellungen</a></li>
                         {% block nav_me_after %}{% endblock %}
                     </ul>
                 </li>

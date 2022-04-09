@@ -439,8 +439,11 @@ function sendForm(form, e) {
             data: data,
             success: function(res) {
                 if ( res && res.success && res.success === "success") {
-                    //parent.$("#overlayIFrame").hide(); // Schließen des Fensters
-                    parent.location.href = parent.location; // Reload Parent Page
+                    if ( res.redirect && res.redirect != '' ) {
+                        parent.location.href = res.redirect;
+                    } else {
+                        parent.location.href = parent.location; // Reload Parent Page
+                    }
                 } else {
                     if ( res && res.success && res.success === "error" ) {
                         if ( res.data && res.data.length > 0 ) {
@@ -454,6 +457,9 @@ function sendForm(form, e) {
                                 }
                             });
                             window.alert(errorMessage);
+                            if ( res.redirect && res.redirect != '' ) {
+                                parent.location.href = res.redirect;
+                            }
                         } else {
                             console.log(res);
                             window.alert("Fehler beim verarbeiten der Rückmeldedaten. Bitte prüfen Sie das Log!");
