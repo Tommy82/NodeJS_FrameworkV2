@@ -21,6 +21,11 @@ app.web.addRoute("get", "/backend/login", Account.web.toLogin, false, false);
 app.web.addRoute("post", "/backend/login", Account.web.checkLogin, false, false);
 //#endregion Login
 
+//#region ForgotPassword
+app.web.addRoute("get", "/backend/forgot", Account.web.toForgot, false, false);
+app.web.addRoute("post", "/backend/forgot", Account.web.saveForgot, false, false);
+//#endregion ForgotPassword
+
 // Logout - Abmeldung des Benutzers aus Frontend und Backend
 app.web.addRoute("get", "/backend/logout", Account.web.toLogout, false, true);
 

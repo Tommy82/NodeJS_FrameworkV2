@@ -63,7 +63,7 @@ class AccountInstall {
                         isBackend: 1,
                         isFrontend: 1,
                         mustChange: 0,
-                        email: '',
+                        email: Administrator.email ? Administrator.email : '',
                         roles: 'admin'
                     };
                     Account.database.save(document)

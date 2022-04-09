@@ -27,6 +27,8 @@ export class Functions {
     static delAccountSingle = delAccountSingle;
     static toMe = toMe;
     static saveMe = saveMe;
+    static toForgot = toForgot;
+    static saveForgot = saveForgot;
 }
 
 /**
@@ -36,10 +38,64 @@ export class Functions {
  */
 function toLogin(req, res) {
     try {
+
+        let msg = req && req.query && req.query.msg ? req.query.msg : '';
+
         // Ausgabe des Login - Templates
-        app.web.toOutput(req, res, ["modules", "_account"], "login", {}, true);
+        app.web.toOutput(req, res, ["modules", "_account"], "login", {msg : msg}, true);
     } catch (err) {
         app.logError(err, Account.moduleName + ":web:webToLogin");
+        app.web.toErrorPage(req, res, err, true, true, false);
+    }
+}
+
+const  generateRandomString = (num) => {
+    const characters ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789![]_-?§$%&/()=';
+    let result1= Math.random().toString(36).substring(0,num);
+
+    return result1;
+}
+
+async function saveForgot(req, res) {
+    let username = req.body.username;
+
+    Account.database.getByName(username)
+        .then(async data => {
+            if ( data && data.length > 0 && data[0].email ) {
+                if ( data[0].email != '' ) {
+                    let newPassword = generateRandomString(12);
+
+                    let document = {
+                        id: data[0].id,
+                        password: await app.helper.security.hashPassword(newPassword),
+                    }
+
+                    Account.database.save(document)
+                        .then(() => {
+                            let text = 'Ihr neues Kennwort lautet: ' + newPassword;
+                            let html = null;
+                            app.mail.sendMail(data[0].email, 'Ihr neues Kennwort', text, html);
+                            res.redirect('/backend/login?msg=pass_changed');
+                        })
+                        .catch(err => {
+                            app.logError(err, Account.moduleName + ":web:webToLogin");
+                            app.web.toErrorPage(req, res, err, true, true, false);
+                        })
+                }
+            }
+        })
+        .catch(err => {
+            app.logError(err, Account.moduleName + ":web:webToLogin");
+            app.web.toErrorPage(req, res, err, true, true, false);
+        })
+}
+
+function toForgot(req, res) {
+    try {
+        // Ausgabe des Login - Templates
+        app.web.toOutput(req, res, ["modules", "_account"], "forgot", {}, true);
+    } catch (err) {
+        app.logError(err, Account.moduleName + ":web:toForgot");
         app.web.toErrorPage(req, res, err, true, true, false);
     }
 }

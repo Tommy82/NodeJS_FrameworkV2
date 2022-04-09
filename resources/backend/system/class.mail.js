@@ -2,7 +2,7 @@ import { default as nodemailer } from 'nodemailer';
 import { mail } from '../../config/settings.js';
 
 export default class Functions {
-    static sendMail = sendMail;
+    sendMail = sendMail;
 }
 
 function sendMail(to, subject, text = null, html = null) {
