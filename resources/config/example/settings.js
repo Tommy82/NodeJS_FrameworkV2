@@ -12,6 +12,17 @@ export const Administrator = {
     password: 'losgehts'
 }
 
+export const mail = {
+    active: true,
+    host: '0',
+    port: 587,
+    secure: false,
+    requireTLS: true,
+    user: '',
+    pass: '',
+}
+
+
 export const database = {
     // Interne Datenbank
     default: {

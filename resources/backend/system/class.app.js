@@ -17,6 +17,7 @@ import { default as WebServer } from "./class.webserver.js";
 import { Functions as fHelper } from './class.helper.js';
 import { default as DBConnection } from './class.database.js';
 import { default as Printer } from './class.printer.js';
+import { default as Email } from './class.mail.js';
 import { EventEmitter } from 'events';
 
 import fs from 'fs';
@@ -86,6 +87,11 @@ class ClassApp {
     printer;
 
     /**
+     * Allgemeine Email Funktionen
+     */
+    mail;
+
+    /**
      * InstallModule (werden nach Start wieder entfernt)
      * @type {[]}
      */
@@ -134,6 +140,7 @@ class ClassApp {
         this.web = new WebServer(this);
         this.frontend = new Frontend();
         this.printer = new Printer();
+        this.mail = new Email();
         this.checkLogFile();
 
     }
