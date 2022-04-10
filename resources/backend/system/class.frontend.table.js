@@ -269,7 +269,7 @@ async function generateEditByID(params, database) {
  * @param params
  * @returns {Promise<void>}
  */
-async function generateByObject(id, frontendName, params = new app.frontend.parameters()) {
+async function generateByObject(id, frontendName, params = new app.frontend.parameters(), tableSettings = '') {
     return new Promise(async (resolve, reject) => {
         //#region Header
         let header = [];
@@ -405,7 +405,7 @@ async function generateByObject(id, frontendName, params = new app.frontend.para
         let response = tableGenerate(params.id, header, content, footer);
 
         // Hinzufügen der Daten für das Frontend
-        params.addScript(`setDataTable('${id}');`);
+        params.addScript(`setDataTable('${id}', ${tableSettings});`);
         params.addData(frontendName, response);
 
         return resolve({
@@ -522,5 +522,3 @@ async function saveEditByID(params, database) {
         }
     })
 }
-
-
