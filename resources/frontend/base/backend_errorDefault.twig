@@ -3,7 +3,7 @@
 {% block content %}
     <h3>Leider ist ein Fehler auf der Seite aufgetreten!</h3>
     <br>
-    <a href="/backend">Zurück zur Startseite</a>    <br>
+    <a href="{{ prefix }}/backend">Zurück zur Startseite</a>    <br>
 
     {% if ERRORMESSAGE is not empty %}
         <br>

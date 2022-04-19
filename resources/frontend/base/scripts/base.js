@@ -336,7 +336,7 @@ function addAutoComplete(fieldID, filter, callback) {
     $( fieldID ).autocomplete({
         source: function( request, response ) {
             $.ajax({
-                url: "/backend/autocomplete/" + filter + "/" + request.term,
+                url: page.prefix + "/backend/autocomplete/" + filter + "/" + request.term,
                 dataType: "json",
                 data: {
                     q: request.term

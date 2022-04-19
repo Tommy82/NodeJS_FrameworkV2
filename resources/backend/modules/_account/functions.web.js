@@ -75,7 +75,7 @@ async function saveForgot(req, res) {
                             let text = 'Ihr neues Kennwort lautet: ' + newPassword;
                             let html = null;
                             app.mail.sendMail(data[0].email, 'Ihr neues Kennwort', text, html);
-                            res.redirect('/backend/login?msg=pass_changed');
+                            res.redirect(app.web.prefix + '/backend/login?msg=pass_changed');
                         })
                         .catch(err => {
                             app.logError(err, Account.moduleName + ":web:webToLogin");
@@ -135,7 +135,7 @@ async function checkLogin(req, res) {
                 if (redirect && redirect.trim() !== '') {
                     res.redirect(redirect);
                 } else {
-                    res.redirect("/backend");
+                    res.redirect(app.web.prefix + "/backend");
                 }
             } else {
                 res.send("Falsche Zugangsdaten");
@@ -161,7 +161,7 @@ function toLogout(req, res) {
     try {
         req.session.loggedIn_Frontend = null;
         req.session.loggedIn_Backend = null;
-        res.redirect("/backend/login");
+        res.redirect(app.web.prefix + "/backend/login");
     } catch (err) {
         app.logError(err, Account.moduleName + ":web:toLogout");
         app.web.toErrorPage(req, res, err, true, true, false);
@@ -290,7 +290,7 @@ async function saveMe(req, res) {
 
         Account.database.save(document)
             .then(() => {
-                res.send({success: "success", data: [], redirect: '/backend'});
+                res.send({success: "success", data: [], redirect: app.web.prefix + '/backend'});
             })
             .catch(err => {
                 res.send({success: "error", error: err.message });
@@ -298,7 +298,7 @@ async function saveMe(req, res) {
 
 
     } else {
-        res.send({success: "error", error: "Access denied", redirect: '/backend'});
+        res.send({success: "error", error: "Access denied", redirect: app.web.prefix + '/backend'});
     }
 }
 
@@ -363,9 +363,9 @@ async function delAccountSingle(req, res) {
                 .catch(err => {
 
                 })
-            } else {
-                res.send({ success: "error", error: "Access denied" });
-            }
+        } else {
+            res.send({ success: "error", error: "Access denied" });
+        }
     } else {
         res.send({ success: "error", error: "ID not found" });
     }
