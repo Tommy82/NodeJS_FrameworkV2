@@ -16,7 +16,7 @@
             <link rel="stylesheet" type="text/css" href="{{prefix}}/vendor/jquery/jquery-confirm/style.css">
             <link rel="stylesheet" type="text/css" href="{{prefix}}/vendor/toastr/toastr.min.css">
             <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
-    {% endblock %}
+        {% endblock %}
 
         {% block stylesheet %}
             <link rel="stylesheet" type="text/css" href="{{prefix}}/base/css/base.css">
@@ -28,46 +28,46 @@
 <div id="wrapper">
     <div id="header">
         {% block navigation_main %}
-        <nav class="mainmenu">
-            <ul>
-                <li><a href="{{prefix}}/backend">Home</a></li>
-                {% block nav_beforebasic %}{% endblock %}
-                <li class="submenu"><a href="#">Basics</a>
-                    <ul>
-                        {% block nav_basic_before %}{% endblock %}
-                        <li><a href="{{prefix}}/backend/account">Users</a></li>
-                        <li><a href="{{prefix}}/backend/role">Rollen</a></li>
-                        {% block nav_basic_after %}{% endblock %}
-                    </ul>
-                </li>
-                {% block nav_afterbasic %}{% endblock %}
-                <li class="submenu"><a href="#">Ich</a>
-                    <ul>
-                        {% block nav_me_before %}{% endblock %}
-                        <li><a href="{{prefix}}/backend/account/{{ me.id }}/me">Eigene Einstellungen</a></li>
-                        {% block nav_me_after %}{% endblock %}
-                    </ul>
-                </li>
-                <li><a href="{{prefix}}/backend/logout">Logout</a></li>
-            </ul>
-            <div id="header_me">User: {{ me.name }} [ID: {{ me.id }} | Role: {{ me.role }}]</div>
-        </nav>
+            <nav class="mainmenu">
+                <ul>
+                    <li><a href="{{prefix}}/backend">Home</a></li>
+                    {% block nav_beforebasic %}{% endblock %}
+                    <li class="submenu"><a href="#">Basics</a>
+                        <ul>
+                            {% block nav_basic_before %}{% endblock %}
+                            <li><a href="{{prefix}}/backend/account">Users</a></li>
+                            <li><a href="{{prefix}}/backend/role">Rollen</a></li>
+                            {% block nav_basic_after %}{% endblock %}
+                        </ul>
+                    </li>
+                    {% block nav_afterbasic %}{% endblock %}
+                    <li class="submenu"><a href="#">Ich</a>
+                        <ul>
+                            {% block nav_me_before %}{% endblock %}
+                            <li><a href="{{prefix}}/backend/account/{{ me.id }}/me">Eigene Einstellungen</a></li>
+                            {% block nav_me_after %}{% endblock %}
+                        </ul>
+                    </li>
+                    <li><a href="{{prefix}}/backend/logout">Logout</a></li>
+                </ul>
+                <div id="header_me">User: {{ me.name }} [ID: {{ me.id }} | Role: {{ me.role }}]</div>
+            </nav>
         {% endblock %}
         {% block header %}{% endblock %}
     </div>
     <div id="main">
         {% block overlayIFrame %}
-        <div id="overlayIFrame">
-            <div id="overlayIFrameContent">
-                <div id="overlayIFrameContentHeader">
-                    <div id="overlayIFrameContentHeaderText"></div>
-                    <div id="overlayIFrameContentHeaderClose">(X)</div>
-                </div>
-                <div id="overlayIFrameContentContent">
-                    <iframe id="overlay_iframe" width="100%" height="100%"></iframe>
+            <div id="overlayIFrame">
+                <div id="overlayIFrameContent">
+                    <div id="overlayIFrameContentHeader">
+                        <div id="overlayIFrameContentHeaderText"></div>
+                        <div id="overlayIFrameContentHeaderClose">(X)</div>
+                    </div>
+                    <div id="overlayIFrameContentContent">
+                        <iframe id="overlay_iframe" width="100%" height="100%"></iframe>
+                    </div>
                 </div>
             </div>
-        </div>
         {% endblock overlayIFrame %}
 
         <div id="content">{% block content %}{% endblock %}</div>
@@ -76,34 +76,34 @@
 </div>
 
 {% block javascript_extern %}
-<script src="{{prefix}}/vendor/jquery/jquery.min.js"></script>
-<script src="{{prefix}}/vendor/jquery/jquery-ui/jquery-ui.min.js"></script>
-<script src="{{prefix}}/vendor/jquery/jquery-tablesorter/js/jquery.tablesorter.min.js"></script>
-<script src="{{prefix}}/vendor/jquery/jquery-tablesorter/js/jquery.tablesorter.widgets.min.js"></script>
-<script src="{{prefix}}/vendor/jquery/jquery-datatable/script.js"></script>
-<script src="{{prefix}}/vendor/jquery/jquery-confirm/script.js"></script>
-<script src="{{prefix}}/vendor/toastr/toastr.min.js"></script>
+    <script src="{{prefix}}/vendor/jquery/jquery.min.js"></script>
+    <script src="{{prefix}}/vendor/jquery/jquery-ui/jquery-ui.min.js"></script>
+    <script src="{{prefix}}/vendor/jquery/jquery-tablesorter/js/jquery.tablesorter.min.js"></script>
+    <script src="{{prefix}}/vendor/jquery/jquery-tablesorter/js/jquery.tablesorter.widgets.min.js"></script>
+    <script src="{{prefix}}/vendor/jquery/jquery-datatable/script.js"></script>
+    <script src="{{prefix}}/vendor/jquery/jquery-confirm/script.js"></script>
+    <script src="{{prefix}}/vendor/toastr/toastr.min.js"></script>
 {% endblock %}
 
 {% block javascript_intern %}
-<script type="text/javascript">
-    page = {
-        prefix: '{{prefix}}',
-    }
-</script>
+    <script type="text/javascript">
+        page = {
+            prefix: '{{prefix}}',
+        }
+    </script>
 
-<script src="{{prefix}}/base/scripts/base.js"></script>
+    <script src="{{prefix}}/base/scripts/base.js"></script>
 
-<script>
-    {{ scripts }}
+    <script>
+        {{ scripts }}
 
-    {% if AUTOCOMPLETE is defined and AUTOCOMPLETE is not null %}
+        {% if AUTOCOMPLETE is defined and AUTOCOMPLETE is not null %}
         {% for complete in AUTOCOMPLETE %}
-            addAutoComplete('#{{complete.fieldID|e}}', '{{complete.filter|e}}');
+        addAutoComplete('#{{complete.fieldID|e}}', '{{complete.filter|e}}', {{ complete.callback|e }});
         {% endfor %}
-    {% endif %}
+        {% endif %}
 
-</script>
+    </script>
 {% endblock %}
 </body>
 </html>

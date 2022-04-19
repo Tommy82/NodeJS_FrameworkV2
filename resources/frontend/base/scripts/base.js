@@ -332,7 +332,7 @@ function dataTable_Break() {
     window.location = window.location.href;
 }
 
-function addAutoComplete(fieldID, filter) {
+function addAutoComplete(fieldID, filter, callback) {
     $( fieldID ).autocomplete({
         source: function( request, response ) {
             $.ajax({
@@ -348,7 +348,13 @@ function addAutoComplete(fieldID, filter) {
         },
         minLength: 2,
         select: function( event, ui ) {
-            $(fieldID).val(ui.item.value);
+            event.preventDefault();
+            if ( !callback || callback === '' ) {
+                $(fieldID).val(ui.item.value);
+            } else {
+                callback(fieldID, ui.item);
+            }
+
         },
         open: function() {
             $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
