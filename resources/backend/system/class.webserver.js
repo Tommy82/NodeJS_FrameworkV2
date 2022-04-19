@@ -14,6 +14,7 @@ import pug from 'pug';
 import methodOverride from 'method-override';
 import fs from 'fs';
 import path from 'path';
+import { settings }  from '../../config/settings.js';
 
 /** WebServer */
 export default class ClassWebserver {
@@ -108,7 +109,8 @@ export default class ClassWebserver {
         if ( req.session.loggedIn_Backend ) {
             return next();
         } else {
-            res.redirect("/backend/login?redirect=" + req.url);
+
+            res.redirect(settings.webServer.prefix + "/backend/login?redirect=" + req.url);
         }
 
     }
@@ -124,7 +126,7 @@ export default class ClassWebserver {
         if ( req.session.loggedIn_Frontend ) {
             return next();
         } else {
-            res.redirect("/login");
+            res.redirect(settings.webServer.prefix + "/login");
         }
     }
 
@@ -184,6 +186,9 @@ export default class ClassWebserver {
         params.isOverlay = false;
         if ( req.query.overlay === 1 || req.query.overlay === '1') {
             params.isOverlay = true;
+        }
+        if ( !params.prefix ) {
+            params.prefix = settings.webServer.prefix;
         }
 
         if ( fs.existsSync(this.#app.directories.frontend + basicSiteCustom)) { params.basicSite = basicSiteCustom; }

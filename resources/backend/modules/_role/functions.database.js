@@ -22,6 +22,7 @@ export class Functions {
     static rightsGetAll = rightsGetAll;
     static rightsSave = rightsSave;
     static AutoCompleteRole = AutoCompleteRole;
+    static deleteByID = deleteByID;
 }
 
 /**
@@ -103,6 +104,25 @@ function rightsSave(document) {
 }
 
 /**
+ * Löschen einer Rolle
+ * @param id
+ */
+function deleteByID(id) {
+    return new Promise((resolve, reject) => {
+        app.DB.deleteById('roles', id)
+            .then(response => {
+                app.DB.delete('rolesRights', { roleID: id})
+                    .then(response => {
+                        return resolve(response);
+                    })
+                    .catch(err => { return reject(err); })
+
+            })
+            .catch(err => { return reject(err); })
+    })
+}
+
+/**
  * Autocomplete für den Filter "role"
  * @param search
  * @returns {Promise<unknown>}
@@ -132,4 +152,6 @@ async function AutoCompleteRole(search) {
             .catch(err => { return reject(err); })
     })
 }
+
+
 

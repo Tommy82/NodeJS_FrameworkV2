@@ -1,26 +1,25 @@
-{% set prefix = '' %}
 <!DOCTYPE html>
 <html lang="de">
 <head>
     {% block head %}
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="icon" type="image/vnd.microsoft.icon" href="{{prefix}}/base/images/favicon.ico">
+        <link rel="icon" type="image/vnd.microsoft.icon" href="/base/images/favicon.ico">
         <title>{{ title }}</title>
 
         {% block stylesheet_extern %}
-            <link rel="stylesheet" type="text/css" href="{{prefix}}/vendor/jquery/jquery-ui/jquery-ui.min.css">
-            <link rel="stylesheet" type="text/css" href="{{prefix}}/vendor/jquery/jquery-tablesorter/css/theme.default.css">
-            <link rel="stylesheet" type="text/css" href="{{prefix}}/vendor/jquery/jquery-tablesorter/css/theme.blue.css">
-            <link rel="stylesheet" type="text/css" href="{{prefix}}/vendor/jquery/jquery-datatable/style.css">
-            <link rel="stylesheet" type="text/css" href="{{prefix}}/vendor/jquery/jquery-confirm/style.css">
-            <link rel="stylesheet" type="text/css" href="{{prefix}}/vendor/toastr/toastr.min.css">
+            <link rel="stylesheet" type="text/css" href="/vendor/jquery/jquery-ui/jquery-ui.min.css">
+            <link rel="stylesheet" type="text/css" href="/vendor/jquery/jquery-tablesorter/css/theme.default.css">
+            <link rel="stylesheet" type="text/css" href="/vendor/jquery/jquery-tablesorter/css/theme.blue.css">
+            <link rel="stylesheet" type="text/css" href="/vendor/jquery/jquery-datatable/style.css">
+            <link rel="stylesheet" type="text/css" href="/vendor/jquery/jquery-confirm/style.css">
+            <link rel="stylesheet" type="text/css" href="/vendor/toastr/toastr.min.css">
             <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
         {% endblock %}
 
         {% block stylesheet %}
-            <link rel="stylesheet" type="text/css" href="{{prefix}}/base/css/base.css">
-            <link rel="stylesheet" type="text/css" href="{{prefix}}/base/css/default_style1.css">
+            <link rel="stylesheet" type="text/css" href="/base/css/base.css">
+            <link rel="stylesheet" type="text/css" href="/base/css/default_style1.css">
         {% endblock %}
     {% endblock %}
 </head>
@@ -35,8 +34,8 @@
                     <li class="submenu"><a href="#">Basics</a>
                         <ul>
                             {% block nav_basic_before %}{% endblock %}
-                            <li><a href="{{prefix}}/backend/account">Users</a></li>
-                            <li><a href="{{prefix}}/backend/role">Rollen</a></li>
+                            <li><a href="{{ prefix }}/backend/account">Users</a></li>
+                            <li><a href="{{ prefix }}/backend/role">Rollen</a></li>
                             {% block nav_basic_after %}{% endblock %}
                         </ul>
                     </li>

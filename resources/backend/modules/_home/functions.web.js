@@ -6,7 +6,8 @@ import {app} from "../../system/class.app.js";
  * @param {*} res Webserver - Response
  */
 export function toHome_backend(req, res) {
-    app.web.toOutput(req, res, ["modules", "_home"], "backend", [], true);
+    let params = new app.frontend.parameters();
+    app.web.toOutput(req, res, ["modules", "_home"], "backend", params.output, true);
 }
 
 /**
@@ -15,5 +16,6 @@ export function toHome_backend(req, res) {
  * @param {*} res Webserver - Response
  */
 export function toHome_frontend(req, res) {
-    app.web.toOutput(req, res, ["modules", "_home"], "frontend", [], false);
+    let params = new app.frontend.parameters();
+    app.web.toOutput(req, res, ["modules", "_home"], "frontend", params.output, false);
 }

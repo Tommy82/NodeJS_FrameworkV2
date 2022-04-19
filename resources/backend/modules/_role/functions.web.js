@@ -20,6 +20,7 @@ export class Functions {
     static getList = getList;
     static getDetails = getDetails;
     static setDetails = setDetails;
+    static delete = deleteRole;
 }
 
 /**
@@ -37,18 +38,18 @@ async function getList(req, res) {
         params.sql = "SELECT `id`, `key`, `name`, `desc` FROM `roles` ";
         params.where = "id > 0";
         params.addAdd = true;
-        params.url_fastsave = '/backend/role/0';
+        params.url_fastsave = app.settings.webServer.prefix + '/backend/role/0';
 
         // Menü
         params.menu = '';
         if ( app.helper.check.rights.bySession(req, Role.moduleName, "change")) {
-            params.menu += `<a class="toOverlay" href='/backend/role/%id%?overlay=1'><img src="/base/images/icons/edit.png" alt="" class="icon" href='/backend/role/%id%'></a>`;
-        }
-        // Wenn Löschen erlaubt, setze Button für Löschen
-        if (app.helper.check.rights.bySession(req, Role.moduleName, "delete")) {
-            params.menu += `<a href="/backend/role/%id%/del" value1="Rolle" value2="%id%" value3="%name%" class="btnDelete""><span><img src="/base/images/icons/delete.png" alt="" class="icon"></a></span>`;
+            params.menu += `<a class="toOverlay" href='${app.settings.webServer.prefix}/backend/role/%id%?overlay=1'><img src="/base/images/icons/edit.png" alt="" class="icon" href='/backend/role/%id%'></a>`;
         }
 
+        // Wenn Löschen erlaubt, setze Button für Löschen
+        if (app.helper.check.rights.bySession(req, Role.moduleName, "delete")) {
+            params.menu += `<a href="${app.settings.webServer.prefix}/backend/role/%id%/del" value1="Rolle" value2="%id%" value3="%name%" class="btnDelete""><span><img src="/base/images/icons/delete.png" alt="" class="icon"></a></span>`;
+        }
 
         app.frontend.table.generateByDB('tblRoles', "TAB1", params, null)
             .then(response => {
@@ -143,6 +144,43 @@ async function setDetails(req, res) {
         app.logError(err, Role.moduleName + ":web:setDetails");
         app.web.toErrorPage(req, res, err, true, true, false);
     }
+
+}
+
+async function deleteRole(req, res)  {
+    let id = req.params.id;
+    let allowed = true;
+
+    Role.database.getByID(id)
+        .then(lstRoles => {
+            if ( lstRoles && lstRoles.length > 0 ) {
+                let key = lstRoles[0].key;
+
+                app.modules.account.database.getByRole(key)
+                    .then(lstAccounts => {
+                        if ( lstAccounts && lstAccounts.length > 0 ) {
+                            app.log('Kann nicht gelöscht werden - Accounts vorhanden');
+                        } else {
+                            Role.database.deleteByID(id)
+                                .then(response => {
+                                    Functions.getList(req, res).catch(err => { app.logError(err); })
+                                })
+                                .catch(err => {
+                                    app.logError(err);
+                                    app.web.toErrorPage(req, res, err, true, true, false);
+                                })
+                        }
+                    })
+                    .catch(err => {
+                        app.logError(err);
+                        app.web.toErrorPage(req, res, err, true, true, false);
+                    })
+            }
+        })
+        .catch(err => {
+            app.logError(err);
+            app.web.toErrorPage(req, res, err, true, true, false);
+        })
 
 }
 

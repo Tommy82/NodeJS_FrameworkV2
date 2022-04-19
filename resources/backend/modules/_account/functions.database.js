@@ -19,6 +19,7 @@ export class Functions {
     static getByName = getByName;
     static save = save;
     static deleteById = deleteById;
+    static getByRole = getByRole;
 }
 
 /**
@@ -42,6 +43,19 @@ function getById(id) {
 function getByName(name) {
     return new Promise((resolve, reject) => {
         app.DB.find('account', { name: name })
+            .then(data => { return resolve(data); })
+            .catch(err => { return reject(err); })
+    })
+}
+
+/**
+ * Lädt alle Accounts mit einer bestimmten Rolle
+ * @param {string} roleKey key der Rolle (db:roles.key)
+ * @returns {Promise<unknown>}
+ */
+function getByRole(roleKey) {
+    return new Promise((resolve, reject) => {
+        app.DB.find('account', { roles: roleKey })
             .then(data => { return resolve(data); })
             .catch(err => { return reject(err); })
     })

@@ -23,3 +23,4 @@ app.web.addRoute("get", "/backend/role/:id", Role.web.getDetails, false, true);
 // Speichern - Einzeldetails einer Rolle
 app.web.addRoute("post", "/backend/role/:id", Role.web.setDetails, false, true);
 
+app.web.addRoute("get", "/backend/role/:id/del", Role.web.delete, false, true);
