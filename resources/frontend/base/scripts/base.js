@@ -440,10 +440,10 @@ function sendForm(form, e) {
             success: function(res) {
                 if ( res && res.success && res.success === "success") {
                     if ( res.redirect && res.redirect != '' ) {
-                        if ( res.redirectParent && (res.redirectParent === '1' || res.redirectParent === 1)) {
-                            parent.location.href = res.redirect;
-                        } else {
+                        if ( res.redirectOverlay && (res.redirectOverlay === '1' || res.redirectOverlay === 1)) {
                             window.location.href = res.redirect;
+                        } else {
+                            parent.location.href = res.redirect;
                         }
                     } else {
                         parent.location.href = parent.location; // Reload Parent Page
