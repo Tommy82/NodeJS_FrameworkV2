@@ -202,11 +202,11 @@ function toAccountList(req, res) {
         params.menu = "";
         // Wenn Änderungen erlaubt, setze Button für Änderungen
         if (app.helper.check.rights.bySession(req, Account.moduleName, "change")) {
-            params.menu += `<a class="toOverlay" href='${app.web.prefix}/backend/account/%id%?overlay=1'><img src="/base/images/icons/edit.png" alt="" class="icon"></a>`;
+            params.menu += `<a class="toOverlay" href='${app.web.prefix}/backend/account/%id%?overlay=1'><img src="${app.web.prefix}/base/images/icons/edit.png" alt="" class="icon"></a>`;
         }
         // Wenn Löschen erlaubt, setze Button für Löschen
         if (app.helper.check.rights.bySession(req, Account.moduleName, "delete")) {
-            params.menu += `<a href="${app.web.prefix}/backend/account/%id%/del" value1="Benutzer" value2="%id%" value3="%name%" class="btnDelete""><span><img src="/base/images/icons/delete.png" alt="" class="icon"></a></span>`;
+            params.menu += `<a href="${app.web.prefix}/backend/account/%id%/del" value1="Benutzer" value2="%id%" value3="%name%" class="btnDelete""><span><img src="${app.web.prefix}/base/images/icons/delete.png" alt="" class="icon"></a></span>`;
         }
         //#endregion Set Parameters
 

@@ -43,12 +43,12 @@ async function getList(req, res) {
         // Menü
         params.menu = '';
         if ( app.helper.check.rights.bySession(req, Role.moduleName, "change")) {
-            params.menu += `<a class="toOverlay" href='${app.settings.webServer.prefix}/backend/role/%id%?overlay=1'><img src="/base/images/icons/edit.png" alt="" class="icon" href='/backend/role/%id%'></a>`;
+            params.menu += `<a class="toOverlay" href='${app.settings.webServer.prefix}/backend/role/%id%?overlay=1'><img src="${app.web.prefix}/base/images/icons/edit.png" alt="" class="icon" href='${app.web.prefix}/backend/role/%id%'></a>`;
         }
 
         // Wenn Löschen erlaubt, setze Button für Löschen
         if (app.helper.check.rights.bySession(req, Role.moduleName, "delete")) {
-            params.menu += `<a href="${app.settings.webServer.prefix}/backend/role/%id%/del" value1="Rolle" value2="%id%" value3="%name%" class="btnDelete""><span><img src="/base/images/icons/delete.png" alt="" class="icon"></a></span>`;
+            params.menu += `<a href="${app.settings.webServer.prefix}/backend/role/%id%/del" value1="Rolle" value2="%id%" value3="%name%" class="btnDelete""><span><img src="${app.web.prefix}/base/images/icons/delete.png" alt="" class="icon"></a></span>`;
         }
 
         app.frontend.table.generateByDB('tblRoles', "TAB1", params, null)

@@ -33,8 +33,8 @@ async function install_rights() {
         try {
             app.log("Installation / Update - Rechte", Rights.moduleName);
             let orgRights = await Rights.database.getAll(false).catch(err => { app.logError(err, Rights.moduleName); });
-            if ( app.modules && app.modules.length > 0 ) {
-                await app.helper.lists.asyncForEach(app.modules, async (module) => {
+            if ( app.installModules && app.installModules.length > 0 ) {
+                await app.helper.lists.asyncForEach(app.installModules, async (module) => {
                     if ( module && module.rights && module.rights.length > 0 ) {
                         await app.helper.lists.asyncForEach(module.rights, async (right) => {
                             let found = orgRights.find(x => x.moduleName === module.moduleName && x.key === right.key);
