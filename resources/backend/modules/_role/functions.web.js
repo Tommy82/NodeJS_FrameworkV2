@@ -237,9 +237,33 @@ function saveRights(params) {
  */
 function setEditableData(id, params = new app.frontend.parameters()) {
     params.columns = [
-        { key: "name", type: "text", name: "Name", check: "notempty" },
-        { key: "desc", type: "text", name: "Beschreibung", check: "", description: 'Beschreibung der Rolle' },
+        {
+            key: "name",
+            type: "text",
+            name: "Name",
+            check: "notempty",
+            fastSave: true,
+            inList: true
+        },
+        {
+            key: "desc",
+            type: "text",
+            name: "Beschreibung",
+            check: "",
+            description: 'Beschreibung der Rolle',
+            fastSave: true,
+            inList: true
+        },
+        {
+            key: 'key',
+            type: 'text',
+            name: "Key",
+            check: "notempty",
+            fastSave: true,
+            inList: true
+        },
     ];
+
     params.table = "roles";
     params.id = id;
     return params;
