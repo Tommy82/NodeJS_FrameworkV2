@@ -87,7 +87,7 @@ async function saveForgot(req, res) {
                     res.redirect(app.web.prefix + '/backend/login?msg=pass_changed');
                 }
             } else {
-                app.log("Kennwort Reset gescheitert: Benutzer hat keine Mail [" + username + "]");
+                app.log("Kennwort Reset gescheitert: Benutzer nicht vorhanden oder hat keine Mail [" + username + "]");
                 res.redirect(app.web.prefix + '/backend/login?msg=pass_changed');
             }
         })
@@ -324,6 +324,26 @@ async function saveAccountSingle(req, res) {
         if (!params || params.errors.length > 0) {
             res.send({success: "error", data: params.errors})
         } else {
+
+            if ( params.id === 0 || params.id === '0') {
+
+                let password = app.settings.users.init_password;
+
+                if ( password && password.trim() != '' ) {
+                    password = await app.helper.security.hashPassword(password);
+                    params.body["password"] = password;
+                }
+
+                params.columns.push({
+                    key: "password",
+                    type: "text",
+                    name: "Kennwort",
+                    check: "notempty",
+                    fastSave: true,
+                    inList: true,
+                });
+            }
+
             app.frontend.table.saveEditByID(params, null)
                 .then(data => {
                     params.savedData = data;
