@@ -186,9 +186,9 @@ function toAccountList(req, res) {
         let params = new app.frontend.parameters();
 
         // Namen der Tabellenheader
-        params.header = ["ID", "Name", "Aktiv", "Backend", "Frontend", "Rollen", "Menü"];
+        params.header = ["ID", "Name", "Aktiv", "Backend", "Frontend", "Rollen", "Email", "Menü"];
         // SQL Abfrage (ohne Where!)
-        params.sql = "SELECT `id`, `name`, `active`, `isBackend`, `isFrontend`, `roles` FROM `account` ";
+        params.sql = "SELECT `id`, `name`, `active`, `isBackend`, `isFrontend`, `roles`, `email` FROM `account` ";
         // Where Klausel
         params.where = "id > 0";
         // Welche Spalten sollen als Checkboxen ausgegeben werden
@@ -451,6 +451,14 @@ function setEditableData(id, params = new app.frontend.parameters()) {
             fastSave: true,
             inList: true,
         },
+        {
+            key: 'email',
+            type: 'text',
+            name: 'Email Adresse',
+            check: "notempty",
+            fastSave: true,
+            inList: true
+        }
     ];
     params.table = "account";
     params.id = id;
