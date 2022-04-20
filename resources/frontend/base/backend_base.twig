@@ -8,18 +8,18 @@
         <title>{{ title }}</title>
 
         {% block stylesheet_extern %}
-            <link rel="stylesheet" type="text/css" href="/vendor/jquery/jquery-ui/jquery-ui.min.css">
-            <link rel="stylesheet" type="text/css" href="/vendor/jquery/jquery-tablesorter/css/theme.default.css">
-            <link rel="stylesheet" type="text/css" href="/vendor/jquery/jquery-tablesorter/css/theme.blue.css">
-            <link rel="stylesheet" type="text/css" href="/vendor/jquery/jquery-datatable/style.css">
-            <link rel="stylesheet" type="text/css" href="/vendor/jquery/jquery-confirm/style.css">
-            <link rel="stylesheet" type="text/css" href="/vendor/toastr/toastr.min.css">
+            <link rel="stylesheet" type="text/css" href="{{ prefix }}/vendor/jquery/jquery-ui/jquery-ui.min.css">
+            <link rel="stylesheet" type="text/css" href="{{ prefix }}/vendor/jquery/jquery-tablesorter/css/theme.default.css">
+            <link rel="stylesheet" type="text/css" href="{{ prefix }}/vendor/jquery/jquery-tablesorter/css/theme.blue.css">
+            <link rel="stylesheet" type="text/css" href="{{ prefix }}/vendor/jquery/jquery-datatable/style.css">
+            <link rel="stylesheet" type="text/css" href="{{ prefix }}/vendor/jquery/jquery-confirm/style.css">
+            <link rel="stylesheet" type="text/css" href="{{ prefix }}/vendor/toastr/toastr.min.css">
             <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
         {% endblock %}
 
         {% block stylesheet %}
-            <link rel="stylesheet" type="text/css" href="/base/css/base.css">
-            <link rel="stylesheet" type="text/css" href="/base/css/default_style1.css">
+            <link rel="stylesheet" type="text/css" href="{{ prefix }}/base/css/base.css">
+            <link rel="stylesheet" type="text/css" href="{{ prefix }}/base/css/default_style1.css">
         {% endblock %}
     {% endblock %}
 </head>
