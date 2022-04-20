@@ -82,6 +82,13 @@ async function saveForgot(req, res) {
                             app.web.toErrorPage(req, res, err, true, true, false);
                         })
                 }
+                else {
+                    app.log("Kennwort Reset gescheitert: Benutzer hat keine Mail [" + username + "]");
+                    res.redirect(app.web.prefix + '/backend/login?msg=pass_changed');
+                }
+            } else {
+                app.log("Kennwort Reset gescheitert: Benutzer hat keine Mail [" + username + "]");
+                res.redirect(app.web.prefix + '/backend/login?msg=pass_changed');
             }
         })
         .catch(err => {
