@@ -55,7 +55,9 @@ export default class Parameters {
         /** Scripte (z.B. Javascript **/
         scripts: '',
         /** Styles **/
-        styles: ''
+        styles: '',
+        /** AutoComplete **/
+        AUTOCOMPLETE: [],
     }
 
     /**
@@ -76,5 +78,9 @@ export default class Parameters {
 
     addData(key, data) {
         this.output[key] = data;
+    }
+
+    addAutocomplete(fieldID, filter, callback = '') {
+        this.output.AUTOCOMPLETE.push({fieldID: fieldID, filter: filter, callback: callback});
     }
 }
