@@ -381,7 +381,8 @@ async function generateByObject(id, frontendName, params = new app.frontend.para
                             case "double":
                                 if ( !item.round ) { item.round = 2; }
                                 if ( value && value != '' ) {
-                                    value = parseFloat(value).toFixed(item.round);
+                                    //value = parseFloat(value).toFixed(item.round);
+                                    value = new Intl.NumberFormat('de-DE', { minimumFractionDigits: item.round, maximumFractionDigits: item.round }).format(value)
                                 }
                                 else { value = '0' };
                                 break;
@@ -402,7 +403,7 @@ async function generateByObject(id, frontendName, params = new app.frontend.para
         let footer = [];
         //#endregion Footer
 
-        let response = tableGenerate(params.id, header, content, footer);
+        let response = tableGenerate(id, header, content, footer);
 
         // Hinzufügen der Daten für das Frontend
         params.addScript(`setDataTable('${id}', ${tableSettings});`);
