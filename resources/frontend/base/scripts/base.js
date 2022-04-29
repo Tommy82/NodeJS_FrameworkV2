@@ -15,6 +15,12 @@ $(document).ready(function () {
         return false;
     });
 
+    $('#overlayIFrameCOntentHeaderRefresh').click(function(e) {
+        e.preventDefault();
+        let iframe = document.getElementById('overlay_iframe');
+        iframe.src = iframe.src;
+    })
+
     $("form").submit(function(e){ return sendForm($(this), e) });
 
     $('.btnDelete').click(function(e) {
@@ -424,70 +430,75 @@ function sendForm(form, e) {
 
     let currButton = $(document.activeElement).attr("name");
 
-    if ( currButton === "btnSave" ) {
-        // Button Speichern
-        let data = {};
-        $.each(form.serializeArray(), function(i, field) {
-            let input = $('input[name='+field.name+']');
-            field.value = $.trim(field.value);
-            data[field.name] = field.value;
-        })
+    switch ( currButton ) {
+        case "btnSave":
+            // Button Speichern
+            let data = {};
+            $.each(form.serializeArray(), function(i, field) {
+                let input = $('input[name='+field.name+']');
+                field.value = $.trim(field.value);
+                data[field.name] = field.value;
+            })
 
-        let action = form.attr("action");
-        let method = form.attr("method");
-        if ( !action || action.trim() === "") {
-            action = location;
-        }
+            let action = form.attr("action");
+            let method = form.attr("method");
+            if ( !action || action.trim() === "") {
+                action = location;
+            }
 
-        $.ajax({
-            type: method,
-            url: action,
-            data: data,
-            success: function(res) {
-                if ( res && res.success && res.success === "success") {
-                    if ( res.redirect && res.redirect != '' ) {
-                        if ( res.redirectOverlay && (res.redirectOverlay === '1' || res.redirectOverlay === 1)) {
-                            window.location.href = res.redirect;
+            $.ajax({
+                type: method,
+                url: action,
+                data: data,
+                success: function(res) {
+                    if ( res && res.success && res.success === "success") {
+                        if ( res.redirect && res.redirect != '' ) {
+                            if ( res.redirectOverlay && (res.redirectOverlay === '1' || res.redirectOverlay === 1)) {
+                                window.location.href = res.redirect;
+                            } else {
+                                parent.location.href = res.redirect;
+                            }
                         } else {
-                            parent.location.href = res.redirect;
+                            parent.location.href = parent.location; // Reload Parent Page
                         }
                     } else {
-                        parent.location.href = parent.location; // Reload Parent Page
-                    }
-                } else {
-                    if ( res && res.success && res.success === "error" ) {
-                        if ( res.data && res.data.length > 0 ) {
-                            let errorMessage = "Folgende Fehler sind aufgetreten:\r\n\r\n";
-                            res.data.forEach(error => {
-                                if ( error && error.field && error.field !== '') {
-                                    $('#' + error.field).addClass('error');
-                                };
-                                if ( error && error.text && error.text !== '' ) {
-                                    errorMessage += "- " + error.text + "\r\n";
+                        if ( res && res.success && res.success === "error" ) {
+                            if ( res.data && res.data.length > 0 ) {
+                                let errorMessage = "Folgende Fehler sind aufgetreten:\r\n\r\n";
+                                res.data.forEach(error => {
+                                    if ( error && error.field && error.field !== '') {
+                                        $('#' + error.field).addClass('error');
+                                    };
+                                    if ( error && error.text && error.text !== '' ) {
+                                        errorMessage += "- " + error.text + "\r\n";
+                                    }
+                                });
+                                window.alert(errorMessage);
+                                if ( res.redirect && res.redirect != '' ) {
+                                    parent.location.href = res.redirect;
                                 }
-                            });
-                            window.alert(errorMessage);
-                            if ( res.redirect && res.redirect != '' ) {
-                                parent.location.href = res.redirect;
+                            } else {
+                                console.log(res);
+                                window.alert("Fehler beim verarbeiten der Rückmeldedaten. Bitte prüfen Sie das Log!");
                             }
                         } else {
                             console.log(res);
                             window.alert("Fehler beim verarbeiten der Rückmeldedaten. Bitte prüfen Sie das Log!");
                         }
-                    } else {
-                        console.log(res);
-                        window.alert("Fehler beim verarbeiten der Rückmeldedaten. Bitte prüfen Sie das Log!");
                     }
+                },
+                error: function(err) {
+                    console.log(err);
+                    window.alert("Es ist ein Fehler aufgetreten. Bitte prüfen Sie das Log!")
                 }
-            },
-            error: function(err) {
-                console.log(err);
-                window.alert("Es ist ein Fehler aufgetreten. Bitte prüfen Sie das Log!")
-            }
-        })
-    } else {
-        // Button Break !
-        parent.location.href = parent.location; // Reload Parent Page
+            });
+            break;
+        case "btnBreak":
+            parent.location.href = parent.location; // Reload Parent Page
+            break;
+        default:
+            return true;
+            break;
     }
     return false;
 }

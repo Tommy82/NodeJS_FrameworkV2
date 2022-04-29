@@ -200,7 +200,8 @@ nav #header_me {
     width: 90%;
 }
 
-#overlayIFrameContentHeaderClose {
+#overlayIFrameContentHeaderClose,
+#overlayIFrameCOntentHeaderRefresh {
     position: fixed;
     color: black;
     right: 0.5em;
@@ -208,6 +209,8 @@ nav #header_me {
     width: 20px;
     cursor: pointer;
 }
+
+#overlayIFrameCOntentHeaderRefresh { right: 3em; }
 
 #overlayIFrameContentContent {
     height: calc(100% - 1.5em); /* 100% - Header */
