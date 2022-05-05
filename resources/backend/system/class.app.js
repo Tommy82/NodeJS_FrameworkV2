@@ -19,6 +19,8 @@ import { default as DBConnection } from './class.database.js';
 import { default as Printer } from './class.printer.js';
 import { default as Email } from './class.mail.js';
 import { EventEmitter } from 'events';
+import { Functions as fSettings } from './class.settings.js';
+import { DBSettings } from "./settings.entities.js";
 
 import fs from 'fs';
 import path from 'path';
@@ -134,6 +136,7 @@ class ClassApp {
         this.server_logfile = "server_" + currTimestamp.year + "_" + currTimestamp.month + "_" + currTimestamp.day + ".txt";
 
         this.settings = settings;
+        this.settings.DB = fSettings
         this.SetDirectories();
         this.events = new EventEmitter();
         this.helper = fHelper;
@@ -173,7 +176,7 @@ class ClassApp {
          * Liste aller Datenbanktabellen für Hauptdatenbank
          * @type {*[]}
          */
-        let entityArray = [];
+        let entityArray = [DBSettings];
 
         await this.helper.lists.asyncForEach(this.installModules, async(module) => {
             if ( module ) {
@@ -202,6 +205,8 @@ class ClassApp {
 
         // Starten der Installation, wenn Datenbank korrekt gestartet
         this.events.on(`database:${database.default.database}:connected`, () => { this.install(); } );
+
+        console.log(entityArray);
 
         // Starten der Hauptdatenbank
         this.DB = new DBConnection(entityArray, database.default, true);

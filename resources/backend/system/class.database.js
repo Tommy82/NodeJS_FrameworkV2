@@ -258,7 +258,7 @@ export default class DBConnection {
     /**
      * Update or Insert a new Item
      * @param {string} repoName Name of Table / Entity
-     * @param {array} document
+     * @param {array | {}} document
      * @return {Promise<array>}
      */
     async upsert(repoName, document) {
