@@ -42,16 +42,7 @@ async function ToList(req, res) {
 }
 
 async function ToDetails(req, res) {
-    let params = new app.frontend.parameters();
-    //#region Set editable Data
-    params.columns = [
-        { key: 'module', name: 'Modul', type: 'text', editable: false },
-        { key: 'key', name: 'Name', type: 'text', editable: false },
-        { key: 'value', name: 'Wert', type: 'text', editable: true }
-    ];
-    params.table = "settings";
-    params.id = req.params.id;
-    //#endregion Set editable Data
+    let params = SetEditableData(req);
 
     let autocomplete = [];
 
@@ -71,5 +62,52 @@ async function ToDetails(req, res) {
 }
 
 async function FromDetails(req, res) {
-    res.send("ok");
+    try {
+        let params = SetEditableData(req);
+        if ( !params || params.errors.length > 0 ) {
+            res.send({ success: 'error', data: params.errors});
+        } else {
+            app.frontend.table.saveEditByID(params, null)
+                .then(response => {
+                    res.send({ success: "success", data: [] });
+                })
+                .catch(err => {
+                    app.logError(err, Settings.moduleName + ":web:FromDetails");
+                    app.web.toErrorPage(req, res, err, true, true, false);
+                })
+        }
+    }
+    catch(err ) {
+        app.logError(err, Settings.moduleName + ":web:FromDetails");
+        app.web.toErrorPage(req, res, err, true, true, false);
+    }
+}
+
+/**
+ * Editable Data für die Speicherung und Einzeldetails
+ * @param req
+ * @returns {*}
+ * @constructor
+ */
+function SetEditableData(req) {
+    let params = new app.frontend.parameters();
+    params.columns = [
+        { key: 'module', name: 'Modul', type: 'text', editable: false },
+        { key: 'key', name: 'Name', type: 'text', editable: false },
+        { key: 'value', name: 'Wert', type: 'text', editable: true }
+    ];
+    params.table = "settings";
+    params.id = req.params.id;
+    params.body = req.body;
+    return params;
+}
+
+/**
+ * Prüfung der Eingaben
+ * @param params
+ * @returns {*}
+ * @constructor
+ */
+function CheckSaveData(params) {
+    return params;
 }

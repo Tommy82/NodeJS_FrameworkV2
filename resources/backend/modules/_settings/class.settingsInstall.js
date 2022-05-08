@@ -6,12 +6,12 @@ class SettingsInstall {
     constructor() {
     }
 
-    module = Settings.moduleName;
+    moduleName = Settings.moduleName;
 
     entities = [ DBSettings ];
 
     rights = [
-        { key: 'change', desc: "Einstellung ändern", defaulRole: "admin" }, // Einstellung ändern
+        { key: 'change', desc: "Einstellung ändern", defaultRole: "admin" }, // Einstellung ändern
     ];
 
     async init() {
