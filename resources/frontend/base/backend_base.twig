@@ -31,17 +31,20 @@
                 <ul>
                     <li><a href="{{prefix}}/backend">Home</a></li>
                     {% block nav_beforebasic %}{% endblock %}
-                    <li class="submenu"><a href="#">Basics</a>
+                    <li class="submenu"><a href="#">Stammdaten</a>
                         <ul>
                             {% block nav_basic_before %}{% endblock %}
-                            <li><a href="{{ prefix }}/backend/account">Users</a></li>
+                            <li><a href="{{ prefix }}/backend/account">Benutzer</a></li>
                             <li><a href="{{ prefix }}/backend/role">Rollen</a></li>
                             {% block nav_basic_after %}{% endblock %}
                         </ul>
                     </li>
                     {% block nav_afterbasic %}{% endblock %}
-                    <li class="submenu"><a href="#">Ich</a>
+                    <li class="submenu"><a href="#">Einstellungen</a>
                         <ul>
+                            {% block nav_settings_before %}{% endblock %}
+                            <li><a href="{{prefix}}/backend/settings">Programm</a></li>
+                            {% block nav_settings_after %}{% endblock %}
                             {% block nav_me_before %}{% endblock %}
                             <li><a href="{{prefix}}/backend/account/{{ me.id }}/me">Eigene Einstellungen</a></li>
                             {% block nav_me_after %}{% endblock %}

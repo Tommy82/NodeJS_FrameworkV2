@@ -1,10 +1,18 @@
-import { app } from "./class.app.js";
+import { app } from "../../system//class.app.js";
 
 export class Functions {
     static GetByID = GetByID;
     static GetByModule = GetByModule;
     static GetByKey = GetByKey;
     static Upsert = Upsert;
+}
+
+async function GetAll() {
+    return new Promise((resolve, reject) => {
+        app.DB.findAll("settings")
+            .then(response => { return resolve(response); })
+            .catch(err => { return reject(err); })
+    })
 }
 
 /**
