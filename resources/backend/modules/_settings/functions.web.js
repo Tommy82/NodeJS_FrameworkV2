@@ -9,13 +9,14 @@ export class Functions {
 
 /**
  * Starte Ausgabe - Liste der Einstellungen
- * @param req
- * @param res
+ * @param {*} req Webserver - Request
+ * @param {*} res Webserver - Response
  * @returns {Promise<void>}
  * @constructor
  */
 async function ToList(req, res) {
     try {
+        //#region Erstellen der Parameter
         let params = new app.frontend.parameters();
 
         params.header = ["ID", "Modul", "Schlüssel", "Wert", "Typ", "Menu"];
@@ -26,21 +27,33 @@ async function ToList(req, res) {
         if ( app.helper.check.rights.bySession(req, Settings.moduleName, "change")) {
             params.menu += `<a class="toOverlay" href='${app.web.prefix}/backend/settings/%id%?overlay=1'><img src="${app.web.prefix}/base/images/icons/edit.png" alt="" class="icon"></a>`;
         }
+        //#endregion Erstellen der Parameter
 
+        // Generierung der Tabelle
         app.frontend.table.generateByDB('tblSettings', 'TAB1', params, null)
             .then(response => {
+                // Starte Ausgabe
                 app.web.toOutput(req, res, ["base"], "backend_tableDefault", response.params.output, true);
             })
             .catch(err => {
+                // Wenn ein Fehler auftritt, gehe zu Fehlerseite
                 app.logError(err, "SYSTEM:settings:ToList");
                 app.web.toErrorPage(req, res, err, true, true, false);
             })
     } catch ( err ) {
+        // Wenn ein Fehler auftritt, gehe zu Fehlerseite
         app.logError(err, "System:Settings");
         app.web.toErrorPage(req, res, err, true, true, false);
     }
 }
 
+/**
+ * Starte Ausgabe - Detailansicht
+ * @param {*} req Webserver - Request
+ * @param {*} res Webserver - Response
+ * @returns {Promise<void>}
+ * @constructor
+ */
 async function ToDetails(req, res) {
     let params = SetEditableData(req);
 
@@ -61,6 +74,13 @@ async function ToDetails(req, res) {
         })
 }
 
+/**
+ * Speichern der Eigenschaften
+ * @param {*} req Webserver - Request
+ * @param {*} res Webserver - Response
+ * @returns {Promise<void>}
+ * @constructor
+ */
 async function FromDetails(req, res) {
     try {
         let params = SetEditableData(req);
@@ -85,8 +105,7 @@ async function FromDetails(req, res) {
 
 /**
  * Editable Data für die Speicherung und Einzeldetails
- * @param req
- * @returns {*}
+ * @param {*} req Webserver - Request
  * @constructor
  */
 function SetEditableData(req) {
@@ -109,5 +128,6 @@ function SetEditableData(req) {
  * @constructor
  */
 function CheckSaveData(params) {
+    // ToDo: Vervollständigen
     return params;
 }
