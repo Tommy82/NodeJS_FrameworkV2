@@ -25,7 +25,7 @@ export class Functions {
  */
 function generateHTMLElementText(data) {
     data = checkData(data, "text");
-    return `<input type="text" id="${data.key}" name="${data.ident ? data.ident : data.key}" value="${data.value}" class="${data.class}">`;
+    return `<input type="text" id="${data.key}" name="${data.ident ? data.ident : data.key}" value="${data.value}" class="${data.class}" ${data.readonly}>`;
 }
 
 /**
@@ -39,7 +39,7 @@ function generateHTMLElementText(data) {
  */
 function generateHTMLElementSelect(data) {
     data = checkData(data, "select");
-    let response = `<select id="${data.key}" name="${data.ident ? data.ident : data.key}" size="${data.size}">`;
+    let response = `<select id="${data.key}" name="${data.ident ? data.ident : data.key}" size="${data.size}" ${data.readonly}>`;
     if ( data.options.length > 0 ) {
         data.options.forEach(item => {
             response += `<option value="${item.value}">${item.name}</option>`;
@@ -64,7 +64,7 @@ function generateHTMLElementCheckBox(data) {
     if ( data.value === 1 || data.value === "1" || data.value === "on" ) {
         checked = 'checked';
     }
-    return `<input type="checkbox" id="${data.key}" name="${data.ident ? data.ident : data.key}" ${checked} class="${data.class}">`;
+    return `<input type="checkbox" id="${data.key}" name="${data.ident ? data.ident : data.key}" ${checked} class="${data.class}" ${data.readonly}>`;
 }
 
 /**
@@ -78,6 +78,8 @@ function checkData(data, type = null) {
     if ( !data.value ) { data.value = ""; }
     if ( !data.class ) { data.class = ""; }
     if ( !data.key ) { data.key = ""; }
+
+    if ( !data.editable ) { data.readonly = 'readonly' } else { data.readonly = ''; }
 
     switch ( type ) {
         case "select":
