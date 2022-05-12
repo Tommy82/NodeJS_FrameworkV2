@@ -244,6 +244,14 @@ export default class ClassWebserver {
         this.toOutput(req, res, ["base"], fileName, params, isBackend);
     }
 
+    toAccessDenied(req, res, isBackend) {
+        let filename = "frontend_accessdenied";
+        if ( isBackend ) {
+            filename = "backend_accessdenied";
+        }
+        this.toOutput(req, res, ["base"], filename, {}, isBackend);
+    }
+
     toUpdatePage(req, res, isBackend) {
         let fileName = "frontend_updateDefault";
         if ( isBackend ) { fileName = "backend_updateDefault"; }

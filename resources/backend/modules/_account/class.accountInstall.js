@@ -28,6 +28,7 @@ class AccountInstall {
 
     /** Verwendete Rechte in diesem Modul */
     rights = [
+        { key: "show", desc: "", defaultRole: "admin" },    // Liste anschauen
         { key: "add", desc: "", defaultRole: "admin" },     // Neuen Account hinzufügen
         { key: "change", desc: "", defaultRole: "admin" },  // Vorhandenen Account ändern
         { key: "delete", desc: "", defaultRole: "admin" },  // Vorhandenen Account löschen

@@ -243,7 +243,8 @@ function setEditableData(id, params = new app.frontend.parameters()) {
             name: "Name",
             check: "notempty",
             fastSave: true,
-            inList: true
+            inList: true,
+            editable: true,
         },
         {
             key: "desc",
@@ -252,7 +253,8 @@ function setEditableData(id, params = new app.frontend.parameters()) {
             check: "",
             description: 'Beschreibung der Rolle',
             fastSave: true,
-            inList: true
+            inList: true,
+            editable: true,
         },
         {
             key: 'key',
@@ -260,7 +262,8 @@ function setEditableData(id, params = new app.frontend.parameters()) {
             name: "Key",
             check: "notempty",
             fastSave: true,
-            inList: true
+            inList: true,
+            editable: true,
         },
     ];
 

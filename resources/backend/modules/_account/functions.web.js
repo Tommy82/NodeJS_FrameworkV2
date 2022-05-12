@@ -182,44 +182,48 @@ function toLogout(req, res) {
  */
 function toAccountList(req, res) {
     try {
-        //#region Set Parameters
-        let params = new app.frontend.parameters();
+        if (!app.helper.check.rights.bySession(req, Account.moduleName, "show")) {
+            app.web.toAccessDenied(req, res, true);
+        } else {
+            //#region Set Parameters
+            let params = new app.frontend.parameters();
 
-        // Namen der Tabellenheader
-        params.header = ["ID", "Name", "Aktiv", "Backend", "Frontend", "Rollen", "Email", "Menü"];
-        // SQL Abfrage (ohne Where!)
-        params.sql = "SELECT `id`, `name`, `active`, `isBackend`, `isFrontend`, `roles`, `email` FROM `account` ";
-        // Where Klausel
-        params.where = "id > 0";
-        // Welche Spalten sollen als Checkboxen ausgegeben werden
-        params.colCheckbox = [2, 3, 4];
-        // Soll die FastSave Funktion hinzugefügt werden?
-        params.addAdd = true;
-        // Url für FastSave
-        params.url_fastsave = app.settings.webServer.prefix + "/backend/account/0";
+            // Namen der Tabellenheader
+            params.header = ["ID", "Name", "Aktiv", "Backend", "Frontend", "Rollen", "Email", "Menü"];
+            // SQL Abfrage (ohne Where!)
+            params.sql = "SELECT `id`, `name`, `active`, `isBackend`, `isFrontend`, `roles`, `email` FROM `account` ";
+            // Where Klausel
+            params.where = "id > 0";
+            // Welche Spalten sollen als Checkboxen ausgegeben werden
+            params.colCheckbox = [2, 3, 4];
+            // Soll die FastSave Funktion hinzugefügt werden?
+            params.addAdd = true;
+            // Url für FastSave
+            params.url_fastsave = app.settings.webServer.prefix + "/backend/account/0";
 
-        // Menü
-        params.menu = "";
-        // Wenn Änderungen erlaubt, setze Button für Änderungen
-        if (app.helper.check.rights.bySession(req, Account.moduleName, "change")) {
-            params.menu += `<a class="toOverlay" href='${app.web.prefix}/backend/account/%id%?overlay=1'><img src="${app.web.prefix}/base/images/icons/edit.png" alt="" class="icon"></a>`;
+            // Menü
+            params.menu = "";
+            // Wenn Änderungen erlaubt, setze Button für Änderungen
+            if (app.helper.check.rights.bySession(req, Account.moduleName, "change")) {
+                params.menu += `<a class="toOverlay" href='${app.web.prefix}/backend/account/%id%?overlay=1'><img src="${app.web.prefix}/base/images/icons/edit.png" alt="" class="icon"></a>`;
+            }
+            // Wenn Löschen erlaubt, setze Button für Löschen
+            if (app.helper.check.rights.bySession(req, Account.moduleName, "delete")) {
+                params.menu += `<a href="${app.web.prefix}/backend/account/%id%/del" value1="Benutzer" value2="%id%" value3="%name%" class="btnDelete""><span><img src="${app.web.prefix}/base/images/icons/delete.png" alt="" class="icon"></a></span>`;
+            }
+            //#endregion Set Parameters
+
+            // Generierung der Tabelle
+            app.frontend.table.generateByDB("tblAccounts", "TAB1", params, null)
+                .then(response => {
+                    // Ausgabe
+                    app.web.toOutput(req, res, ["base"], "backend_tableDefault", response.params.output, true);
+                })
+                .catch(err => {
+                    app.logError(err, Account.moduleName + ":web:toAccountList");
+                    app.web.toErrorPage(req, res, err, true, true, false);
+                });
         }
-        // Wenn Löschen erlaubt, setze Button für Löschen
-        if (app.helper.check.rights.bySession(req, Account.moduleName, "delete")) {
-            params.menu += `<a href="${app.web.prefix}/backend/account/%id%/del" value1="Benutzer" value2="%id%" value3="%name%" class="btnDelete""><span><img src="${app.web.prefix}/base/images/icons/delete.png" alt="" class="icon"></a></span>`;
-        }
-        //#endregion Set Parameters
-
-        // Generierung der Tabelle
-        app.frontend.table.generateByDB("tblAccounts", "TAB1", params, null)
-            .then(response => {
-                // Ausgabe
-                app.web.toOutput(req, res, ["base"], "backend_tableDefault", response.params.output, true);
-            })
-            .catch(err => {
-                app.logError(err, Account.moduleName + ":web:toAccountList");
-                app.web.toErrorPage(req, res, err, true, true, false);
-            });
     } catch (err) {
         app.logError(err, Account.moduleName + ":web:toAccountList");
         app.web.toErrorPage(req, res, err, true, true, false);
@@ -415,6 +419,7 @@ function setEditableData(id, params = new app.frontend.parameters()) {
             check: "notempty",
             fastSave: true,
             inList: true,
+            editable: true,
         },
         {
             key: "active",
@@ -423,6 +428,7 @@ function setEditableData(id, params = new app.frontend.parameters()) {
             check: "",
             fastSave: true,
             inList: true,
+            editable: true,
         },
         {
             key: "isBackend",
@@ -432,6 +438,7 @@ function setEditableData(id, params = new app.frontend.parameters()) {
             check: "",
             fastSave: true,
             inList: true,
+            editable: true,
         },
         {
             key: "isFrontend",
@@ -441,6 +448,7 @@ function setEditableData(id, params = new app.frontend.parameters()) {
             check: "",
             fastSave: true,
             inList: true,
+            editable: true,
         },
         {
             key: "roles",
@@ -450,6 +458,7 @@ function setEditableData(id, params = new app.frontend.parameters()) {
             description: 'Welche Rolle hat dieser User? [Wichtig für Rechteverwaltung!]',
             fastSave: true,
             inList: true,
+            editable: true,
         },
         {
             key: 'email',
@@ -457,7 +466,8 @@ function setEditableData(id, params = new app.frontend.parameters()) {
             name: 'Email Adresse',
             check: "notempty",
             fastSave: true,
-            inList: true
+            inList: true,
+            editable: true,
         }
     ];
     params.table = "account";
