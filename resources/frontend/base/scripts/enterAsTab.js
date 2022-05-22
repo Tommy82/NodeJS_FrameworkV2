@@ -73,10 +73,18 @@ EnterAsTab.prototype.decreaseIndex = function (index, counter) {
 
 EnterAsTab.prototype.isFocusableElement = function (element) {
 
-    return ['SELECT', 'TEXTAREA'].indexOf(element.prop('tagName')) > -1 ||
+    let check = ['SELECT', 'TEXTAREA'].indexOf(element.prop('tagName')) > -1 ||
+        //element.is(':select') ||
+        //element.is(':number') ||
         element.is(':text') ||
         element.is(':checkbox') ||
-        element.is(':radio');
+        element.is(':radio') ||
+        element.hasClass('isFocusable');
+
+    if ( element.hasClass('notFocusable') ) { check = false; }
+    if ( element.prop('readonly') || element.prop('readOnly') ) { check = false; }
+
+    return check;
 };
 
 let enterAsTab = new EnterAsTab();
