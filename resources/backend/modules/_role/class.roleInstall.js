@@ -29,6 +29,7 @@ class RoleInstall {
 
     /** Verwendete Rechte in diesem Modul */
     rights = [
+        { key: "show", desc: "", defaultRole: "admin" },    // Anzeige der Rollen
         { key: "add", desc: "", defaultRole: "admin" },     // Neue Rolle anlegen
         { key: "change", desc: "", defaultRole: "admin" },  // Rolle ändern
         { key: "delete", desc: "", defaultRole: "admin" },  // Rolle löschen

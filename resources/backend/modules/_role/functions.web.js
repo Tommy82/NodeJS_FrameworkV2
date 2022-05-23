@@ -31,35 +31,39 @@ export class Functions {
  */
 async function getList(req, res) {
     try {
+        if (!app.helper.check.rights.bySession(req, Role.moduleName, "show")) {
+            app.web.toAccessDenied(req, res, true);
+        } else {
 
-        let params = new app.frontend.parameters();
+            let params = new app.frontend.parameters();
 
-        params.header = ["ID", "Key", "Name", "Beschreibung", "Menü"];
-        params.sql = "SELECT `id`, `key`, `name`, `desc` FROM `roles` ";
-        params.where = "id > 0";
-        params.addAdd = true;
-        params.url_fastsave = app.settings.webServer.prefix + '/backend/role/0';
+            params.header = ["ID", "Key", "Name", "Beschreibung", "Menü"];
+            params.sql = "SELECT `id`, `key`, `name`, `desc` FROM `roles` ";
+            params.where = "id > 0";
+            params.addAdd = true;
+            params.url_fastsave = app.settings.webServer.prefix + '/backend/role/0';
 
-        // Menü
-        params.menu = '';
-        if ( app.helper.check.rights.bySession(req, Role.moduleName, "change")) {
-            params.menu += `<a class="toOverlay" href='${app.settings.webServer.prefix}/backend/role/%id%?overlay=1'><img src="${app.web.prefix}/base/images/icons/edit.png" alt="" class="icon" href='${app.web.prefix}/backend/role/%id%'></a>`;
+            // Menü
+            params.menu = '';
+            if (app.helper.check.rights.bySession(req, Role.moduleName, "change")) {
+                params.menu += `<a class="toOverlay" href='${app.settings.webServer.prefix}/backend/role/%id%?overlay=1'><img src="${app.web.prefix}/base/images/icons/edit.png" alt="" class="icon" href='${app.web.prefix}/backend/role/%id%'></a>`;
+            }
+
+            // Wenn Löschen erlaubt, setze Button für Löschen
+            if (app.helper.check.rights.bySession(req, Role.moduleName, "delete")) {
+                params.menu += `<a href="${app.settings.webServer.prefix}/backend/role/%id%/del" value1="Rolle" value2="%id%" value3="%name%" class="btnDelete""><span><img src="${app.web.prefix}/base/images/icons/delete.png" alt="" class="icon"></a></span>`;
+            }
+
+            app.frontend.table.generateByDB('tblRoles', "TAB1", params, null)
+                .then(response => {
+                    // Ausgabe
+                    app.web.toOutput(req, res, ["base"], "backend_tableDefault", response.params.output, true);
+                })
+                .catch(err => {
+                    app.logError(err, Role.moduleName + ":web:getList");
+                    app.web.toErrorPage(req, res, err, true, true, false);
+                })
         }
-
-        // Wenn Löschen erlaubt, setze Button für Löschen
-        if (app.helper.check.rights.bySession(req, Role.moduleName, "delete")) {
-            params.menu += `<a href="${app.settings.webServer.prefix}/backend/role/%id%/del" value1="Rolle" value2="%id%" value3="%name%" class="btnDelete""><span><img src="${app.web.prefix}/base/images/icons/delete.png" alt="" class="icon"></a></span>`;
-        }
-
-        app.frontend.table.generateByDB('tblRoles', "TAB1", params, null)
-            .then(response => {
-                // Ausgabe
-                app.web.toOutput(req, res, ["base"], "backend_tableDefault", response.params.output, true);
-            })
-            .catch(err => {
-                app.logError(err, Role.moduleName + ":web:getList");
-                app.web.toErrorPage(req, res, err, true, true, false);
-            })
     } catch ( err ) {
         app.logError(err, Role.moduleName + ":web:getList");
         app.web.toErrorPage(req, res, err, true, true, false);
@@ -74,41 +78,47 @@ async function getList(req, res) {
  */
 async function getDetails(req, res) {
     try {
-        let id = req.params.id;
-        let params = setEditableData(req.params.id);
 
-        //Role.database.rightsGetAll(id)
-        Role.rights.getAllFromRole(id)
-            .then(lstRights => {
-                app.frontend.table.generateByObject(setEditableDataRights(lstRights))
-                    .then(response => {
-                        params.output = response.params.output;
-                        let tabRights = response.data;
-                        params.appendBeforeSaveButtons = tabRights;
+        if (!app.helper.check.rights.bySession(req, Role.moduleName, "change")) {
+            app.web.toAccessDenied(req, res, true);
+        } else {
 
-                        app.frontend.table.generateEditByID(params, null)
-                            .then(response => {
-                                params = response.params;
-                                params.addData('TAB_EDIT', response.data);
-                                params.addData('TAB_RIGHTS', tabRights);
-                                params.addData("AUTOCOMPLETE", []);
+            let id = req.params.id;
+            let params = setEditableData(req.params.id);
 
-                                app.web.toOutput(req, res, ["base"], "backend_tableEditDefault", params.output, true);
-                            })
-                            .catch(err => {
-                                app.logError(err, Role.moduleName + ":web:getList");
-                                app.web.toErrorPage(req, res, err, true, true, false);
-                            })
-                    })
-                    .catch(err => {
-                        app.logError(err, Role.moduleName + ":web:getList");
-                        app.web.toErrorPage(req, res, err, true, true, false);
-                    })
-            })
-            .catch(err => {
-                app.logError(err, Role.moduleName + ":web:getList");
-                app.web.toErrorPage(req, res, err, true, true, false);
-            })
+            //Role.database.rightsGetAll(id)
+            Role.rights.getAllFromRole(id)
+                .then(lstRights => {
+                    app.frontend.table.generateByObject(setEditableDataRights(lstRights))
+                        .then(response => {
+                            params.output = response.params.output;
+                            let tabRights = response.data;
+                            params.appendBeforeSaveButtons = tabRights;
+
+                            app.frontend.table.generateEditByID(params, null)
+                                .then(response => {
+                                    params = response.params;
+                                    params.addData('TAB_EDIT', response.data);
+                                    params.addData('TAB_RIGHTS', tabRights);
+                                    params.addData("AUTOCOMPLETE", []);
+
+                                    app.web.toOutput(req, res, ["base"], "backend_tableEditDefault", params.output, true);
+                                })
+                                .catch(err => {
+                                    app.logError(err, Role.moduleName + ":web:getList");
+                                    app.web.toErrorPage(req, res, err, true, true, false);
+                                })
+                        })
+                        .catch(err => {
+                            app.logError(err, Role.moduleName + ":web:getList");
+                            app.web.toErrorPage(req, res, err, true, true, false);
+                        })
+                })
+                .catch(err => {
+                    app.logError(err, Role.moduleName + ":web:getList");
+                    app.web.toErrorPage(req, res, err, true, true, false);
+                })
+        }
     } catch ( err ) {
         app.logError(err, Role.moduleName + ":web:getDetails");
         app.web.toErrorPage(req, res, err, true, true, false);
@@ -123,23 +133,30 @@ async function getDetails(req, res) {
  */
 async function setDetails(req, res) {
     try {
-        let params = setEditableData(req.params.id);
 
-        params.body = req.body;
+        if (!app.helper.check.rights.bySession(req, Role.moduleName, "change")) {
+            res.send({success: "error", error: "Access denied"});
+        } else {
+            let params = setEditableData(req.params.id);
 
-        app.frontend.table.saveEditByID(params, null)
-            .then(async data => {
-                params.savedData = data;
-                if ( params.id === 0 && data.insertId > 0 ) { params.id = data.insertId; }
+            params.body = req.body;
 
-                await saveRights(params);
-                //toAccountSingle(req, res, params, true);
-                res.send({ success: "success", data: [] });
-            })
-            .catch(err => {
-                app.logError(err, Role.moduleName + ":web:getList");
-                app.web.toErrorPage(req, res, err, true, true, false);
-            })
+            app.frontend.table.saveEditByID(params, null)
+                .then(async data => {
+                    params.savedData = data;
+                    if (params.id === 0 && data.insertId > 0) {
+                        params.id = data.insertId;
+                    }
+
+                    await saveRights(params);
+                    //toAccountSingle(req, res, params, true);
+                    res.send({success: "success", data: []});
+                })
+                .catch(err => {
+                    app.logError(err, Role.moduleName + ":web:getList");
+                    app.web.toErrorPage(req, res, err, true, true, false);
+                })
+        }
     } catch ( err ) {
         app.logError(err, Role.moduleName + ":web:setDetails");
         app.web.toErrorPage(req, res, err, true, true, false);
@@ -150,38 +167,43 @@ async function setDetails(req, res) {
 async function deleteRole(req, res)  {
     let id = req.params.id;
     let allowed = true;
+    if (!app.helper.check.rights.bySession(req, Role.moduleName, "change")) {
+        app.web.toAccessDenied(req, res, true);
+    } else {
 
-    Role.database.getByID(id)
-        .then(lstRoles => {
-            if ( lstRoles && lstRoles.length > 0 ) {
-                let key = lstRoles[0].key;
+        Role.database.getByID(id)
+            .then(lstRoles => {
+                if (lstRoles && lstRoles.length > 0) {
+                    let key = lstRoles[0].key;
 
-                app.modules.account.database.getByRole(key)
-                    .then(lstAccounts => {
-                        if ( lstAccounts && lstAccounts.length > 0 ) {
-                            app.log('Kann nicht gelöscht werden - Accounts vorhanden');
-                        } else {
-                            Role.database.deleteByID(id)
-                                .then(response => {
-                                    Functions.getList(req, res).catch(err => { app.logError(err); })
-                                })
-                                .catch(err => {
-                                    app.logError(err);
-                                    app.web.toErrorPage(req, res, err, true, true, false);
-                                })
-                        }
-                    })
-                    .catch(err => {
-                        app.logError(err);
-                        app.web.toErrorPage(req, res, err, true, true, false);
-                    })
-            }
-        })
-        .catch(err => {
-            app.logError(err);
-            app.web.toErrorPage(req, res, err, true, true, false);
-        })
-
+                    app.modules.account.database.getByRole(key)
+                        .then(lstAccounts => {
+                            if (lstAccounts && lstAccounts.length > 0) {
+                                app.log('Kann nicht gelöscht werden - Accounts vorhanden');
+                            } else {
+                                Role.database.deleteByID(id)
+                                    .then(response => {
+                                        Functions.getList(req, res).catch(err => {
+                                            app.logError(err);
+                                        })
+                                    })
+                                    .catch(err => {
+                                        app.logError(err);
+                                        app.web.toErrorPage(req, res, err, true, true, false);
+                                    })
+                            }
+                        })
+                        .catch(err => {
+                            app.logError(err);
+                            app.web.toErrorPage(req, res, err, true, true, false);
+                        })
+                }
+            })
+            .catch(err => {
+                app.logError(err);
+                app.web.toErrorPage(req, res, err, true, true, false);
+            })
+    }
 }
 
 /**

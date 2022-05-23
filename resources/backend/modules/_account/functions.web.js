@@ -196,10 +196,13 @@ function toAccountList(req, res) {
             params.where = "id > 0";
             // Welche Spalten sollen als Checkboxen ausgegeben werden
             params.colCheckbox = [2, 3, 4];
-            // Soll die FastSave Funktion hinzugefügt werden?
-            params.addAdd = true;
-            // Url für FastSave
-            params.url_fastsave = app.settings.webServer.prefix + "/backend/account/0";
+
+            if (app.helper.check.rights.bySession(req, Account.moduleName, "add")) {
+                // Soll die FastSave Funktion hinzugefügt werden?
+                params.addAdd = true;
+                // Url für FastSave
+                params.url_fastsave = app.settings.webServer.prefix + "/backend/account/0";
+            }
 
             // Menü
             params.menu = "";
@@ -239,22 +242,26 @@ function toAccountList(req, res) {
  */
 function toAccountSingle(req, res, params = [], canClose = false) {
     try {
-        params = setEditableData(req.params.id, params);
-        let autoComplete = [{fieldID: 'roles', filter: 'role'}];
+        if (!app.helper.check.rights.bySession(req, Account.moduleName, "change")) {
+            app.web.toAccessDenied(req, res, true);
+        } else {
+            params = setEditableData(req.params.id, params);
+            let autoComplete = [{fieldID: 'roles', filter: 'role'}];
 
-        app.frontend.table.generateEditByID(params, null)
-            .then(response => {
-                let data = response.data;
-                params = response.params;
-                app.web.toOutput(req, res, ["base"], "backend_tableEditDefault", {
-                    TAB_EDIT: data,
-                    AUTOCOMPLETE: autoComplete
-                }, true);
-            })
-            .catch(err => {
-                app.logError(err, Account.moduleName + ":web:toAccountSingle");
-                app.web.toErrorPage(req, res, err, true, true, false);
-            })
+            app.frontend.table.generateEditByID(params, null)
+                .then(response => {
+                    let data = response.data;
+                    params = response.params;
+                    app.web.toOutput(req, res, ["base"], "backend_tableEditDefault", {
+                        TAB_EDIT: data,
+                        AUTOCOMPLETE: autoComplete
+                    }, true);
+                })
+                .catch(err => {
+                    app.logError(err, Account.moduleName + ":web:toAccountSingle");
+                    app.web.toErrorPage(req, res, err, true, true, false);
+                })
+        }
     } catch (err) {
         app.logError(err, Account.moduleName + ":web:toAccountSingle");
         app.web.toErrorPage(req, res, err, true, true, false);
@@ -320,44 +327,48 @@ async function saveMe(req, res) {
  */
 async function saveAccountSingle(req, res) {
     try {
-        let params = setEditableData(req.params.id);
-
-        params.body = req.body;
-
-        params = await checkSaveData(params);
-        if (!params || params.errors.length > 0) {
-            res.send({success: "error", data: params.errors})
+        if (!app.helper.check.rights.bySession(req, Account.moduleName, "show")) {
+            app.web.toAccessDenied(req, res, true);
         } else {
+            let params = setEditableData(req.params.id);
 
-            if ( params.id === 0 || params.id === '0') {
+            params.body = req.body;
 
-                let password = app.settings.users.init_password;
+            params = await checkSaveData(params);
+            if (!params || params.errors.length > 0) {
+                res.send({success: "error", data: params.errors})
+            } else {
 
-                if ( password && password.trim() != '' ) {
-                    password = await app.helper.security.hashPassword(password);
-                    params.body["password"] = password;
+                if (params.id === 0 || params.id === '0') {
+
+                    let password = app.settings.users.init_password;
+
+                    if (password && password.trim() != '') {
+                        password = await app.helper.security.hashPassword(password);
+                        params.body["password"] = password;
+                    }
+
+                    params.columns.push({
+                        key: "password",
+                        type: "text",
+                        name: "Kennwort",
+                        check: "notempty",
+                        fastSave: true,
+                        inList: true,
+                    });
                 }
 
-                params.columns.push({
-                    key: "password",
-                    type: "text",
-                    name: "Kennwort",
-                    check: "notempty",
-                    fastSave: true,
-                    inList: true,
-                });
+                app.frontend.table.saveEditByID(params, null)
+                    .then(data => {
+                        params.savedData = data;
+                        //toAccountSingle(req, res, params, true);
+                        res.send({success: "success", data: []});
+                    })
+                    .catch(err => {
+                        app.logError(err, Account.moduleName + ":web:saveAccountSingle");
+                        app.web.toErrorPage(req, res, err, true, true, false);
+                    })
             }
-
-            app.frontend.table.saveEditByID(params, null)
-                .then(data => {
-                    params.savedData = data;
-                    //toAccountSingle(req, res, params, true);
-                    res.send({success: "success", data: []});
-                })
-                .catch(err => {
-                    app.logError(err, Account.moduleName + ":web:saveAccountSingle");
-                    app.web.toErrorPage(req, res, err, true, true, false);
-                })
         }
     } catch (err) {
         app.logError(err, Account.moduleName + ":web:saveAccountSingle");
@@ -373,6 +384,7 @@ async function saveAccountSingle(req, res) {
  * @returns {Promise<void>}
  */
 async function delAccountSingle(req, res) {
+
     let id = req.params.id;
     if ( id && id != "" && parseInt(id) > 0 ) {
         if (app.helper.check.rights.bySession(req, Account.moduleName, "delete")) {
