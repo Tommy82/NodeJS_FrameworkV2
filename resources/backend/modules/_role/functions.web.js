@@ -89,18 +89,22 @@ async function getDetails(req, res) {
             //Role.database.rightsGetAll(id)
             Role.rights.getAllFromRole(id)
                 .then(lstRights => {
-                    app.frontend.table.generateByObject(setEditableDataRights(lstRights))
+                    app.frontend.table.generateByObject("tblRoleRights", "TAB_RIGHTS", setEditableDataRights(lstRights), '')
                         .then(response => {
                             params.output = response.params.output;
-                            let tabRights = response.data;
-                            params.appendBeforeSaveButtons = tabRights;
+                            //let tabRights = response.data;
+                            //params.appendBeforeSaveButtons = tabRights;
+
+                            if ( params.output["TAB_RIGHTS"]) {
+                                params.appendBeforeSaveButtons += params.output["TAB_RIGHTS"];
+                            }
 
                             app.frontend.table.generateEditByID(params, null)
                                 .then(response => {
                                     params = response.params;
                                     params.addData('TAB_EDIT', response.data);
-                                    params.addData('TAB_RIGHTS', tabRights);
                                     params.addData("AUTOCOMPLETE", []);
+
 
                                     app.web.toOutput(req, res, ["base"], "backend_tableEditDefault", params.output, true);
                                 })
@@ -304,13 +308,13 @@ function setEditableDataRights(data) {
     response.id = "tblRoleRights";
     response.header = ["Modul", "Schlüssel", "Autom. erlaubt", "Man. erlaubt"]
     response.columns = [
-        { key: "module", type: "text", name: "Modul", editAble: false },
-        { key: "key", type: "text", name: "", editAble: false },
-        { key: "allowedRole", type: "checkbox", name: "", editAble: false },
-        { key: "allowed", type: "checkbox", name: "", editAble: true, ident: 'allowed_%rightID%', value: getRoleRightValue, valueParamCount: 2, valueParam1: '%rightID%', valueParam2: data },
+        { key: "module", type: "text", name: "Modul", editable: false },
+        { key: "key", type: "text", name: "", editable: false },
+        { key: "allowedRole", type: "checkbox", name: "", editable: false },
+        { key: "allowed", type: "checkbox", name: "", editable: true, ident: 'allowed_%rightID%', value: getRoleRightValue, valueParamCount: 2, valueParam1: '%rightID%', valueParam2: data },
     ];
     response.orgObject = data;
-    response.colCheckBox = [2,3];
+    response.colCheckbox = [2,3];
 
     return response;
 }

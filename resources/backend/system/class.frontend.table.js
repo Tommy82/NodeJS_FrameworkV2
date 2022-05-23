@@ -346,7 +346,7 @@ async function generateByObject(id, frontendName, params = new app.frontend.para
                         ident = generateStringByColumn(obj, ident);
                     }
 
-                    if ( item.editAble === true ) {
+                    if ( item.editAble === true || item.editable === true ) {
                         let tmpItem = {};
                         tmpItem.value = value;
                         tmpItem.key = ident && ident !== null ? ident : key;
