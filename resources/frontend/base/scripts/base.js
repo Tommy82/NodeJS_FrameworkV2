@@ -46,7 +46,11 @@ function setDataTable(id, params) {
             paging: true,
             filter: true,
             info: true,
-            buttons: [ "copy" ],
+            buttons: [
+                { extend: 'excelHtml5', title: 'Data Export' },
+                { extend: 'pdfHtml5', title: 'Data Export' },
+                { extend: 'csv', title: 'Data Export' },
+            ],
             lengthMenu: [ [ 10, 25, 50, 100 -1 ], [ '10', '25', '50', '100', 'Alle' ]]
         }
     } else {
@@ -54,7 +58,12 @@ function setDataTable(id, params) {
         if ( params.searching === undefined ) { params.searching = true; }
         if ( params.info === undefined) { params.info = true; }
         if ( params.paging === undefined ) { params.paging = true; }
-        if ( params.buttons === undefined ) { params.buttons = [ "copy" ]; }
+        if ( params.buttons === undefined ) { params.buttons = [
+            { extend: 'excelHtml5', title: 'Data Export' },
+            { extend: 'pdfHtml5', title: 'Data Export' },
+            { extend: 'csv', title: 'Data Export' },
+            ];
+        }
         if ( params.lengthMenu === undefined ) {
             params.lengthMenu = [
                 [ 10, 25, 50, 100, -1 ],
@@ -62,6 +71,7 @@ function setDataTable(id, params) {
             ];
         }
     }
+
 
     // Setup - add a text input to each footer cell
     if ( params.filter ) {
@@ -73,6 +83,7 @@ function setDataTable(id, params) {
 
     let table = $('#' + id).DataTable({
         dom: 'Blfrtip',
+        buttons: params.buttons,
         lengthMenu: params.lengthMenu,
         orderCellsTop: params.filter,
         fixedHeader: true,
