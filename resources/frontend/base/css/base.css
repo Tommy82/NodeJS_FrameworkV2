@@ -221,3 +221,7 @@ thead input {
     width: 100%;
 }
 
+div.dt-buttons{
+    position:relative;
+    float:right;
+}

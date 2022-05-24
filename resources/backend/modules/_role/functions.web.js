@@ -231,6 +231,7 @@ function saveRights(params) {
                     app.helper.lists.asyncForEach(lstRights, async (right) => {
                         if ( errors.length === 0 ) {
                             let allowed = params.body && params.body["allowed_" + right.id] ? params.body["allowed_" + right.id] : "";
+
                             if ( allowed && (allowed.toLowerCase() === "on" || allowed.toLowerCase() === "1")) {
                                 let sql = "SELECT `allowed` FROM `roles_rights` WHERE `roleID` = " + params.id + " AND `rightID` = " + right.id;
                                 let data = await app.DB.query(sql).catch(err => {
@@ -248,6 +249,8 @@ function saveRights(params) {
                 }
                 if ( errors.length === 0 ) { return resolve(true); }
                 else { return reject(errors); }
+
+                await Role.sync.all();
 
             })
             .catch(err => { return reject(err); })

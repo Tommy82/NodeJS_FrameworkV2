@@ -46,12 +46,21 @@ function setDataTable(id, params) {
             paging: true,
             filter: true,
             info: true,
+            buttons: [ "copy" ],
+            lengthMenu: [ [ 10, 25, 50, 100 -1 ], [ '10', '25', '50', '100', 'Alle' ]]
         }
     } else {
         if ( params.filter === undefined ) { params.filter = true; }
         if ( params.searching === undefined ) { params.searching = true; }
         if ( params.info === undefined) { params.info = true; }
         if ( params.paging === undefined ) { params.paging = true; }
+        if ( params.buttons === undefined ) { params.buttons = [ "copy" ]; }
+        if ( params.lengthMenu === undefined ) {
+            params.lengthMenu = [
+                [ 10, 25, 50, 100, -1 ],
+                [ '10', '25', '50', '100', 'Alle' ]
+            ];
+        }
     }
 
     // Setup - add a text input to each footer cell
@@ -60,9 +69,11 @@ function setDataTable(id, params) {
             .clone(true)
             .addClass('filters')
             .appendTo('#' + id + ' thead');
-    };
+    }
 
     let table = $('#' + id).DataTable({
+        dom: 'Blfrtip',
+        lengthMenu: params.lengthMenu,
         orderCellsTop: params.filter,
         fixedHeader: true,
         responsive: true,
